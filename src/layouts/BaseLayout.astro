@@ -1,0 +1,277 @@
+---
+import SideNav from "../components/SideNav.astro";
+import SideNavContent from "../components/SideNavContent.astro";
+import MobileNav from "../components/MobileNav.astro";
+import Footer from "../components/Footer.astro";
+import { ViewTransitions } from "astro:transitions";
+import PromoOverlay from "../components/PromoOverlay.astro";
+
+
+interface Props {
+  title?: string;
+}
+
+const { title = "OffFrame" } = Astro.props;
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <ViewTransitions />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Shippori+Mincho:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-top">
+        <a href="/" class="header-logo">
+          <span class="header-logo-main">OFF FRAME</span>
+          <span class="header-logo-sub">素の、その時間。</span>
+        </a>
+        <button
+          class="burger"
+          id="burgerBtn"
+          aria-label="メニュー"
+          onclick="
+            document.getElementById('drawer').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('open');
+            this.classList.toggle('open');
+          "
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div class="nav-area">
+        <MobileNav />
+      </div>
+    </header>
+
+    <div class="drawer" id="drawer">
+      <SideNavContent />
+    </div>
+    <div
+      class="overlay"
+      id="overlay"
+      onclick="
+        document.getElementById('drawer').classList.remove('open');
+        document.getElementById('overlay').classList.remove('open');
+        document.getElementById('burgerBtn').classList.remove('open');
+      "
+    ></div>
+
+    <div class="root">
+      <div class="left">
+        <SideNav />
+      </div>
+      <div class="right">
+        <slot />
+        <Footer />
+      </div>
+    </div>
+    <PromoOverlay />
+  </body>
+</html>
+
+<style is:global>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #000;
+    color: #000;
+    font-family: "Shippori Mincho", "Cormorant Garamond", serif;
+  }
+
+  h1, h2, h3, time {
+    font-family: "Cormorant Garamond", "Shippori Mincho", serif;
+    font-weight: 300;
+    color: #000;
+  }
+
+  /* ============ OffFrame 画像切替フェード ============ */
+  img.switchable {
+    transition: opacity 0.3s ease;
+  }
+
+  img.switchable.blurring {
+    opacity: 0;
+  }
+
+  /* ============ ヘッダー ============ */
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 160px;
+    right: 0;
+    height: 56px;
+    background: #000;
+    border-bottom: 1px solid #222;
+    display: flex;
+    align-items: center;
+    z-index: 200;
+  }
+
+  .header-top {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #222;
+    padding: 0 1rem;
+  }
+
+  .header-logo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.8rem 0;
+    text-decoration: none;
+  }
+
+  .header-logo-main {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.6rem;
+    letter-spacing: 0.25em;
+    color: #fff;
+  }
+
+  .header-logo-sub {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 400;
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    color: #fff;
+    opacity: 0.7;
+  }
+
+  .nav-area {
+    flex: 1;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  /* ============ バーガーボタン ============ */
+  .burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    flex-shrink: 0;
+    touch-action: manipulation;
+  }
+
+  .burger span {
+    display: block;
+    width: 22px;
+    height: 1px;
+    background: #fff;
+    transition: all 0.3s ease;
+  }
+
+  .burger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .burger.open span:nth-child(2) { opacity: 0; }
+  .burger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  /* ============ ドロワー（スマホメニュー） ============ */
+  .drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 48%;
+    height: 100%;
+    background: #000;
+    border-left: 1px solid #222;
+    z-index: 300;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+  }
+
+  .drawer.open { transform: translateX(0); }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 299;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ============ レイアウト ============ */
+  .root {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .left {
+    width: 160px;
+    flex-shrink: 0;
+    border-right: 1px solid #222;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 199;
+  }
+
+  .right {
+    margin-left: 160px;
+    margin-top: 56px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: calc(2000px - 160px);
+    background: #000;
+  }
+
+  /* ============ ページ遷移フェード ============ */
+  @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+  ::view-transition-old(root) { animation: fadeOut 0.3s ease forwards; }
+  ::view-transition-new(root) { animation: fadeIn  0.3s ease forwards; }
+
+  /* ============ スマホ（〜1024px） ============ */
+  @media (max-width: 1024px) {
+    .left { display: none; }
+
+    .site-header {
+      left: 0;
+      height: auto;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .header-top { display: flex; }
+    .burger     { display: flex; }
+
+    .right {
+      margin-left: 0;
+      margin-top: 130px;
+      max-width: 100%;
+    }
+  }
+</style>

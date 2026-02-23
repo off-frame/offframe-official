@@ -1,0 +1,82 @@
+---
+interface Props {
+  id?: string;
+}
+
+const { id = "offframeBtn" } = Astro.props;
+---
+
+<button class="offframe-btn" id={id}>OFF FRAME MODE</button>
+
+<style>
+  .offframe-btn {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    color: #8f8f8f;
+    padding: 0.6rem 0.75rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.25s ease;
+    box-shadow: none;
+    width: 100%;
+    border-radius: 100px;
+  }
+
+  .offframe-btn.active {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6), 0 0 24px rgba(255, 255, 255, 0.2);
+  }
+
+  .offframe-btn:hover:not(.active) {
+    border-color: #666;
+    color: #999;
+  }
+</style>
+
+<script>
+  function switchImages(next: string) {
+    const imgs = document.querySelectorAll("img.switchable");
+    imgs.forEach((img) => img.classList.add("blurring"));
+    setTimeout(() => {
+      imgs.forEach((img) => {
+        const el = img as HTMLImageElement;
+        el.src = next === "1" ? el.dataset.full! : el.dataset.general!;
+      });
+      setTimeout(() => {
+        imgs.forEach((img) => img.classList.remove("blurring"));
+      }, 100);
+    }, 300);
+  }
+
+  function initOffframeBtn(id: string) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+
+    const isActive = localStorage.getItem("offframe") === "1";
+    btn.classList.toggle("active", isActive);
+    btn.textContent = isActive ? "OFF Frame" : "ON Frame";
+
+    btn.onclick = () => {
+      const next = localStorage.getItem("offframe") === "1" ? "0" : "1";
+      localStorage.setItem("offframe", next);
+      const active = next === "1";
+      btn.classList.toggle("active", active);
+      btn.textContent = active ? "OFF Frame" : "ON Frame";
+      switchImages(next);
+    };
+  }
+
+  function init() {
+    initOffframeBtn("offframeBtn");
+    initOffframeBtn("drawerOffframeBtn");
+  }
+
+  document.addEventListener("astro:page-load", init);
+  init();
+</script>

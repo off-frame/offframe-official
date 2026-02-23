@@ -1,0 +1,385 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Card from "../../components/Card.astro";
+import AdBanner from "../../components/AdBanner.astro";
+import Promo from "../../components/Promo.astro";
+
+// ============ 広告設定 ============
+const SHOW_ADS = true;
+const AD_POSITIONS_BOTTOM = [1, 5];
+const AD_POSITIONS_SIDE   = [2, 4, 6, 8];
+
+type PromoVariant = "offframe" | "new" | "about";
+
+const AD_PROMOS_BOTTOM: (PromoVariant | undefined)[] = [
+  "offframe",  // 位置1
+  "offframe",       // 位置5
+];
+
+const AD_PROMOS_SIDE: (PromoVariant | undefined)[] = [
+  "offframe",     // 位置2
+  "offframe",  // 位置4
+  "offframe",   // 位置6 → 空白
+  "offframe",       // 位置8
+];
+
+export async function getStaticPaths() {
+  const photos = await getCollection("photos");
+  return photos.map((photo) => ({
+    params: { slug: photo.data.title.replace(":", "") },
+    props: { photo },
+  }));
+}
+
+// ============ データ取得 ============
+const { photo } = Astro.props;
+const { title } = photo.data;
+const { Content } = await photo.render();
+const id         = title.replace(":", "");
+const generalSrc = `/images/high/${id}.webp`;
+const fullSrc    = `/images/full_high/${id}.webp`;
+
+const all    = await getCollection("photos");
+const others = all.filter((p) => p.data.title !== title);
+
+const related     = others.sort(() => Math.random() - 0.5).slice(0, 6);
+const relatedSide = others
+  .filter((p) => !related.includes(p))
+  .sort(() => Math.random() - 0.5)
+  .slice(0, 18);
+
+type AdItem = { __ad: true; promo: PromoVariant | undefined };
+type Item = typeof related[number] | AdItem;
+
+const relatedWithAds: Item[] = SHOW_ADS
+  ? related.flatMap((p, i) => {
+      const adIdx = AD_POSITIONS_BOTTOM.indexOf(i);
+      return adIdx !== -1
+        ? [{ __ad: true as const, promo: AD_PROMOS_BOTTOM[adIdx] }, p]
+        : [p];
+    })
+  : related;
+
+const relatedSideWithAds: Item[] = SHOW_ADS
+  ? relatedSide.flatMap((p, i) => {
+      const adIdx = AD_POSITIONS_SIDE.indexOf(i);
+      return adIdx !== -1
+        ? [{ __ad: true as const, promo: AD_PROMOS_SIDE[adIdx] }, p]
+        : [p];
+    })
+  : relatedSide;
+
+const bottomCol1 = relatedWithAds.filter((_, i) => i % 2 === 0);
+const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
+---
+
+<BaseLayout title={title}>
+  <main>
+    <div class="layout">
+
+      <!-- メインカラム -->
+      <div class="main-col">
+
+        <!-- メイン写真カード -->
+        <div class="card">
+          <div class="inner">
+            <img
+              src={generalSrc}
+              data-general={generalSrc}
+              data-full={fullSrc}
+              alt={title}
+              class="switchable"
+            />
+            <div class="text">
+              <span class="title">
+                {title.split(":")[0]}<span class="colon">:</span>{title.split(":")[1]}
+              </span>
+              <div class="body">
+                <Content />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 広告バナー（記事下） -->
+        {SHOW_ADS && (
+          <div class="ad-wrap">
+            <AdBanner variant="horizontal">
+              <Promo variant="offframe" size="horizontal" />
+            </AdBanner>
+          </div>
+        )}
+
+        <!-- 関連カード：PC -->
+        <div class="related-bottom-pc">
+          {relatedWithAds.map((item) =>
+            "__ad" in item ? (
+              <AdBanner variant="card">
+                {item.promo && <Promo variant={item.promo} size="card" />}
+              </AdBanner>
+            ) : (
+              <Card title={item.data.title} />
+            )
+          )}
+        </div>
+
+        <!-- 関連カード：スマホ -->
+        <div class="related-bottom-mobile">
+          <div class="col">
+            {bottomCol1.map((item) =>
+              "__ad" in item ? (
+                <AdBanner variant="card">
+                  {item.promo && <Promo variant={item.promo} size="card" />}
+                </AdBanner>
+              ) : (
+                <Card title={item.data.title} />
+              )
+            )}
+          </div>
+          <div class="col">
+            {bottomCol2.map((item) =>
+              "__ad" in item ? (
+                <AdBanner variant="card">
+                  {item.promo && <Promo variant={item.promo} size="card" />}
+                </AdBanner>
+              ) : (
+                <Card title={item.data.title} />
+              )
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- サイドバー -->
+      <aside class="related-side">
+        {relatedSideWithAds.map((item) =>
+          "__ad" in item ? (
+            <AdBanner variant="card">
+              {item.promo && <Promo variant={item.promo} size="card" />}
+            </AdBanner>
+          ) : (
+            <Card title={item.data.title} />
+          )
+        )}
+      </aside>
+
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  /* ============ ベース ============ */
+  main {
+    background: #000;
+    padding: 2rem;
+  }
+
+  .layout {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .main-col {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ============ メイン写真カード ============ */
+  .card {
+    background: #fff;
+    width: 100%;
+    padding: 8% 5%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .inner {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .card img {
+    width: 90%;
+    height: auto;
+    display: block;
+  }
+
+  /* ============ テキスト ============ */
+  .text {
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-width: 50%;
+  }
+
+  .title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 2rem;
+    letter-spacing: 0.2em;
+    line-height: 1;
+    margin: 0;
+    padding: 0 0.6rem 1rem 0.75rem;
+    color: #000;
+    background: #fff;
+    display: inline;
+    width: fit-content;
+  }
+
+  .colon {
+    animation: blink 2.5s step-start infinite;
+  }
+
+  @keyframes blink {
+    0%, 80%     { opacity: 1; }
+    80.1%, 100% { opacity: 0; }
+  }
+
+  .body :global(p) {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.9rem;
+    line-height: 2.2;
+    color: #000;
+    margin: 0;
+    background: #fff;
+    display: inline;
+    padding: 0.1rem 0.75rem;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  /* ============ 広告バナー ============ */
+  .ad-wrap {
+    margin-top: 1rem;
+  }
+
+  /* ============ 関連カード：PC ============ */
+  .related-bottom-pc {
+    display: block;
+    columns: 2;
+    column-gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .related-bottom-pc > :global(a),
+  .related-bottom-pc > :global(.ad-banner) {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  /* ============ 関連カード：スマホ ============ */
+  .related-bottom-mobile {
+    display: none;
+  }
+
+  .col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* ============ サイドバー ============ */
+  .related-side {
+    display: none;
+    flex-shrink: 0;
+  }
+
+  .related-side > :global(a),
+  .related-side > :global(.ad-banner) {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .related-side > :global(a:nth-child(n+7)) { display: none; }
+
+  @media (min-width: 850px) {
+    .related-side { display: block; columns: 1; width: 300px; }
+  }
+
+  @media (min-width: 1000px) {
+    .related-side { width: 350px; }
+  }
+
+  @media (min-width: 1200px) {
+    .related-side { columns: 2; width: 450px; }
+    .related-side > :global(a:nth-child(n+7))  { display: block; }
+    .related-side > :global(a:nth-child(n+13)) { display: none; }
+  }
+
+  @media (min-width: 1300px) {
+    .related-side { width: 500px; }
+  }
+
+  @media (min-width: 1400px) {
+    .related-side { width: 600px; }
+  }
+
+  @media (min-width: 1500px) {
+    .related-side { columns: 3; width: 700px; }
+    .related-side > :global(a:nth-child(n+13)) { display: block; }
+  }
+
+  @media (min-width: 1600px) {
+    .related-side { width: 750px; }
+  }
+
+  /* ============ スマホ ============ */
+  @media (max-width: 728px) {
+    main { padding: 0; }
+
+    .layout { flex-direction: column; gap: 0; }
+
+    .card { background: #000; padding: 0; flex-direction: column; }
+
+    .inner { flex-direction: column; align-items: flex-start; }
+
+    .card img { width: 100%; margin-top: 1rem; }
+
+    .text { top: 1rem; left: 1rem; align-items: flex-end; max-width: 50%; }
+
+    .body :global(p) {
+      display: inline;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    .related-bottom-pc { display: none; }
+
+    .related-bottom-mobile {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 1rem;
+    }
+
+    .ad-wrap { padding: 0 1rem; }
+  }
+</style>
+
+<script>
+  function applyOffframeMode() {
+    const isActive = localStorage.getItem("offframe") === "1";
+    document.querySelectorAll("img.switchable").forEach((img) => {
+      const el = img as HTMLImageElement;
+      el.src = isActive ? el.dataset.full! : el.dataset.general!;
+    });
+  }
+  document.addEventListener("astro:page-load", applyOffframeMode);
+  applyOffframeMode();
+</script>

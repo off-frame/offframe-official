@@ -1,0 +1,42 @@
+---
+interface Props {
+  variant?: "horizontal" | "card";
+}
+
+const { variant = "horizontal" } = Astro.props;
+---
+
+<div class={`ad-banner ad-${variant}`}>
+  <slot>
+    <span class="ad-label">広告枠</span>
+  </slot>
+</div>
+
+<style>
+  .ad-banner {
+    background: #fff;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* slotに中身がある時は stretch で全体を埋める */
+  .ad-banner:has(> :not(.ad-label)) {
+    align-items: stretch;
+  }
+
+  .ad-banner :global(> a) {
+    width: 100%;
+  }
+
+ 
+
+  .ad-label {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: #ccc;
+  }
+</style>

@@ -1,0 +1,105 @@
+---
+interface Props {
+  title: string;
+  variant?: "high" | "low" | "raw";
+}
+
+const { title, variant = "low" } = Astro.props;
+
+const id       = title.replace(":", "");
+const ext      = variant === "raw" ? "png" : "webp";
+const generalSrc = `/images/low/${id}.${ext}`;
+const fullSrc    = `/images/full_low/${id}.${ext}`;
+
+// タイトル末尾の数字でアスペクト比を決定
+const aspectRatios: Record<string, string> = {
+  "0": "4 / 5", "1": "3 / 4", "2": "2 / 3", "3": "5 / 6",
+  "4": "1 / 1", "5": "3 / 5", "6": "5 / 7", "7": "4 / 6",
+  "8": "7 / 9", "9": "2 / 3",
+};
+const aspectRatio = aspectRatios[title.slice(-1)] ?? "3 / 4";
+---
+
+<a href={`/photos/${id}`} class="card">
+  <div class="image-wrap" style={`aspect-ratio: ${aspectRatio}`}>
+    <img
+      src={generalSrc}
+      data-general={generalSrc}
+      data-full={fullSrc}
+      alt={title}
+      class="switchable"
+    />
+  </div>
+  <p class="title">
+    {title.split(":")[0]}<span class="colon">:</span>{title.split(":")[1]}
+  </p>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    text-decoration: none;
+    color: inherit;
+    background: #fff;
+    padding: 5%;
+    padding-bottom: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateX(-2px) scale(1.01);
+  }
+
+  .image-wrap {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 0.4rem 0.5rem 0.75rem;
+    color: #000;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+  }
+
+  .colon {
+    animation: blink 2.5s step-start infinite;
+  }
+
+  @keyframes blink {
+    0%, 90%     { opacity: 1; }
+    90.1%, 100% { opacity: 0; }
+  }
+
+  @media (max-width: 1024px) {
+    .title {
+      font-size: 1.15rem;
+      margin-left: -0.2rem;
+    }
+  }
+</style>
+
+<script>
+  function applyOffframeMode() {
+    const isActive = localStorage.getItem("offframe") === "1";
+    document.querySelectorAll("img.switchable").forEach((img) => {
+      const el = img as HTMLImageElement;
+      el.src = isActive ? el.dataset.full! : el.dataset.general!;
+    });
+  }
+  document.addEventListener("astro:page-load", applyOffframeMode);
+  applyOffframeMode();
+</script>

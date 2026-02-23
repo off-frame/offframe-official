@@ -1,0 +1,233 @@
+---
+interface Props {
+  variant?: "offframe" | "new" | "about";
+  size?:    "card" | "horizontal";
+}
+
+const { variant = "offframe", size = "card" } = Astro.props;
+
+const content = {
+  offframe: {
+    title: "OFF FRAME MODE",
+    sub:   "オフフレームモード無料開放中",
+    body:  "枠を外し、ありのままに。\n写真の外側に広がる世界へ。",
+    cta:   "体験する",
+    href:  "/about",
+  },
+  new: {
+    title: "NEW",
+    sub:   "新着フォト",
+    body:  "今週も新しい「素顔」が届きました。\nまだ見ていない一枚を探しに。",
+    cta:   "新着を見る",
+    href:  "/",
+  },
+  about: {
+    title: "OFF FRAME",
+    sub:   "素の、その時間。",
+    body:  "生成AIが描く、存在しない日常。\nリアルな質感の向こう側へ。",
+    cta:   "About",
+    href:  "/about",
+  },
+} as const;
+
+const c = content[variant];
+---
+
+<a class={`promo promo--${size}${variant === "offframe" ? " promo--trigger" : ""}`} href={c.href} data-variant={variant}>
+  <div class="promo-inner">
+    <div class="promo-top">
+      <span class="promo-title">{c.title}</span>
+      <span class="promo-sub promo-sub--wide">{c.sub}</span>
+      <span class="promo-sub promo-sub--narrow">{c.sub.replace("オフフレームモード無料開放中", "オフフレームモード\n無料開放中")}</span>
+    </div>
+    <p class="promo-body promo-body--wide">{c.body}</p>
+    <p class="promo-body promo-body--narrow">{c.body.replace("枠を外し、ありのままに。\n写真の外側に広がる世界へ。", "枠を外し、\nありのままに。\n写真の外側に\n広がる世界へ。")}</p>
+    <span class="promo-cta">{c.cta} →</span>
+  </div>
+</a>
+
+<style>
+  /* ============ 共通 ============ */
+  .promo {
+    display: block;
+    background: #fff;
+    text-decoration: none;
+    width: 100%;
+    box-sizing: border-box;
+    transition: transform 0.2s ease;
+  }
+
+  .promo:hover {
+    transform: translateX(-2px) scale(1.01);
+  }
+
+  .promo-title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    color: #000;
+  }
+
+  .promo-sub {
+    font-family: "Shippori Mincho", serif;
+    letter-spacing: 0.15em;
+    color: #000;
+    opacity: 0.5;
+  }
+
+  .promo-body {
+    font-family: "Shippori Mincho", serif;
+    line-height: 2;
+    letter-spacing: 0.06em;
+    color: #333;
+    margin: 0;
+    white-space: pre-line;
+  }
+
+  .promo-cta {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: #000;
+    opacity: 0.55;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.1rem;
+    align-self: flex-start;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* ============ カード型 ============ */
+  .promo--card {
+    container-type: inline-size;
+    container-name: promo-c;
+    padding: 10%;
+  }
+
+  .promo--card .promo-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .promo--card .promo-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    border-bottom: 1px solid #e8e8e8;
+    padding-bottom: 0.6rem;
+  }
+
+  .promo--card .promo-title { font-size: 1.1rem; }
+  .promo--card .promo-sub   { font-size: 0.68rem; }
+  .promo--card .promo-body  { font-size: 0.78rem; }
+  .promo--card .promo-cta   { font-size: 0.72rem; margin-top: auto; }
+
+  /* 400px以上：余裕があるので大きく */
+  @container promo-c (min-width: 300px) {
+    .promo--card { padding: 8% 10%; }
+    .promo--card .promo-title { font-size: 2rem; }
+    .promo--card .promo-sub   { font-size: 0.85rem; }
+    .promo--card .promo-body  { font-size: 0.85rem; }
+    .promo--card .promo-cta   { font-size: 0.78rem; }
+  }
+
+  /* 280px以下 */
+  @container promo-c (max-width: 280px) {
+    .promo--card .promo-title { font-size: 1.8rem; padding-right: 5rem;}
+    .promo--card .promo-sub   { font-size: 0.85rem; }
+  }
+
+  .promo-sub--narrow  { display: none; }
+  .promo-body--narrow { display: none; }
+
+  /* 200px以下：最小表示 */
+  @container promo-c (max-width: 200px) {
+    .promo--card { padding: 8%; }
+    .promo--card .promo-title { font-size: 1.2rem; }
+    .promo--card .promo-sub   { font-size: 0.65rem; }
+    .promo--card .promo-cta   { font-size: 0.62rem; }
+    .promo-sub--wide  { display: none; }
+    .promo-sub--narrow  { display: inline; white-space: pre-line; }
+    .promo-body--wide  { display: none; }
+    .promo-body--narrow { display: block; }
+  }
+
+  /* ============ 横長型 ============ */
+  .promo--horizontal {
+    container-type: inline-size;
+    container-name: promo-h;
+  }
+
+  /* デフォルト（1400px〜）：全要素表示、大きめ */
+  .promo--horizontal .promo-inner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 1.5rem 3rem;
+    box-sizing: border-box;
+  }
+
+  .promo--horizontal .promo-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    border-right: 1px solid #e8e8e8;
+    padding-right: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  .promo--horizontal .promo-title { font-size: 1.6rem; }
+  .promo--horizontal .promo-sub   { font-size: 0.8rem; }
+  .promo--horizontal .promo-body  { font-size: 0.85rem; flex: 1; white-space: normal; line-height: 1.9; }
+  .promo--horizontal .promo-cta   { font-size: 0.8rem; align-self: center; }
+
+  /* 1100px以下：フォント小さく */
+  @container promo-h (max-width: 1100px) {
+    .promo--horizontal .promo-inner { gap: 2rem; padding: 1.25rem 2rem; }
+    .promo--horizontal .promo-title { font-size: 1.3rem; }
+    .promo--horizontal .promo-sub   { font-size: 0.72rem; }
+    .promo--horizontal .promo-body  { font-size: 0.78rem; }
+    .promo--horizontal .promo-cta   { font-size: 0.75rem; }
+  }
+
+  /* 800px以下：本文非表示 */
+  @container promo-h (max-width: 800px) {
+    .promo--horizontal .promo-inner { gap: 1.5rem; padding: 1rem 1.5rem; }
+    .promo--horizontal .promo-title { font-size: 1.1rem; }
+    .promo--horizontal .promo-sub   { font-size: 0.68rem; }
+    .promo--horizontal .promo-body  { display: none; }
+    .promo--horizontal .promo-cta   { font-size: 0.7rem; }
+    .promo--horizontal .promo-top   { padding-right: 1.5rem; }
+  }
+
+  /* 550px以下：タイトルとサブのみ */
+  @container promo-h (max-width: 550px) {
+    .promo--horizontal .promo-inner { gap: 1.5rem; padding: 1.5rem 1.35rem; }
+    .promo--horizontal .promo-title { font-size: 1rem; }
+    .promo--horizontal .promo-sub   { font-size: 0.62rem; }
+    .promo--horizontal .promo-top   { border-right: none; padding-right: 0; }
+    .promo--horizontal .promo-cta   { font-size: 0.75rem; }
+  }
+
+  /* 250px以下：最小表示 */
+  @container promo-h (max-width: 250px) {
+    .promo--horizontal .promo-inner { padding: 0.75rem 1rem; }
+    .promo--horizontal .promo-title { font-size: 0.85rem; }
+    .promo--horizontal .promo-sub   { display: none; }
+  }
+</style>
+
+<script>
+  function initPromoTriggers() {
+    document.querySelectorAll<HTMLElement>(".promo--trigger").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        (window as any).openPromoOverlay?.();
+      });
+    });
+  }
+  document.addEventListener("astro:page-load", initPromoTriggers);
+  initPromoTriggers();
+</script>

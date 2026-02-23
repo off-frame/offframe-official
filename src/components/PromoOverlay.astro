@@ -1,0 +1,221 @@
+---
+// offframe告知専用オーバーレイ
+// BaseLayoutに1つ置くだけ
+// 開き方: window.openPromoOverlay() を呼ぶ
+---
+
+<div id="promoOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:9999; align-items:center; justify-content:center;">
+  <div class="po-inner">
+
+    <div class="po-images">
+      <div class="po-img-wrap">
+        <img src="/images/low/1123.webp" alt="standard" />
+        <span class="po-label">Standard</span>
+      </div>
+      <div class="po-arrow">→</div>
+      <div class="po-img-wrap">
+        <img src="/images/full_low/1123.webp" alt="off frame" />
+        <span class="po-label">Off Frame</span>
+      </div>
+    </div>
+
+    <div class="po-text">
+      <p class="po-catch">枠を外し、<br>ありのままに。</p>
+      <p class="po-note">オフフレームモード、無料開放中。<br>サイドメニューのボタンから切り替えられます。</p>
+      <button class="po-btn" id="overlayOffframeBtn" onclick="window.toggleOverlayOffframe()">OFF FRAME MODE</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .po-inner {
+    background: #000;
+    border: 1px solid #888888;
+    width: min(900px, 94vw);
+    position: relative;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .po-images {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .po-img-wrap {
+    flex: 1;
+    position: relative;
+  }
+
+  .po-img-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .po-label {
+    position: absolute;
+    top: 1rem;
+    left: 0.5rem;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.2rem;
+    letter-spacing: 0.2em;
+    color: #fff;
+    background: rgba(0,0,0,0.5);
+    padding: 0.1rem 0.4rem;
+  }
+
+  .po-arrow {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.8rem;
+    color: #686868;
+    flex-shrink: 0;
+  }
+
+  .po-text {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .po-catch {
+    font-family: "Shippori Mincho", serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.18em;
+    color: #fff;
+    margin: 0;
+    white-space: nowrap;
+    margin-left: 2rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .po-note {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.8rem;
+    line-height: 1.9;
+    letter-spacing: 0.06em;
+    color: #a0a0a0;
+    margin: 0;
+    flex: 1;
+  }
+
+  .po-btn {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.4rem;
+    letter-spacing: 0.2em;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    color: #8f8f8f;
+    padding: 0.8rem 2.5rem;
+    cursor: pointer;
+    border-radius: 100px;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .po-btn.active {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+    box-shadow: 0 0 12px rgba(255,255,255,0.6), 0 0 24px rgba(255,255,255,0.2);
+  }
+
+    @media (max-width: 930px) {
+    .po-note {}
+    .po-catch {margin-left: 0.2rem;}
+    .po-text {gap: 0.3rem;}
+  }
+
+  @media (max-width: 840px) {
+    .po-inner { padding: 2rem 1rem; gap: 1.3rem; }
+    .po-arrow { font-size: 1rem; color: #a0a0a0;}
+    .po-text {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      text-align: center;
+    }
+    .po-catch { white-space: normal; }
+    .po-note { text-align: center; }
+    .po-btn { width: 60%; padding: 0.7rem 0;}
+    .po-label {top: 0.5rem; font-size: 0.7rem;}
+
+  }
+</style>
+
+<script is:inline>
+  window.openPromoOverlay = function() {
+    var el = document.getElementById("promoOverlay");
+    if (!el) return;
+    el.style.display = "flex";
+    document.body.style.overflow = "hidden";
+    // ボタン状態を同期
+    var btn = document.getElementById("overlayOffframeBtn");
+    if (btn) {
+      var isActive = localStorage.getItem("offframe") === "1";
+      btn.classList.toggle("active", isActive);
+      btn.textContent = isActive ? "OFF Frame" : "ON Frame";
+    }
+  };
+
+  window.closePromoOverlay = function() {
+    var el = document.getElementById("promoOverlay");
+    if (!el) return;
+    el.style.display = "none";
+    document.body.style.overflow = "";
+  };
+
+  window.toggleOverlayOffframe = function() {
+    var next = localStorage.getItem("offframe") === "1" ? "0" : "1";
+    localStorage.setItem("offframe", next);
+    var active = next === "1";
+
+    // オーバーレイ内ボタン
+    var btn = document.getElementById("overlayOffframeBtn");
+    if (btn) {
+      btn.classList.toggle("active", active);
+      btn.textContent = active ? "OFF Frame" : "ON Frame";
+    }
+
+    // サイドナビのボタンも同期
+    ["offframeBtn", "drawerOffframeBtn"].forEach(function(id) {
+      var b = document.getElementById(id);
+      if (b) {
+        b.classList.toggle("active", active);
+        b.textContent = active ? "OFF Frame" : "ON Frame";
+      }
+    });
+
+    // 画像切替
+    var imgs = document.querySelectorAll("img.switchable");
+    imgs.forEach(function(img) { img.classList.add("blurring"); });
+    setTimeout(function() {
+      imgs.forEach(function(img) {
+        img.src = active ? img.dataset.full : img.dataset.general;
+      });
+      setTimeout(function() {
+        imgs.forEach(function(img) { img.classList.remove("blurring"); });
+      }, 100);
+    }, 300);
+  };
+
+  // 背景クリックで閉じる
+  document.addEventListener("click", function(e) {
+    if (e.target && e.target.id === "promoOverlay") {
+      window.closePromoOverlay();
+    }
+  });
+
+  // ESCで閉じる
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") window.closePromoOverlay();
+  });
+</script>

@@ -1,0 +1,126 @@
+---
+import { getCollection } from "astro:content";
+
+const photos = await getCollection("photos");
+const sorted = photos.sort((a, b) => a.data.title.localeCompare(b.data.title));
+const currentPath = Astro.url.pathname;
+---
+
+<div class="mobile-nav-outer" id="mobileNavOuter">
+  <div class="mobile-nav-inner" id="mobileNav">
+    {sorted.map((photo) => {
+      const id = photo.data.title.replace(":", "");
+      const href = `/photos/${id}`;
+      const isActive = currentPath === href;
+      return (
+        <a href={href} class={`item ${isActive ? "active" : ""}`}>
+          {photo.data.title}
+        </a>
+      );
+    })}
+    {sorted.map((photo) => {
+      const id = photo.data.title.replace(":", "");
+      const href = `/photos/${id}`;
+      return (
+        <a href={href} class="item" aria-hidden="true" tabindex="-1">
+          {photo.data.title}
+        </a>
+      );
+    })}
+  </div>
+</div>
+
+<style>
+  .mobile-nav-outer {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .mobile-nav-inner {
+    display: flex;
+    width: max-content;
+  }
+
+  .item {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: #fff;
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: block;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+
+  .item:hover {
+    background: #fff;
+    color: #000;
+  }
+</style>
+
+<script>
+  function init() {
+    const nav = document.getElementById("mobileNav");
+    const outer = document.getElementById("mobileNavOuter");
+    if (!nav || !outer) return;
+
+    const half = nav.scrollWidth / 2;
+    let x = 0;
+    let index = 0;
+    let paused = false;
+    let dragging = false;
+    let dragStartX = 0;
+    let dragStartPos = 0;
+
+    function setX(val, animate = true) {
+      if (val >= half) val -= half;
+      if (val < 0) val += half;
+      x = val;
+      nav.style.transition = animate ? "transform 0.5s ease" : "none";
+      nav.style.transform = `translateX(-${x}px)`;
+    }
+
+    // 自動スクロール
+    const items = Array.from(nav.querySelectorAll(".item:not([aria-hidden])"));
+    const timer = setInterval(() => {
+      if (paused) return;
+      index++;
+      const targetX = items[index % items.length].offsetLeft + (Math.floor(index / items.length) % 2) * half;
+      setX(targetX % (half * 2));
+    }, 1000);
+
+    // タッチドラッグ
+    outer.addEventListener("touchstart", (e) => {
+      paused = true;
+      dragging = true;
+      dragStartX = e.touches[0].clientX;
+      dragStartPos = x;
+    }, { passive: true });
+
+    outer.addEventListener("touchmove", (e) => {
+      if (!dragging) return;
+      const diff = dragStartX - e.touches[0].clientX;
+      setX(dragStartPos + diff, false);
+    }, { passive: true });
+
+outer.addEventListener("touchend", () => {
+      dragging = false;
+      paused = false;
+      // 指を離した位置から最も近いアイテムにindexを合わせる
+      const closest = items.reduce((prev, curr, i) => {
+        const currX = curr.offsetLeft + (Math.floor(i / items.length) % 2) * half;
+        const prevDiff = Math.abs(dragStartPos - prev.x);
+        const currDiff = Math.abs(x - currX % (half * 2));
+        return currDiff < prevDiff ? { i, x: currX % (half * 2) } : prev;
+      }, { i: 0, x: 0 });
+      index = closest.i;
+    });
+  }
+
+  document.addEventListener("astro:page-load", init);
+  init();
+</script>

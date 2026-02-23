@@ -1,0 +1,228 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="About | OFF FRAME">
+  <main>
+    <div class="card">
+      <div class="content">
+
+        <h1 class="heading">About</h1>
+
+        <div class="row">
+          <div class="ja">
+            <p>「Off Frame」は、生成AIによって描き出された「存在しない、けれど確かな日常」を記録する場所です。</p>
+            <p>私たちが目指しているのは、単なる画像の生成ではありません。心を許したパートナーの隣でだけこぼれる「無防備な素顔」を、実在する写真と見紛うほどの質感で表現することです。</p>
+          </div>
+          <div class="en">
+            <p>"Off Frame" is a place that documents an absent yet tangible everyday life, rendered by generative AI.</p>
+            <p>Our goal is not mere image generation. We strive to capture the unguarded expressions that only emerge beside a trusted partner — with a tactile quality indistinguishable from real photography.</p>
+          </div>
+        </div>
+
+        <h2 class="section-title">Our Craft：AIは手法であり、手抜きではない。</h2>
+
+        <div class="row">
+          <div class="ja">
+            <p>「AI生成」と聞くと、ボタン一つで無限に画像が生まれる光景を想像されるかもしれません。しかし、当サイトに掲載されている1枚の裏側には、膨大な時間と熱量が注がれています。</p>
+            <ul>
+              <li><span class="li-title">終わりのないプロンプト研究</span>窓から差し込む光の角度、肌に残る体温、その瞬間の空気感までを感じさせるために、数百語に及ぶプロンプトをミリ単位で調整し、研究し続けています。</li>
+              <li><span class="li-title">妥協のないセレクト（Curation）</span>AIが生成した何百、何千というカットのうち、当サイトに掲載されるのは、私たちの「選美眼」をくぐり抜けた、わずか数パーセントの瞬間のみです。</li>
+              <li><span class="li-title">「生」の空気感の追求</span>AI特有の不自然さを削ぎ落とし、フィルム写真のような「揺らぎ」をあえて宿らせる。その職人的なセレクトプロセスを経て初めて、「Off Frame」の一枚となります。</li>
+            </ul>
+            <p>数多の試行錯誤、そのセレクトをくぐり抜けて残った「リアリティ」を味わっていただけますと幸いです。</p>
+          </div>
+          <div class="en">
+            <p>"AI-generated" may conjure images of endless output at the push of a button. Yet behind every image on this site lies an enormous investment of time and passion.</p>
+            <ul>
+              <li><span class="li-title">Endless Prompt Research</span>To evoke the angle of light through a window, warmth lingering on skin, the very air of a moment — we refine prompts of hundreds of words with millimeter precision.</li>
+              <li><span class="li-title">Uncompromising Curation</span>Of the hundreds or thousands of frames generated, only a few percent survive our curatorial eye to appear on this site.</li>
+              <li><span class="li-title">Pursuit of Authentic Atmosphere</span>Stripping away AI's uncanny qualities, deliberately instilling the grain of film photography — only after this artisanal process does an image become an "Off Frame."</li>
+            </ul>
+            <p>We hope you can taste the reality that has survived countless iterations and the most rigorous selection.</p>
+          </div>
+        </div>
+
+        <h2 class="section-title">The Mechanism：フレームを外す体験</h2>
+
+        <div class="row">
+          <div class="ja">
+            <p>当サイトには、一つの特別なボタンを搭載しています。</p>
+            <div class="offframe-btn-demo">Off Frame</div>
+            <p>このボタンは、私たちがこだわり抜いて切り取った「枠（フレーム）」を物理的に取り払うためのものです。クリックした瞬間、写真はその外側へと広がり、今まで見えていなかった部屋の景色や、彼女が過ごす空間の全貌が解き放たれます。</p>
+            <p>サイトで見ている景色は、世界の一部に過ぎません。フレームを外すことで、より深い物語の中へ。</p>
+            <p class="note">※「オフフレーム・モード」について<br>現在、本機能は開発および研究期間につき、すべての読者に無料開放しています。</p>
+          </div>
+          <div class="en">
+            <p>This site features one special button.</p>
+            <div class="offframe-btn-demo">Off Frame</div>
+            <p>This button physically removes the frame we so carefully composed. The moment you click it, the photograph expands beyond its borders — revealing the room's full landscape and the entirety of the space she inhabits.</p>
+            <p>What you see on the site is only part of the world. Remove the frame, and step deeper into the story.</p>
+            <p class="note">※ About "Off Frame Mode"<br>Currently, this feature is open to all readers free of charge during our development period.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    background: #000;
+    padding: 2rem;
+    min-height: 100%;
+  }
+
+  .card {
+    background: #fff;
+    width: 100%;
+    padding: 6% 8%;
+  }
+
+  .content {
+    width: 100%;
+  }
+
+  /* ============ 見出し ============ */
+  .heading {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.5rem;
+    letter-spacing: 0.3em;
+    color: #000;
+    margin: 0 0 3rem;
+  }
+
+  .section-title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+    color: #000;
+    margin: 3rem 0 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ddd;
+  }
+
+  /* ============ 2カラム ============ */
+  .row {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 4rem;
+    align-items: flex-start;
+  }
+
+  .ja {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .en {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ============ 本文 ============ */
+  p {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.95rem;
+    line-height: 2.8;
+    letter-spacing: 0.1em;
+    color: #000;
+    margin: 0 0 1.5rem;
+  }
+
+  .en p {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1rem;
+    line-height: 2.2;
+    letter-spacing: 0.05em;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  /* ============ リスト ============ */
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  li {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.95rem;
+    line-height: 2.4;
+    letter-spacing: 0.05em;
+    color: #000;
+    padding-left: 1rem;
+    border-left: 1px solid #ccc;
+  }
+
+  .en li {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1rem;
+    line-height: 2;
+  }
+
+  .li-title {
+    display: block;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.25rem;
+  }
+
+  /* ============ OffFrameボタン見本 ============ */
+  .offframe-btn-demo {
+    display: inline-block;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    border: 1px solid #999;
+    color: #000;
+    padding: 0.3rem 0.75rem;
+    margin: 0.5rem 0 1.5rem;
+  }
+
+  /* ============ 注釈 ============ */
+  .note {
+    font-size: 0.8rem;
+    color: #888;
+    line-height: 2;
+    border-top: 1px solid #eee;
+    padding-top: 1.5rem;
+    margin-top: 2rem !important;
+  }
+
+  /* ============ スマホ（〜900px） ============ */
+  @media (max-width: 900px) {
+    main { padding: 1.5rem; }
+
+    .card { padding: 3rem 2rem; }
+
+    .row {
+      flex-direction: column !important;
+      gap: 2.5rem;
+    }
+
+    .heading { font-size: 1.1rem; }
+
+    .section-title { font-size: 0.9rem; }
+
+    p, .en p { font-size: 0.8rem; line-height: 2.4; }
+
+    li, .en li { font-size: 0.8rem; }
+
+    .li-title { font-size: 0.8rem; }
+
+    .note { font-size: 0.72rem; }
+  }
+</style>
