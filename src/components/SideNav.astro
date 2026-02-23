@@ -15,8 +15,8 @@ import OffFrameButton from "./OffFrameButton.astro";
     <hr />
 
     <div class="offframe-area">
-      <p class="offframe-copy">枠を外し、<br>ありのままに。</p>
-      <p class="offframe-title">オフフレームモード<br>無料開放中。</p>
+      <p class="offframe-copy">枠を外し、<br>写真の外側に<br>広がる世界へ。</p>
+      <p class="offframe-title">OFFフレームモード<br>無料開放中。</p>
       <OffFrameButton id="offframeBtn" />
     </div>
 
@@ -27,8 +27,7 @@ import OffFrameButton from "./OffFrameButton.astro";
     <div class="sns-section">
       <span class="section-label">公式SNS</span>
       <div class="sns-links">
-        <span><a href="#" class="sns-btn">X</a>
-        <a href="#" class="sns-btn">Instagram</a></span>
+        <a href="#" class="sns-btn">X</a>
         <a href="#" class="sns-btn">TikTok</a>
       </div>
     </div>
@@ -126,9 +125,9 @@ import OffFrameButton from "./OffFrameButton.astro";
 
   .offframe-copy {
     font-family: "Shippori Mincho", serif;
-    font-size: 1.1rem;
-    line-height: 1.8;
-    letter-spacing: 0.03em;
+    font-size: 0.95rem;
+    line-height: 2;
+    letter-spacing: 0.18em;
     color: #fff;
     opacity: 0.85;
     margin: 0.6rem 0 0;
@@ -196,6 +195,8 @@ import OffFrameButton from "./OffFrameButton.astro";
   .sns-btn:hover { opacity: 1; }
 
   /* ============ シェア ============ */
+  .share-section{display: none;}
+  
   .share-links {
     display: flex;
     flex-direction: row;

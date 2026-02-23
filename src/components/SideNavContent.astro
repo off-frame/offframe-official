@@ -8,8 +8,8 @@ import OffFrameButton from "./OffFrameButton.astro";
         <hr />
 
     <div class="offframe-area">
-      <p class="offframe-copy">枠を外し、<br>ありのままに。</p> 
-      <p class="offframe-title">オフフレームモード。<br>無料開放中。</p> 
+      <p class="offframe-copy">枠を外し、<br>写真の外側に<br>広がる世界へ。</p> 
+      <p class="offframe-title">OFFフレームモード。<br>無料開放中。</p> 
       <OffFrameButton id="drawerOffframeBtn" />
     </div>
 
@@ -23,7 +23,6 @@ import OffFrameButton from "./OffFrameButton.astro";
       <span class="section-label">公式SNS</span>
       <div class="sns-links">
         <a href="#" class="sns-btn">X</a>
-        <a href="#" class="sns-btn">Instagram</a>
         <a href="#" class="sns-btn">TikTok</a>
       </div>
     </div>
@@ -91,9 +90,9 @@ import OffFrameButton from "./OffFrameButton.astro";
 
   .offframe-copy {
     font-family: "Shippori Mincho", serif;
-    font-size: 1.2rem;
-    line-height: 1.6;
-    letter-spacing: 0.08em;
+    font-size: 1rem;
+    line-height: 1.9;
+    letter-spacing: 0.2em;
     color: #fff;
     opacity: 0.85;
     margin: 1rem 0 0;
@@ -145,13 +144,13 @@ import OffFrameButton from "./OffFrameButton.astro";
   .sns-links {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 0.5rem;
   }
 
   .sns-btn {
     font-family: "Cormorant Garamond", serif;
     font-weight: 100;
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     letter-spacing: 0.1em;
     text-decoration: none;
     color: #fff;
@@ -159,7 +158,9 @@ import OffFrameButton from "./OffFrameButton.astro";
   }
 
   .sns-btn:hover { opacity: 1; }
-
+  
+  .share-section{display: none;}
+  
   .share-links {
     display: flex;
     flex-direction: row;
