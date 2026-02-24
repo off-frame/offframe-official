@@ -1,0 +1,254 @@
+---
+---
+
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-modal" id="authModal">
+    <button class="auth-close" id="authClose">×</button>
+
+    <!-- ログインフォーム -->
+    <div class="auth-form" id="loginForm">
+      <h2 class="auth-title">Login</h2>
+      <input class="auth-input" id="loginEmail" type="email" placeholder="メールアドレス" />
+      <input class="auth-input" id="loginPassword" type="password" placeholder="パスワード" />
+      <p class="auth-error" id="loginError"></p>
+      <button class="auth-btn" id="loginSubmit">ログイン</button>
+      <p class="auth-switch">アカウントをお持ちでない方は<button class="auth-link" id="toSignup">新規登録</button></p>
+    </div>
+
+    <!-- 新規登録フォーム -->
+    <div class="auth-form" id="signupForm" style="display:none;">
+      <h2 class="auth-title">Sign Up</h2>
+      <input class="auth-input" id="signupEmail" type="email" placeholder="メールアドレス" />
+      <input class="auth-input" id="signupPassword" type="password" placeholder="パスワード" />
+      <p class="auth-error" id="signupError"></p>
+      <button class="auth-btn" id="signupSubmit">新規登録</button>
+      <p class="auth-switch">すでにアカウントをお持ちの方は<button class="auth-link" id="toLogin">ログイン</button></p>
+    </div>
+
+    <!-- 登録完了メッセージ -->
+    <div class="auth-form" id="signupDone" style="display:none;">
+      <h2 class="auth-title">確認メールを送信しました</h2>
+      <p class="auth-message">メールのリンクをクリックして登録を完了してください。</p>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .auth-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-overlay.open {
+    display: flex;
+  }
+
+  .auth-modal {
+    background: #fff;
+    width: 90%;
+    max-width: 360px;
+    padding: 3rem 2.5rem 2.5rem;
+    position: relative;
+  }
+
+  .auth-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    background: transparent;
+    border: none;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.5rem;
+    color: #000;
+    opacity: 0.4;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .auth-close:hover { opacity: 1; }
+
+  .auth-title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.4rem;
+    letter-spacing: 0.3em;
+    color: #000;
+    margin: 0 0 2rem;
+  }
+
+  .auth-input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    padding: 0.6rem 0;
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: #000;
+    background: transparent;
+    outline: none;
+    margin-bottom: 1.25rem;
+  }
+
+  .auth-input::placeholder { color: #aaa; }
+  .auth-input:focus { border-bottom-color: #000; }
+
+  .auth-error {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.75rem;
+    color: #c00;
+    margin: -0.5rem 0 1rem;
+    min-height: 1rem;
+  }
+
+  .auth-btn {
+    display: block;
+    width: 100%;
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 0.85rem;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: opacity 0.2s;
+  }
+
+  .auth-btn:hover { opacity: 0.75; }
+
+  .auth-switch {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.72rem;
+    color: #888;
+    text-align: center;
+    margin-top: 1.25rem;
+  }
+
+  .auth-link {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #aaa;
+    padding: 0;
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.72rem;
+    color: #555;
+    cursor: pointer;
+  }
+
+  .auth-link:hover { color: #000; }
+
+  .auth-message {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.85rem;
+    line-height: 2;
+    color: #555;
+    margin: 0;
+  }
+</style>
+
+<script>
+  import { createClient } from "@supabase/supabase-js";
+
+  const supabase = createClient(
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  function initAuthModal() {
+    const overlay   = document.getElementById("authOverlay");
+    const closeBtn  = document.getElementById("authClose");
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+    const signupDone = document.getElementById("signupDone");
+
+    if (!overlay) return;
+
+    // 開く
+    (window as any).openAuthModal = () => overlay.classList.add("open");
+
+    // 閉じる
+    closeBtn?.addEventListener("click", () => overlay.classList.remove("open"));
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) overlay.classList.remove("open");
+    });
+
+    // フォーム切り替え
+    document.getElementById("toSignup")?.addEventListener("click", () => {
+      loginForm!.style.display = "none";
+      signupForm!.style.display = "block";
+    });
+    document.getElementById("toLogin")?.addEventListener("click", () => {
+      signupForm!.style.display = "none";
+      loginForm!.style.display = "block";
+    });
+
+    // ログイン
+    document.getElementById("loginSubmit")?.addEventListener("click", async () => {
+      const email    = (document.getElementById("loginEmail") as HTMLInputElement).value;
+      const password = (document.getElementById("loginPassword") as HTMLInputElement).value;
+      const errorEl  = document.getElementById("loginError")!;
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        errorEl.textContent = "メールアドレスまたはパスワードが正しくありません";
+      } else {
+        overlay.classList.remove("open");
+        updateAuthButtons();
+      }
+    });
+
+    // 新規登録
+    document.getElementById("signupSubmit")?.addEventListener("click", async () => {
+      const email    = (document.getElementById("signupEmail") as HTMLInputElement).value;
+      const password = (document.getElementById("signupPassword") as HTMLInputElement).value;
+      const errorEl  = document.getElementById("signupError")!;
+
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        errorEl.textContent = "登録に失敗しました。もう一度お試しください。";
+      } else {
+        signupForm!.style.display = "none";
+        signupDone!.style.display = "block";
+      }
+    });
+  }
+
+  // ログイン/ログアウトボタンの表示切り替え
+  async function updateAuthButtons() {
+    const { data: { session } } = await supabase.auth.getSession();
+    const loginBtns  = document.querySelectorAll<HTMLElement>(".auth-login-btn");
+    const logoutBtns = document.querySelectorAll<HTMLElement>(".auth-logout-btn");
+
+    if (session) {
+      loginBtns.forEach(el => el.style.display = "none");
+      logoutBtns.forEach(el => el.style.display = "block");
+    } else {
+      loginBtns.forEach(el => el.style.display = "block");
+      logoutBtns.forEach(el => el.style.display = "none");
+    }
+  }
+
+  // ログアウト
+  (window as any).handleLogout = async () => {
+    await supabase.auth.signOut();
+    updateAuthButtons();
+  };
+
+  document.addEventListener("astro:page-load", () => {
+    initAuthModal();
+    updateAuthButtons();
+  });
+  initAuthModal();
+  updateAuthButtons();
+</script>

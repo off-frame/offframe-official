@@ -5,6 +5,7 @@ import MobileNav from "../components/MobileNav.astro";
 import Footer from "../components/Footer.astro";
 import { ViewTransitions } from "astro:transitions";
 import PromoOverlay from "../components/PromoOverlay.astro";
+import AuthModal from "../components/AuthModal.astro";
 
 interface Props {
   title?: string;
@@ -83,6 +84,7 @@ const { title = "OffFrame" } = Astro.props;
       </div>
     </div>
     <PromoOverlay />
+    <AuthModal />
   </body>
 </html>
 
@@ -197,8 +199,8 @@ const { title = "OffFrame" } = Astro.props;
     position: fixed;
     top: 0;
     right: 0;
-    width: 50vw;
-    height: 100%;
+    width: 48vw;
+    height: 100dvh;
     background: #000;
     border-left: 1px solid #222;
     z-index: 300;
@@ -206,11 +208,6 @@ const { title = "OffFrame" } = Astro.props;
     transition: transform 0.3s ease;
     overflow-y: auto;
   }
-
-    @media (min-width: 700px) {
-    .drawer { width: 30vw; }
-    }
-
 
   .drawer.open { transform: translateX(0); }
 

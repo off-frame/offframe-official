@@ -55,6 +55,12 @@ import OffFrameButton from "./OffFrameButton.astro";
     <hr />
 
     <a href="/privacy" class="link small">Privacy Policy</a>
+
+    <div class="auth-area">
+      <button class="auth-login-btn auth-nav-btn" onclick="window.openAuthModal?.()">Login</button>
+      <button class="auth-logout-btn auth-nav-btn" onclick="window.handleLogout?.()" style="display:none;">Logout</button>
+    </div>
+
     <p class="copyright">© 2026 OFF FRAME</p>
 
   </div>
@@ -222,6 +228,29 @@ import OffFrameButton from "./OffFrameButton.astro";
     color: #fff;
     opacity: 0.5;
   }
+
+  .auth-area {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .auth-nav-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #333;
+    padding: 0.2rem 0;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: #fff;
+    opacity: 0.5;
+    cursor: pointer;
+    text-align: left;
+    transition: opacity 0.2s;
+  }
+
+  .auth-nav-btn:hover { opacity: 1; }
 
   .copyright {
     font-family: "Cormorant Garamond", serif;
