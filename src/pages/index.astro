@@ -21,7 +21,8 @@ const AD_PROMOS: (PromoVariant | undefined)[] = [
 
 // ============ データ取得 ============
 const photos = await getCollection("photos");
-const shuffled = photos.sort(() => Math.random() - 0.5);
+// ビルド時は固定順（クライアントでシャッフル）
+const shuffled = photos;
 
 type AdItem = { __ad: true; promo: PromoVariant | undefined };
 type Item = typeof shuffled[number] | AdItem;
@@ -164,4 +165,47 @@ const col2 = withAds.filter((_, i) => i % 2 === 1);
   applyLayout();
   window.addEventListener("resize", applyLayout);
   document.addEventListener("astro:page-load", applyLayout);
+
+  // カードをリロードのたびにランダムシャッフル
+  function shuffleGrids() {
+    ["grid-mobile", "grid-pc"].forEach(function(gridId) {
+      var grid = document.getElementById(gridId);
+      if (!grid) return;
+      // 広告以外のカード要素を取得
+      var items = Array.from(grid.querySelectorAll(":scope > a, :scope > .ad-banner, :scope > .col"));
+      // grid-mobileはcolが2つなので中身をシャッフル
+      if (gridId === "grid-mobile") {
+        var cols = grid.querySelectorAll(".col");
+        cols.forEach(function(col) {
+          var cards = Array.from(col.children);
+          for (var i = cards.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            col.appendChild(cards[j]);
+            cards.splice(j, 1);
+          }
+        });
+      } else {
+        // grid-pcは直接シャッフル（広告を固定位置に保ちつつカードだけ入れ替え）
+        var cards = items.filter(function(el) { return !el.classList.contains("ad-banner"); });
+        var ads = items.filter(function(el) { return el.classList.contains("ad-banner"); });
+        // カードをシャッフル
+        for (var i = cards.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = cards[i]; cards[i] = cards[j]; cards[j] = tmp;
+        }
+        // 全アイテムを元の順序で再挿入（広告は元位置、カードはシャッフル済み）
+        var cardIdx = 0;
+        items.forEach(function(el) {
+          if (el.classList.contains("ad-banner")) {
+            grid.appendChild(el);
+          } else {
+            grid.appendChild(cards[cardIdx++]);
+          }
+        });
+      }
+    });
+  }
+
+  document.addEventListener("astro:page-load", shuffleGrids);
+  shuffleGrids();
 </script>

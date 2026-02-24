@@ -4,7 +4,6 @@ import SideNavContent from "../components/SideNavContent.astro";
 import MobileNav from "../components/MobileNav.astro";
 import Footer from "../components/Footer.astro";
 import { ViewTransitions } from "astro:transitions";
-import PromoOverlay from "../components/PromoOverlay.astro";
 
 interface Props {
   title?: string;
@@ -18,9 +17,7 @@ const { title = "OffFrame" } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="google-adsense-account" content="ca-pub-5176750984152342" />
     <ViewTransitions />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -28,6 +25,9 @@ const { title = "OffFrame" } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Shippori+Mincho:wght@400;500&display=swap"
       rel="stylesheet"
     />
+    <style is:global>
+      .ad-pc-wrap { display: none; }
+    </style>
   </head>
   <body>
     <header class="site-header">
@@ -78,7 +78,6 @@ const { title = "OffFrame" } = Astro.props;
         <Footer />
       </div>
     </div>
-    <PromoOverlay />
   </body>
 </html>
 
@@ -100,15 +99,14 @@ const { title = "OffFrame" } = Astro.props;
     color: #000;
   }
 
-  /* ============ OffFrame 画像切替フェード ============ */
-  img.switchable {
+  /* ============ OffFrame 画像切替ブラー ============ */
+img.switchable {
     transition: opacity 0.3s ease;
   }
 
   img.switchable.blurring {
     opacity: 0;
   }
-
   /* ============ ヘッダー ============ */
   .site-header {
     position: fixed;
@@ -162,7 +160,7 @@ const { title = "OffFrame" } = Astro.props;
     min-width: 0;
   }
 
-  /* ============ バーガーボタン ============ */
+  /* ============ バーガー ============ */
   .burger {
     display: none;
     flex-direction: column;
@@ -188,7 +186,7 @@ const { title = "OffFrame" } = Astro.props;
   .burger.open span:nth-child(2) { opacity: 0; }
   .burger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-  /* ============ ドロワー（スマホメニュー） ============ */
+  /* ============ ドロワー ============ */
   .drawer {
     position: fixed;
     top: 0;
@@ -220,12 +218,7 @@ const { title = "OffFrame" } = Astro.props;
     pointer-events: all;
   }
 
-  /* ============ レイアウト ============ */
-  .root {
-    display: flex;
-    min-height: 100vh;
-  }
-
+  /* ============ PC：サイドナビ ============ */
   .left {
     width: 160px;
     flex-shrink: 0;
@@ -239,6 +232,12 @@ const { title = "OffFrame" } = Astro.props;
     z-index: 199;
   }
 
+  /* ============ コンテンツ ============ */
+  .root {
+    display: flex;
+    min-height: 100vh;
+  }
+
   .right {
     margin-left: 160px;
     margin-top: 56px;
@@ -249,14 +248,21 @@ const { title = "OffFrame" } = Astro.props;
     background: #000;
   }
 
-  /* ============ ページ遷移フェード ============ */
-  @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+  /* ============ フェード遷移 ============ */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
 
   ::view-transition-old(root) { animation: fadeOut 0.3s ease forwards; }
-  ::view-transition-new(root) { animation: fadeIn  0.3s ease forwards; }
+  ::view-transition-new(root) { animation: fadeIn 0.3s ease forwards; }
 
-  /* ============ スマホ（〜1024px） ============ */
+  /* ============ スマホ ============ */
   @media (max-width: 1024px) {
     .left { display: none; }
 
@@ -268,7 +274,7 @@ const { title = "OffFrame" } = Astro.props;
     }
 
     .header-top { display: flex; }
-    .burger     { display: flex; }
+    .burger { display: flex; }
 
     .right {
       margin-left: 0;

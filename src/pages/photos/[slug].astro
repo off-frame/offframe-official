@@ -41,26 +41,27 @@ const generalSrc = `/images/high/${id}.webp`;
 const fullSrc    = `/images/full_high/${id}.webp`;
 
 const all    = await getCollection("photos");
-const others = all.filter((p) => p.data.title !== title);
+const others = all.filter((p) => p.data.title !== title).sort(() => Math.random() - 0.5);
 
-const related     = others.sort(() => Math.random() - 0.5).slice(0, 6);
-const relatedSide = others
-  .filter((p) => !related.includes(p))
-  .sort(() => Math.random() - 0.5)
-  .slice(0, 18);
+const half        = Math.ceil(others.length / 2);
+const relatedSide = others.slice(0, half);       // サイドバー用（前半）
+const relatedPC   = others.slice(half);           // PC記事下用（後半・重複なし）
+const related     = others;                       // スマホ記事下用（全記事）
 
 type AdItem = { __ad: true; promo: PromoVariant | undefined };
-type Item = typeof related[number] | AdItem;
+type Item = typeof others[number] | AdItem;
 
+// PC記事下（後半のみ）
 const relatedWithAds: Item[] = SHOW_ADS
-  ? related.flatMap((p, i) => {
+  ? relatedPC.flatMap((p, i) => {
       const adIdx = AD_POSITIONS_BOTTOM.indexOf(i);
       return adIdx !== -1
         ? [{ __ad: true as const, promo: AD_PROMOS_BOTTOM[adIdx] }, p]
         : [p];
     })
-  : related;
+  : relatedPC;
 
+// サイドバー（前半）
 const relatedSideWithAds: Item[] = SHOW_ADS
   ? relatedSide.flatMap((p, i) => {
       const adIdx = AD_POSITIONS_SIDE.indexOf(i);
@@ -70,8 +71,16 @@ const relatedSideWithAds: Item[] = SHOW_ADS
     })
   : relatedSide;
 
-const bottomCol1 = relatedWithAds.filter((_, i) => i % 2 === 0);
-const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
+// スマホ記事下（全記事）
+const allWithAds: Item[] = related.flatMap((p, i) => {
+  const adIdx = AD_POSITIONS_BOTTOM.indexOf(i);
+  return SHOW_ADS && adIdx !== -1
+    ? [{ __ad: true as const, promo: AD_PROMOS_BOTTOM[adIdx] }, p]
+    : [p];
+});
+
+const bottomCol1 = allWithAds.filter((_, i) => i % 2 === 0);
+const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
 ---
 
 <BaseLayout title={title}>
@@ -305,7 +314,7 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
     display: block;
   }
 
-  .related-side > :global(a:nth-child(n+7)) { display: none; }
+  .related-side > :global(a:nth-child(n+7)) { display: block; }
 
   @media (min-width: 850px) {
     .related-side { display: block; columns: 1; width: 300px; }
