@@ -63,10 +63,13 @@ import OffFrameButton from "./OffFrameButton.astro";
     <a href="/privacy" class="link small">Privacy Policy</a>
 
     <div class="auth-area">
+      <div class="auth-status" id="authStatus" style="display:none;">
+        <span class="auth-status-dot"></span>
+        <span class="auth-status-text">ログイン中</span>
+      </div>
       <button class="auth-login-btn auth-nav-btn" onclick="window.openAuthModal?.()">Login</button>
-      <button class="auth-logout-btn auth-nav-btn" onclick="window.openAuthModal?.()" style="display:none;">Logout</button>
+      <button class="auth-logout-btn auth-nav-btn" onclick="window.handleLogout?.()" style="display:none;">Logout</button>
     </div>
-
     <p class="copyright">© 2026 OFF FRAME</p>
 
   </div>
@@ -268,6 +271,29 @@ import OffFrameButton from "./OffFrameButton.astro";
   .auth-area {
     display: flex;
     flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .auth-status {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .auth-status-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #4ade80;
+    flex-shrink: 0;
+  }
+
+  .auth-status-text {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: #fff;
+    opacity: 0.6;
   }
 
   .auth-nav-btn {

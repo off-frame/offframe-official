@@ -211,9 +211,23 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       const email    = document.getElementById("signupEmail").value;
       const password = document.getElementById("signupPassword").value;
       const errorEl  = document.getElementById("signupError");
-      const { error } = await supabase.auth.signUp({ email, password });
+
+      if (password.length < 6) {
+        errorEl.textContent = "パスワードは6文字以上で入力してください。";
+        return;
+      }
+      const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) {
-        errorEl.textContent = "登録に失敗しました。もう一度お試しください。";
+        if (error.message.includes("already registered") || error.message.includes("User already registered")) {
+          errorEl.textContent = "このメールアドレスはすでに登録されています。";
+        } else if (error.message.includes("Password")) {
+          errorEl.textContent = "パスワードは6文字以上で入力してください。";
+        } else {
+          errorEl.textContent = "登録に失敗しました。もう一度お試しください。";
+        }
+      } else if (data.user && data.user.identities && data.user.identities.length === 0) {
+        // Supabaseが重複時にerrorを返さずempty identitiesを返すケース
+        errorEl.textContent = "このメールアドレスはすでに登録されています。";
       } else {
         signupForm.style.display = "none";
         signupDone.style.display = "block";
@@ -236,6 +250,9 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     });
     document.querySelectorAll(".auth-logout-btn").forEach(el => {
       el.style.display = session ? "block" : "none";
+    });
+    document.querySelectorAll("#authStatus").forEach(el => {
+      el.style.display = session ? "flex" : "none";
     });
   }
 
