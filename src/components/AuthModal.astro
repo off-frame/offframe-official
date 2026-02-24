@@ -159,97 +159,87 @@ const SUPABASE_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
   }
 </style>
 
-<script>
-  import { createClient } from "@supabase/supabase-js";
+<script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script is:inline>
+  function initAuth() {
+    const overlayEl  = document.getElementById("authOverlay");
+    if (!overlayEl) return;
 
-  const overlay = document.getElementById("authOverlay")!;
-  const supabaseUrl = overlay.dataset.url!;
-  const supabaseKey = overlay.dataset.key!;
-  const supabase = createClient(supabaseUrl, supabaseKey);
+    const SUPABASE_URL = overlayEl.dataset.url;
+    const SUPABASE_KEY = overlayEl.dataset.key;
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  function initAuthModal() {
-    const closeBtn  = document.getElementById("authClose");
-    const loginForm = document.getElementById("loginForm");
+    const closeBtn   = document.getElementById("authClose");
+    const loginForm  = document.getElementById("loginForm");
     const signupForm = document.getElementById("signupForm");
     const signupDone = document.getElementById("signupDone");
 
-    if (!overlay) return;
-
     // 開く
-    (window as any).openAuthModal = () => overlay.classList.add("open");
+    window.openAuthModal = () => overlayEl.classList.add("open");
 
     // 閉じる
-    closeBtn?.addEventListener("click", () => overlay.classList.remove("open"));
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) overlay.classList.remove("open");
+    closeBtn.addEventListener("click", () => overlayEl.classList.remove("open"));
+    overlayEl.addEventListener("click", (e) => {
+      if (e.target === overlayEl) overlayEl.classList.remove("open");
     });
 
     // フォーム切り替え
-    document.getElementById("toSignup")?.addEventListener("click", () => {
-      loginForm!.style.display = "none";
-      signupForm!.style.display = "block";
+    document.getElementById("toSignup").addEventListener("click", () => {
+      loginForm.style.display  = "none";
+      signupForm.style.display = "block";
     });
-    document.getElementById("toLogin")?.addEventListener("click", () => {
-      signupForm!.style.display = "none";
-      loginForm!.style.display = "block";
+    document.getElementById("toLogin").addEventListener("click", () => {
+      signupForm.style.display = "none";
+      loginForm.style.display  = "block";
     });
 
     // ログイン
-    document.getElementById("loginSubmit")?.addEventListener("click", async () => {
-      const email    = (document.getElementById("loginEmail") as HTMLInputElement).value;
-      const password = (document.getElementById("loginPassword") as HTMLInputElement).value;
-      const errorEl  = document.getElementById("loginError")!;
-
+    document.getElementById("loginSubmit").addEventListener("click", async () => {
+      const email    = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      const errorEl  = document.getElementById("loginError");
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         errorEl.textContent = "メールアドレスまたはパスワードが正しくありません";
       } else {
-        overlay.classList.remove("open");
-        updateAuthButtons();
+        overlayEl.classList.remove("open");
+        updateAuthButtons(supabase);
       }
     });
 
     // 新規登録
-    document.getElementById("signupSubmit")?.addEventListener("click", async () => {
-      const email    = (document.getElementById("signupEmail") as HTMLInputElement).value;
-      const password = (document.getElementById("signupPassword") as HTMLInputElement).value;
-      const errorEl  = document.getElementById("signupError")!;
-
+    document.getElementById("signupSubmit").addEventListener("click", async () => {
+      const email    = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPassword").value;
+      const errorEl  = document.getElementById("signupError");
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) {
         errorEl.textContent = "登録に失敗しました。もう一度お試しください。";
       } else {
-        signupForm!.style.display = "none";
-        signupDone!.style.display = "block";
+        signupForm.style.display = "none";
+        signupDone.style.display = "block";
       }
+    });
+
+    // ログアウト
+    window.handleLogout = async () => {
+      await supabase.auth.signOut();
+      updateAuthButtons(supabase);
+    };
+
+    updateAuthButtons(supabase);
+  }
+
+  async function updateAuthButtons(supabase) {
+    const { data: { session } } = await supabase.auth.getSession();
+    document.querySelectorAll(".auth-login-btn").forEach(el => {
+      el.style.display = session ? "none" : "block";
+    });
+    document.querySelectorAll(".auth-logout-btn").forEach(el => {
+      el.style.display = session ? "block" : "none";
     });
   }
 
-  // ログイン/ログアウトボタンの表示切り替え
-  async function updateAuthButtons() {
-    const { data: { session } } = await supabase.auth.getSession();
-    const loginBtns  = document.querySelectorAll<HTMLElement>(".auth-login-btn");
-    const logoutBtns = document.querySelectorAll<HTMLElement>(".auth-logout-btn");
-
-    if (session) {
-      loginBtns.forEach(el => el.style.display = "none");
-      logoutBtns.forEach(el => el.style.display = "block");
-    } else {
-      loginBtns.forEach(el => el.style.display = "block");
-      logoutBtns.forEach(el => el.style.display = "none");
-    }
-  }
-
-  // ログアウト
-  (window as any).handleLogout = async () => {
-    await supabase.auth.signOut();
-    updateAuthButtons();
-  };
-
-  document.addEventListener("astro:page-load", () => {
-    initAuthModal();
-    updateAuthButtons();
-  });
-  initAuthModal();
-  updateAuthButtons();
+  document.addEventListener("astro:page-load", initAuth);
+  initAuth();
 </script>
