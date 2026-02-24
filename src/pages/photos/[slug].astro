@@ -13,15 +13,15 @@ const AD_POSITIONS_SIDE   = [2, 4, 6, 8];
 type PromoVariant = "offframe" | "new" | "about";
 
 const AD_PROMOS_BOTTOM: (PromoVariant | undefined)[] = [
-  "offframe",  // 位置1
-  "offframe",       // 位置5
+  "offframe",
+  "offframe",
 ];
 
 const AD_PROMOS_SIDE: (PromoVariant | undefined)[] = [
-  "offframe",     // 位置2
-  "offframe",  // 位置4
-  "offframe",   // 位置6 → 空白
-  "offframe",       // 位置8
+  "offframe",
+  "offframe",
+  "offframe",
+  "offframe",
 ];
 
 export async function getStaticPaths() {
@@ -43,24 +43,24 @@ const fullSrc    = `/images/full_high/${id}.webp`;
 const all    = await getCollection("photos");
 const others = all.filter((p) => p.data.title !== title);
 
-const related     = others.sort(() => Math.random() - 0.5).slice(0, 6);
-const relatedSide = others
-  .filter((p) => !related.includes(p))
-  .sort(() => Math.random() - 0.5)
-  .slice(0, 18);
+const half        = Math.ceil(others.length / 2);
+const relatedSide = others.slice(0, half);   // サイドバー用（前半）
+const relatedPC   = others.slice(half);      // PC記事下用（後半）
 
 type AdItem = { __ad: true; promo: PromoVariant | undefined };
-type Item = typeof related[number] | AdItem;
+type Item = typeof others[number] | AdItem;
 
+// PC記事下（後半）
 const relatedWithAds: Item[] = SHOW_ADS
-  ? related.flatMap((p, i) => {
+  ? relatedPC.flatMap((p, i) => {
       const adIdx = AD_POSITIONS_BOTTOM.indexOf(i);
       return adIdx !== -1
         ? [{ __ad: true as const, promo: AD_PROMOS_BOTTOM[adIdx] }, p]
         : [p];
     })
-  : related;
+  : relatedPC;
 
+// サイドバー（前半）
 const relatedSideWithAds: Item[] = SHOW_ADS
   ? relatedSide.flatMap((p, i) => {
       const adIdx = AD_POSITIONS_SIDE.indexOf(i);
@@ -70,8 +70,18 @@ const relatedSideWithAds: Item[] = SHOW_ADS
     })
   : relatedSide;
 
-const bottomCol1 = relatedWithAds.filter((_, i) => i % 2 === 0);
-const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
+// スマホ記事下（全記事）
+const allWithAds: Item[] = SHOW_ADS
+  ? others.flatMap((p, i) => {
+      const adIdx = AD_POSITIONS_BOTTOM.indexOf(i);
+      return adIdx !== -1
+        ? [{ __ad: true as const, promo: AD_PROMOS_BOTTOM[adIdx] }, p]
+        : [p];
+    })
+  : others;
+
+const bottomCol1 = allWithAds.filter((_, i) => i % 2 === 0);
+const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
 ---
 
 <BaseLayout title={title}>
@@ -124,7 +134,7 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
           )}
         </div>
 
-        <!-- 関連カード：スマホ -->
+        <!-- 関連カード：スマホ（全記事） -->
         <div class="related-bottom-mobile">
           <div class="col">
             {bottomCol1.map((item) =>
@@ -170,7 +180,6 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
 </BaseLayout>
 
 <style>
-  /* ============ ベース ============ */
   main {
     background: #000;
     padding: 2rem;
@@ -188,7 +197,6 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
     min-width: 0;
   }
 
-  /* ============ メイン写真カード ============ */
   .card {
     background: #fff;
     width: 100%;
@@ -213,7 +221,6 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
     display: block;
   }
 
-  /* ============ テキスト ============ */
   .text {
     position: absolute;
     top: 0;
@@ -260,12 +267,10 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
     -webkit-box-decoration-break: clone;
   }
 
-  /* ============ 広告バナー ============ */
   .ad-wrap {
     margin-top: 1rem;
   }
 
-  /* ============ 関連カード：PC ============ */
   .related-bottom-pc {
     display: block;
     columns: 2;
@@ -280,7 +285,6 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
     display: block;
   }
 
-  /* ============ 関連カード：スマホ ============ */
   .related-bottom-mobile {
     display: none;
   }
@@ -292,7 +296,6 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
     gap: 1rem;
   }
 
-  /* ============ サイドバー ============ */
   .related-side {
     display: none;
     flex-shrink: 0;
@@ -305,7 +308,7 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
     display: block;
   }
 
-  .related-side > :global(a:nth-child(n+7)) { display: none; }
+  .related-side > :global(a:nth-child(n+7)) { display: block; }
 
   @media (min-width: 850px) {
     .related-side { display: block; columns: 1; width: 300px; }
@@ -317,7 +320,6 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
 
   @media (min-width: 1200px) {
     .related-side { columns: 2; width: 450px; }
-    .related-side > :global(a:nth-child(n+7))  { display: block; }
     .related-side > :global(a:nth-child(n+13)) { display: none; }
   }
 
@@ -338,7 +340,6 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
     .related-side { width: 750px; }
   }
 
-  /* ============ スマホ ============ */
   @media (max-width: 728px) {
     main { padding: 0; }
 
@@ -383,15 +384,12 @@ const bottomCol2 = relatedWithAds.filter((_, i) => i % 2 === 1);
   }
 
   function shuffleGrids() {
-    // PC記事下
     const pc = document.querySelector(".related-bottom-pc");
     if (pc) shuffleChildren(pc);
 
-    // サイドバー
     const side = document.querySelector(".related-side");
     if (side) shuffleChildren(side);
 
-    // スマホ記事下（2カラムそれぞれ）
     document.querySelectorAll(".related-bottom-mobile .col").forEach(shuffleChildren);
   }
 
