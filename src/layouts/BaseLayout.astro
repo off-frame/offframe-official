@@ -197,7 +197,7 @@ const { title = "OffFrame" } = Astro.props;
     position: fixed;
     top: 0;
     right: 0;
-    width: 50vw
+    width: 50vw;
     height: 100%;
     background: #000;
     border-left: 1px solid #222;
@@ -206,6 +206,11 @@ const { title = "OffFrame" } = Astro.props;
     transition: transform 0.3s ease;
     overflow-y: auto;
   }
+
+    @media (min-width: 700px) {
+    .drawer { width: 30vw; }
+    }
+
 
   .drawer.open { transform: translateX(0); }
 
