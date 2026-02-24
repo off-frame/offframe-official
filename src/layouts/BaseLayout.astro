@@ -4,6 +4,7 @@ import SideNavContent from "../components/SideNavContent.astro";
 import MobileNav from "../components/MobileNav.astro";
 import Footer from "../components/Footer.astro";
 import { ViewTransitions } from "astro:transitions";
+import PromoOverlay from "../components/PromoOverlay.astro";
 
 interface Props {
   title?: string;
@@ -18,6 +19,9 @@ const { title = "OffFrame" } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="google-adsense-account" content="ca-pub-5176750984152342" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <ViewTransitions />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -78,6 +82,7 @@ const { title = "OffFrame" } = Astro.props;
         <Footer />
       </div>
     </div>
+    <PromoOverlay />
   </body>
 </html>
 
@@ -100,13 +105,14 @@ const { title = "OffFrame" } = Astro.props;
   }
 
   /* ============ OffFrame 画像切替ブラー ============ */
-img.switchable {
+  img.switchable {
     transition: opacity 0.3s ease;
   }
 
   img.switchable.blurring {
     opacity: 0;
   }
+
   /* ============ ヘッダー ============ */
   .site-header {
     position: fixed;
