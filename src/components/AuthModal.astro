@@ -165,6 +165,7 @@ const SUPABASE_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "";
     const overlayEl = document.getElementById("authOverlay");
     if (!overlayEl) return;
 
+    if (!window.supabase) { setTimeout(initAuth, 100); return; }
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const closeBtn   = document.getElementById("authClose");
