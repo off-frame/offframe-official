@@ -43,25 +43,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           </div>
         </div>
 
-        <h2 class="section-title">The Mechanism：フレームを外す体験</h2>
-
-        <div class="row">
-          <div class="ja">
-            <p>当サイトには、一つの特別なボタンを搭載しています。</p>
-            <div class="offframe-btn-demo">Off Frame</div>
-            <p>このボタンは、私たちがこだわり抜いて切り取った「枠（フレーム）」を物理的に取り払うためのものです。クリックした瞬間、写真はその外側へと広がり、今まで見えていなかった部屋の景色や、彼女が過ごす空間の全貌が解き放たれます。</p>
-            <p>サイトで見ている景色は、世界の一部に過ぎません。フレームを外すことで、より深い物語の中へ。</p>
-            <p class="note">※「オフフレーム・モード」について<br>現在、本機能は開発および研究期間につき、すべての読者に無料開放しています。</p>
-          </div>
-          <div class="en">
-            <p>This site features one special button.</p>
-            <div class="offframe-btn-demo">Off Frame</div>
-            <p>This button physically removes the frame we so carefully composed. The moment you click it, the photograph expands beyond its borders — revealing the room's full landscape and the entirety of the space she inhabits.</p>
-            <p>What you see on the site is only part of the world. Remove the frame, and step deeper into the story.</p>
-            <p class="note">※ About "Off Frame Mode"<br>Currently, this feature is open to all readers free of charge during our development period.</p>
-          </div>
-        </div>
-
       </div>
     </div>
   </main>
@@ -179,29 +160,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     margin-bottom: 0.25rem;
   }
 
-  /* ============ OffFrameボタン見本 ============ */
-  .offframe-btn-demo {
-    display: inline-block;
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 300;
-    font-size: 0.85rem;
-    letter-spacing: 0.2em;
-    border: 1px solid #999;
-    color: #000;
-    padding: 0.3rem 0.75rem;
-    margin: 0.5rem 0 1.5rem;
-  }
-
-  /* ============ 注釈 ============ */
-  .note {
-    font-size: 0.8rem;
-    color: #888;
-    line-height: 2;
-    border-top: 1px solid #eee;
-    padding-top: 1.5rem;
-    margin-top: 2rem !important;
-  }
-
   /* ============ スマホ（〜900px） ============ */
   @media (max-width: 900px) {
     main { padding: 1.5rem; }
@@ -222,7 +180,5 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     li, .en li { font-size: 0.8rem; }
 
     .li-title { font-size: 0.8rem; }
-
-    .note { font-size: 0.72rem; }
   }
 </style>
