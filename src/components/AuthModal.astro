@@ -1,7 +1,9 @@
 ---
+const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 ---
 
-<div class="auth-overlay" id="authOverlay">
+<div class="auth-overlay" id="authOverlay" data-url={SUPABASE_URL} data-key={SUPABASE_KEY}>
   <div class="auth-modal" id="authModal">
     <button class="auth-close" id="authClose">×</button>
 
@@ -160,13 +162,12 @@
 <script>
   import { createClient } from "@supabase/supabase-js";
 
-  const supabase = createClient(
-    import.meta.env.PUBLIC_SUPABASE_URL,
-    import.meta.env.PUBLIC_SUPABASE_ANON_KEY
-  );
+  const overlay = document.getElementById("authOverlay")!;
+  const supabaseUrl = overlay.dataset.url!;
+  const supabaseKey = overlay.dataset.key!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
   function initAuthModal() {
-    const overlay   = document.getElementById("authOverlay");
     const closeBtn  = document.getElementById("authClose");
     const loginForm = document.getElementById("loginForm");
     const signupForm = document.getElementById("signupForm");
