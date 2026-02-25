@@ -21,16 +21,24 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     <div class="auth-form" id="signupForm" style="display:none;">
       <h2 class="auth-title">Sign Up</h2>
       <input class="auth-input" id="signupEmail" type="email" placeholder="メールアドレス" />
-      <input class="auth-input" id="signupPassword" type="password" placeholder="パスワード" />
+      <input class="auth-input" id="signupPassword" type="password" placeholder="パスワード（6文字以上）" />
       <p class="auth-error" id="signupError"></p>
       <button class="auth-btn" id="signupSubmit">新規登録</button>
       <p class="auth-switch">すでにアカウントをお持ちの方は<button class="auth-link" id="toLogin">ログイン</button></p>
     </div>
 
-    <!-- 登録完了メッセージ -->
-    <div class="auth-form" id="signupDone" style="display:none;">
-      <h2 class="auth-title">確認メールを送信しました</h2>
-      <p class="auth-message">メールのリンクをクリックして登録を完了してください。</p>
+    <!-- ようこそ（新規登録完了） -->
+    <div class="auth-form auth-greeting" id="welcomeForm" style="display:none;">
+      <p class="auth-greeting-sub">OFF FRAME へ</p>
+      <h2 class="auth-title">ようこそ。</h2>
+      <p class="auth-message">素の、その時間。<br>ごゆっくりお楽しみください。</p>
+    </div>
+
+    <!-- おかえり（ログイン完了） -->
+    <div class="auth-form auth-greeting" id="welcomeBackForm" style="display:none;">
+      <p class="auth-greeting-sub">OFF FRAME へ</p>
+      <h2 class="auth-title">おかえりなさいませ。</h2>
+      <p class="auth-message">素の、その時間。<br>ごゆっくりお楽しみください。</p>
     </div>
 
   </div>
@@ -78,10 +86,11 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
   .auth-title {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 1.4rem;
+    font-size: 1.8rem;
     letter-spacing: 0.3em;
     color: #000;
-    margin: 0 0 2rem;
+    margin: 0 0 1.5rem;
+    line-height: 1.2;
   }
 
   .auth-input {
@@ -150,10 +159,25 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
   .auth-link:hover { color: #000; }
 
+  .auth-greeting {
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .auth-greeting-sub {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: #000;
+    opacity: 0.4;
+    margin: 0 0 0.5rem;
+  }
+
   .auth-message {
     font-family: "Shippori Mincho", serif;
     font-size: 0.85rem;
-    line-height: 2;
+    line-height: 2.2;
     color: #555;
     margin: 0;
   }
@@ -161,6 +185,19 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script define:vars={{ SUPABASE_URL, SUPABASE_KEY }}>
+  function showForm(id) {
+    ["loginForm", "signupForm", "welcomeForm", "welcomeBackForm"].forEach(f => {
+      document.getElementById(f).style.display = "none";
+    });
+    document.getElementById(id).style.display = "block";
+  }
+
+  function closeModal(overlayEl) {
+    overlayEl.classList.remove("open");
+    // フォームをログインに戻す
+    setTimeout(() => showForm("loginForm"), 300);
+  }
+
   function initAuth() {
     const overlayEl = document.getElementById("authOverlay");
     if (!overlayEl) return;
@@ -168,29 +205,23 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     if (!window.supabase) { setTimeout(initAuth, 100); return; }
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const closeBtn   = document.getElementById("authClose");
-    const loginForm  = document.getElementById("loginForm");
-    const signupForm = document.getElementById("signupForm");
-    const signupDone = document.getElementById("signupDone");
+    const closeBtn = document.getElementById("authClose");
 
     // 開く
-    window.openAuthModal = () => overlayEl.classList.add("open");
+    window.openAuthModal = () => {
+      overlayEl.classList.add("open");
+      showForm("loginForm");
+    };
 
     // 閉じる
-    closeBtn.addEventListener("click", () => overlayEl.classList.remove("open"));
+    closeBtn.addEventListener("click", () => closeModal(overlayEl));
     overlayEl.addEventListener("click", (e) => {
-      if (e.target === overlayEl) overlayEl.classList.remove("open");
+      if (e.target === overlayEl) closeModal(overlayEl);
     });
 
     // フォーム切り替え
-    document.getElementById("toSignup").addEventListener("click", () => {
-      loginForm.style.display  = "none";
-      signupForm.style.display = "block";
-    });
-    document.getElementById("toLogin").addEventListener("click", () => {
-      signupForm.style.display = "none";
-      loginForm.style.display  = "block";
-    });
+    document.getElementById("toSignup").addEventListener("click", () => showForm("signupForm"));
+    document.getElementById("toLogin").addEventListener("click", () => showForm("loginForm"));
 
     // ログイン
     document.getElementById("loginSubmit").addEventListener("click", async () => {
@@ -201,8 +232,9 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       if (error) {
         errorEl.textContent = "メールアドレスまたはパスワードが正しくありません";
       } else {
-        overlayEl.classList.remove("open");
+        showForm("welcomeBackForm");
         updateAuthButtons(supabase);
+        setTimeout(() => closeModal(overlayEl), 2500);
       }
     });
 
@@ -216,21 +248,20 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
         errorEl.textContent = "パスワードは6文字以上で入力してください。";
         return;
       }
+
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) {
         if (error.message.includes("already registered") || error.message.includes("User already registered")) {
           errorEl.textContent = "このメールアドレスはすでに登録されています。";
-        } else if (error.message.includes("Password")) {
-          errorEl.textContent = "パスワードは6文字以上で入力してください。";
         } else {
           errorEl.textContent = "登録に失敗しました。もう一度お試しください。";
         }
       } else if (data.user && data.user.identities && data.user.identities.length === 0) {
-        // Supabaseが重複時にerrorを返さずempty identitiesを返すケース
         errorEl.textContent = "このメールアドレスはすでに登録されています。";
       } else {
-        signupForm.style.display = "none";
-        signupDone.style.display = "block";
+        showForm("welcomeForm");
+        updateAuthButtons(supabase);
+        setTimeout(() => closeModal(overlayEl), 2500);
       }
     });
 
