@@ -1,0 +1,169 @@
+<!-- プレミアム誘導モーダル -->
+<div class="premium-overlay" id="premiumOverlay">
+  <div class="premium-modal">
+    <button class="premium-close" id="premiumClose">×</button>
+    <div class="premium-modal-card">
+      <h2 class="premium-catch">全画像に、<br>フルアクセス。</h2>
+      <p class="premium-heading">OFF FRAME Premium</p>
+      <p class="premium-desc">素の写真を、余すことなく。</p>
+      <div class="price-row">
+        <span class="price-amount">¥500</span>
+        <span class="price-period">/ 月</span>
+      </div>
+      <button class="cta-btn" id="premiumModalSubscribeBtn">プレミアムに登録する</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .premium-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .premium-overlay.open { display: flex; }
+
+  .premium-modal {
+    position: relative;
+    width: 90%;
+    max-width: 360px;
+  }
+
+  .premium-close {
+    position: absolute;
+    top: 0.8rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.5rem;
+    color: #fff;
+    opacity: 0.4;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 1;
+  }
+
+  .premium-close:hover { opacity: 1; }
+
+  .premium-modal-card {
+    background: #000;
+    padding: 2.5rem 2.5rem 2rem;
+    color: #fff;
+  }
+
+  .premium-catch {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 300;
+    font-size: 1.8rem;
+    letter-spacing: 0.12em;
+    line-height: 1.6;
+    color: #fff;
+    margin: 0 0 0.5rem;
+  }
+
+  .premium-heading {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.6rem;
+    letter-spacing: 0.25em;
+    color: #fff;
+    opacity: 0.8;
+    margin: 0 0 0.6rem;
+  }
+
+  .premium-desc {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.82rem;
+    line-height: 2;
+    color: #fff;
+    opacity: 0.7;
+    margin: 0 0 1.5rem;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .price-amount {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 2.5rem;
+    letter-spacing: 0.05em;
+    color: #fff;
+  }
+
+  .price-period {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.8rem;
+    color: #fff;
+    opacity: 0.6;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: #dbc06c;
+    color: #000;
+    border: none;
+    padding: 0.85rem 2rem;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    letter-spacing: 0.25em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .cta-btn:hover { opacity: 0.75; }
+
+  @media (max-width: 320px) {
+    .premium-catch { font-size: 1.3rem; }
+    .premium-heading { font-size: 1.2rem; }
+    .premium-desc { font-size: 0.7rem; }
+    .cta-btn { font-size: 0.75rem; padding: 0.7rem 1.5rem; }
+    .premium-modal-card { padding: 2rem 1.5rem 1.5rem; }
+    .price-amount { font-size: 2rem; }
+  }
+</style>
+
+<script>
+  function initPremiumModal() {
+    const overlay = document.getElementById("premiumOverlay");
+    if (!overlay) return;
+
+    const closeBtn = document.getElementById("premiumClose");
+
+    window.openPremiumModal = () => {
+      overlay.classList.add("open");
+    };
+
+    closeBtn?.addEventListener("click", () => {
+      overlay.classList.remove("open");
+    });
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) overlay.classList.remove("open");
+    });
+
+    const subscribeBtn = document.getElementById("premiumModalSubscribeBtn");
+    subscribeBtn?.addEventListener("click", () => {
+      // TODO: Stripe実装後にここで決済を開始
+      // 決済完了後に以下を実行:
+      // localStorage.setItem("offframe_premium", "1");
+      // document.dispatchEvent(new CustomEvent("offframe:premium"));
+      // overlay.classList.remove("open");
+      alert("Stripe実装後にここで決済を開始します");
+    });
+  }
+
+  document.addEventListener("astro:page-load", initPremiumModal);
+  initPremiumModal();
+</script>

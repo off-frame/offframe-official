@@ -333,7 +333,7 @@ import OffFrameButton from "./OffFrameButton.astro";
         var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
         var isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
         if (!isLoggedIn) {
-          window.openAuthModal?.();
+          window.openPromoOverlay?.();
           return;
         }
         if (localStorage.getItem("offframe_premium") === "1") {
@@ -355,7 +355,7 @@ import OffFrameButton from "./OffFrameButton.astro";
             }, 300);
           });
         } else {
-          location.href = "/mypage#premiumCard";
+          window.openPremiumModal?.();
         }
       };
     }

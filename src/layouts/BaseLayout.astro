@@ -7,6 +7,7 @@ import { ViewTransitions } from "astro:transitions";
 import PromoOverlay from "../components/PromoOverlay.astro";
 import AuthModal from "../components/AuthModal.astro";
 import MyPageModal from "../components/MyPageModal.astro";
+import PremiumModal from "../components/PremiumModal.astro";
 
 interface Props {
   title?: string;
@@ -87,6 +88,91 @@ const { title = "OffFrame" } = Astro.props;
     <PromoOverlay />
     <AuthModal />
     <MyPageModal />
+    <PremiumModal />
+
+    <!-- 初回吹き出し -->
+    <div class="tip-bubble" id="tipBubble">
+      このボタンを押すと<br>サイトの画像が変化します
+    </div>
+    <script is:inline>
+      // 吹き出し表示タイミング:
+      // 1. 初回セッション (tip_phase なし)
+      // 2. ログイン後 (offframe:loggedin イベント)
+      // 3. プレミアム決済後 (offframe:premium イベント)
+
+      function showTipBubble() {
+        var bubble = document.getElementById("tipBubble");
+        if (!bubble) return;
+
+        // 現在のフェーズで既に消されていたら表示しない
+        var phase = sessionStorage.getItem("tip_phase") || "0";
+        var dismissed = sessionStorage.getItem("tip_dismissed");
+        if (dismissed === phase) return;
+
+        var isMobile = window.innerWidth <= 1024;
+
+        if (isMobile) {
+          var burger = document.getElementById("burgerBtn");
+          if (!burger) return;
+          var rect = burger.getBoundingClientRect();
+          bubble.innerHTML = "メニューの中のボタンを押すと<br>オフフレームモードを体験できます";
+          bubble.className = "tip-bubble tip-sp";
+          bubble.style.top = (rect.bottom + 8) + "px";
+          bubble.style.right = "1rem";
+          bubble.style.left = "auto";
+        } else {
+          var stdBtn = document.getElementById("offframeBtn");
+          var premBtn = document.getElementById("sidenavPremiumBtn");
+          if (!stdBtn && !premBtn) return;
+          var topRect = (stdBtn || premBtn).getBoundingClientRect();
+          var bottomRect = (premBtn || stdBtn).getBoundingClientRect();
+          var centerY = (topRect.top + bottomRect.bottom) / 2;
+          bubble.className = "tip-bubble tip-pc";
+          bubble.style.top = (centerY - 30) + "px";
+          bubble.style.left = (topRect.right + 12) + "px";
+        }
+
+        bubble.style.display = "block";
+        bubble.classList.remove("tip-hide");
+
+        function hideBubble() {
+          if (bubble.style.display === "none") return;
+          bubble.classList.add("tip-hide");
+          var currentPhase = sessionStorage.getItem("tip_phase") || "0";
+          sessionStorage.setItem("tip_dismissed", currentPhase);
+          setTimeout(function() { bubble.style.display = "none"; }, 400);
+        }
+
+        bubble.addEventListener("click", hideBubble);
+
+        var burger = document.getElementById("burgerBtn");
+        if (burger) {
+          burger.addEventListener("click", hideBubble);
+        }
+
+        ["offframeBtn", "sidenavPremiumBtn", "overlayRegisterBtn"].forEach(function(id) {
+          var btn = document.getElementById(id);
+          if (btn) btn.addEventListener("click", hideBubble);
+        });
+      }
+
+      // ログイン後に吹き出しを再表示
+      document.addEventListener("offframe:loggedin", function() {
+        sessionStorage.setItem("tip_phase", "1");
+        setTimeout(showTipBubble, 1000);
+      });
+
+      // プレミアム決済後に吹き出しを再表示
+      document.addEventListener("offframe:premium", function() {
+        sessionStorage.setItem("tip_phase", "2");
+        setTimeout(showTipBubble, 1000);
+      });
+
+      document.addEventListener("astro:page-load", function() {
+        setTimeout(showTipBubble, 1000);
+      });
+      setTimeout(showTipBubble, 1000);
+    </script>
   </body>
 </html>
 
@@ -291,5 +377,58 @@ const { title = "OffFrame" } = Astro.props;
       margin-top: 130px;
       max-width: 100%;
     }
+  }
+
+  /* ============ 初回吹き出し ============ */
+  .tip-bubble {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    background: #fff;
+    color: #000;
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.7rem;
+    line-height: 1.7;
+    letter-spacing: 0.05em;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    animation: tipFadeIn 0.4s ease forwards;
+  }
+
+  .tip-bubble::after {
+    content: "";
+    position: absolute;
+    border: 6px solid transparent;
+  }
+
+  /* PC: サイドナビ右横 → 左に三角 */
+  .tip-bubble.tip-pc::after {
+    top: 50%;
+    left: -12px;
+    transform: translateY(-50%);
+    border-right-color: #fff;
+  }
+
+  /* スマホ: ハンバーガー下 → 上に三角 */
+  .tip-bubble.tip-sp::after {
+    top: -12px;
+    right: 1rem;
+    border-bottom-color: #fff;
+  }
+
+  @keyframes tipFadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes tipFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  .tip-bubble.tip-hide {
+    animation: tipFadeOut 0.4s ease forwards;
   }
 </style>

@@ -517,7 +517,7 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
       premBtn.onclick = () => {
         const sbKey = Object.keys(localStorage).find((k) => k.startsWith("sb-") && k.endsWith("-auth-token"));
         if (!(sbKey ? !!localStorage.getItem(sbKey) : false)) {
-          (window as any).openAuthModal?.();
+          (window as any).openPromoOverlay?.();
           return;
         }
         const next = localStorage.getItem("offframe") === "1" ? "0" : "1";
@@ -557,7 +557,7 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
         stdBtn.onclick = () => {
           const sbKey = Object.keys(localStorage).find((k) => k.startsWith("sb-") && k.endsWith("-auth-token"));
           if (!(sbKey ? !!localStorage.getItem(sbKey) : false)) {
-            (window as any).openAuthModal?.();
+            (window as any).openPromoOverlay?.();
             return;
           }
           const next = localStorage.getItem("offframe") === "1" ? "0" : "1";
@@ -590,10 +590,10 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
         premBtn.onclick = () => {
           const sbKey = Object.keys(localStorage).find((k) => k.startsWith("sb-") && k.endsWith("-auth-token"));
           if (!(sbKey ? !!localStorage.getItem(sbKey) : false)) {
-            (window as any).openAuthModal?.();
+            (window as any).openPromoOverlay?.();
             return;
           }
-          location.href = "/mypage#premiumCard";
+          (window as any).openPremiumModal?.();
         };
       }
     }
@@ -606,5 +606,5 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
   });
   shuffleGrids();
   applyOffframeMode();
-  initMobilePremiumBtn();
+  initMobileOffframeBtns();
 </script>

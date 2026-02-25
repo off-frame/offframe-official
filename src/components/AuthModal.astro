@@ -15,6 +15,24 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       <p class="auth-error" id="loginError"></p>
       <button class="auth-btn" id="loginSubmit">ログイン</button>
       <p class="auth-switch">アカウントをお持ちでない方は<button class="auth-link" id="toSignup">新規登録</button></p>
+      <p class="auth-switch"><button class="auth-link" id="toReset">パスワードをお忘れの方</button></p>
+    </div>
+
+    <!-- パスワードリセット -->
+    <div class="auth-form" id="resetForm" style="display:none;">
+      <h2 class="auth-title">Reset Password</h2>
+      <p class="auth-sub-text">ご登録のメールアドレスに<br>再設定用のリンクをお送りします。</p>
+      <input class="auth-input" id="resetEmail" type="email" placeholder="メールアドレス" />
+      <p class="auth-error" id="resetError"></p>
+      <button class="auth-btn" id="resetSubmit">送信する</button>
+      <p class="auth-switch"><button class="auth-link" id="resetToLogin">ログインに戻る</button></p>
+    </div>
+
+    <!-- リセットメール送信完了 -->
+    <div class="auth-form auth-greeting" id="resetSentForm" style="display:none;">
+      <h2 class="auth-title">メールを送信しました</h2>
+      <p class="auth-message">パスワード再設定用のリンクを<br>お送りしました。</p>
+      <p class="auth-message confirm-note">メール内のリンクから<br>新しいパスワードを設定してください。</p>
     </div>
 
     <!-- 新規登録フォーム -->
@@ -27,7 +45,14 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       <p class="auth-switch">すでにアカウントをお持ちの方は<button class="auth-link" id="toLogin">ログイン</button></p>
     </div>
 
-    <!-- ようこそ（新規登録完了） -->
+    <!-- メール確認案内 -->
+    <div class="auth-form auth-greeting" id="confirmEmailForm" style="display:none;">
+      <h2 class="auth-title">メールをご確認ください</h2>
+      <p class="auth-message">ご入力いただいたメールアドレスに<br>確認メールをお送りしました。</p>
+      <p class="auth-message confirm-note">メール内のリンクをクリックして<br>登録を完了してください。</p>
+    </div>
+
+    <!-- ようこそ（メール確認後のログイン） -->
     <div class="auth-form auth-greeting" id="welcomeForm" style="display:none;">
       <p class="auth-greeting-sub">OFF FRAME へ</p>
       <h2 class="auth-title">ようこそ。</h2>
@@ -68,7 +93,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.7);
-    z-index: 500;
+    z-index: 10000;
     align-items: center;
     justify-content: center;
   }
@@ -198,12 +223,26 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     margin: 0;
   }
 
+  .confirm-note {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  .auth-sub-text {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.78rem;
+    line-height: 2;
+    color: #888;
+    margin: -0.5rem 0 1.5rem;
+  }
+
   .logout-overlay {
     display: none;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.7);
-    z-index: 600;
+    z-index: 10001;
     align-items: center;
     justify-content: center;
   }
@@ -266,7 +305,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script define:vars={{ SUPABASE_URL, SUPABASE_KEY }}>
   function showForm(id) {
-    ["loginForm", "signupForm", "welcomeForm", "welcomeBackForm"].forEach(f => {
+    ["loginForm", "signupForm", "resetForm", "resetSentForm", "confirmEmailForm", "welcomeForm", "welcomeBackForm"].forEach(f => {
       document.getElementById(f).style.display = "none";
     });
     document.getElementById(id).style.display = "block";
@@ -297,17 +336,52 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
     document.getElementById("toSignup").addEventListener("click", () => showForm("signupForm"));
     document.getElementById("toLogin").addEventListener("click", () => showForm("loginForm"));
+    document.getElementById("toReset").addEventListener("click", () => showForm("resetForm"));
+    document.getElementById("resetToLogin").addEventListener("click", () => showForm("loginForm"));
+
+    // メール形式チェック
+    function isValidEmail(v) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    }
+
+    // パスワードリセット
+    document.getElementById("resetSubmit").addEventListener("click", async () => {
+      const email = document.getElementById("resetEmail").value.trim();
+      const errorEl = document.getElementById("resetError");
+      if (!isValidEmail(email)) {
+        errorEl.textContent = "正しいメールアドレスを入力してください。";
+        return;
+      }
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: location.origin + "/reset-password"
+      });
+      if (error) {
+        errorEl.textContent = "送信に失敗しました。もう一度お試しください。";
+      } else {
+        showForm("resetSentForm");
+      }
+    });
 
     // ログイン
     document.getElementById("loginSubmit").addEventListener("click", async () => {
-      const email    = document.getElementById("loginEmail").value;
+      const email    = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value;
       const errorEl  = document.getElementById("loginError");
+      if (!isValidEmail(email)) {
+        errorEl.textContent = "正しいメールアドレスを入力してください。";
+        return;
+      }
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         errorEl.textContent = "メールアドレスまたはパスワードが正しくありません";
       } else {
-        showForm("welcomeBackForm");
+        const welcomed = localStorage.getItem("offframe_welcomed");
+        if (!welcomed) {
+          showForm("welcomeForm");
+          localStorage.setItem("offframe_welcomed", "1");
+        } else {
+          showForm("welcomeBackForm");
+        }
         updateAuthButtons(supabase);
         document.dispatchEvent(new CustomEvent("offframe:loggedin"));
       }
@@ -315,10 +389,14 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
     // 新規登録
     document.getElementById("signupSubmit").addEventListener("click", async () => {
-      const email    = document.getElementById("signupEmail").value;
+      const email    = document.getElementById("signupEmail").value.trim();
       const password = document.getElementById("signupPassword").value;
       const errorEl  = document.getElementById("signupError");
 
+      if (!isValidEmail(email)) {
+        errorEl.textContent = "正しいメールアドレスを入力してください。";
+        return;
+      }
       if (password.length < 6) {
         errorEl.textContent = "パスワードは6文字以上で入力してください。";
         return;
@@ -333,9 +411,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       } else if (data.user && data.user.identities && data.user.identities.length === 0) {
         errorEl.textContent = "このメールアドレスはすでに登録されています。";
       } else {
-        showForm("welcomeForm");
-        updateAuthButtons(supabase);
-        document.dispatchEvent(new CustomEvent("offframe:loggedin"));
+        showForm("confirmEmailForm");
       }
     });
 

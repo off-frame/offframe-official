@@ -10,24 +10,27 @@
     <div class="po-images">
       <div class="po-img-wrap">
         <img src="/images/low/1602.webp" alt="standard" />
-        <span class="po-label">Standard</span>
+        <span class="po-label">通常表示</span>
       </div>
       <div class="po-arrow">→</div>
       <div class="po-img-wrap">
         <img src="/images/full_low/1602.webp" alt="off frame" />
-        <span class="po-label">Premium</span>
+        <span class="po-label">オフフレームモード</span>
       </div>
     </div>
 
     <div class="po-text">
       <div class="po-copy">
-        <h2 class="po-title">OFF FRAME MODE</h2>
         <p class="po-sub">枠を外し、写真の外側に広がる世界へ。</p>
-        <p class="po-note po-note-guest" id="promoNoteGuest">OFFフレームモードは、<br>ログインするとご使用いただけます。</p>
+        <h2 class="po-title">OFF FRAME MODE</h2>
+        <p class="po-hint po-hint-pc" id="poHintPc">ボタンを押すとサイトの画像が切り替わります。<br>サイドメニューからいつでも切り替えが可能です。</p>
       </div>
       <div class="po-btns">
+        <p class="po-note-btns" id="promoNoteBtns" style="display:none;">OFFフレームモードは、<br>ログインするとご使用いただけます。</p>
         <button class="po-btn" id="overlayOffframeBtn" onclick="window.handleOverlayStandard()">Standard</button>
         <button class="po-btn po-btn-premium" id="overlayPremiumBtn" onclick="window.handleOverlayPremium()">Premium</button>
+        <button class="po-btn po-btn-register" id="overlayRegisterBtn" style="display:none;" onclick="window.openAuthModal?.()">会員登録 / ログイン</button>
+        <p class="po-hint po-hint-sp" id="poHintSp">ボタンを押すとサイトの画像が切り替わります。<br>サイドメニューからいつでも切り替えが可能です。</p>
       </div>
     </div>
     <button class="po-close-mobile" onclick="window.closePromoOverlay()">閉じる</button>
@@ -68,13 +71,13 @@
     position: absolute;
     top: 1rem;
     left: 0.5rem;
-    font-family: "Cormorant Garamond", serif;
+    font-family: "Shippori Mincho", serif;
     font-weight: 300;
-    font-size: 1.2rem;
-    letter-spacing: 0.2em;
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
     color: #fff;
     background: rgba(0,0,0,0.5);
-    padding: 0.1rem 0.4rem;
+    padding: 0.1rem 0.35rem;
   }
 
   .po-arrow {
@@ -87,8 +90,9 @@
   .po-text {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     gap: 2rem;
+    padding-left: 0.5rem;
   }
 
   .po-copy {
@@ -101,7 +105,7 @@
   .po-title {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     letter-spacing: 0.3em;
     color: #fff;
     margin: 0;
@@ -109,11 +113,11 @@
 
   .po-sub {
     font-family: "Shippori Mincho", serif;
-    font-size: 0.85rem;
-    line-height: 2;
-    letter-spacing: 0.15em;
-    color: #aaa;
-    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    letter-spacing: 0.35em;
+    color: #fff;
+    margin: 0 0 0.2rem;
   }
 
   .po-note {
@@ -169,6 +173,25 @@
     letter-spacing: 0.25em !important;
   }
 
+  .po-note-btns {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.75rem;
+    line-height: 1.9;
+    letter-spacing: 0.06em;
+    color: #ccc;
+    margin: 0 0 0.2rem;
+    text-align: left;
+  }
+
+  .po-btn-register {
+    background: #fff;
+    color: #000;
+    border-radius: 0;
+    font-size: 1.1rem;
+    padding: 0.8rem 2.5rem;
+    letter-spacing: 0.25em;
+  }
+
   #overlayOffframeBtn {
     background: #2a2a2a;
     border: 1px solid #444;
@@ -191,6 +214,23 @@
     box-shadow: 0 0 12px rgba(255, 255, 255, 0.6), 0 0 24px rgba(255, 255, 255, 0.2);
   }
 
+  .po-hint {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.75rem;
+    line-height: 1.9;
+    letter-spacing: 0.05em;
+    color: #666;
+    margin: 0.3rem 0 0;
+  }
+
+  .po-hint-pc {
+    text-align: left;
+  }
+
+  .po-hint-sp {
+    display: none;
+  }
+
   .po-close-mobile {
     display: none;
   }
@@ -202,16 +242,15 @@
     box-shadow: 0 0 12px rgba(255,255,255,0.6), 0 0 24px rgba(255,255,255,0.2);
   }
 
-    @media (max-width: 930px) {
-    .po-note {}
-    .po-title {margin-left: 0.2rem;}
-    .po-sub {margin-left: 0.2rem;}
-    .po-text {gap: 0.3rem;}
+  @media (max-width: 950px) {
+    .po-sub { font-size: 0.75rem; }
   }
 
   @media (max-width: 840px) {
-    .po-inner { padding: 2rem 1rem; gap: 1.3rem; width: min(900px, 72vw); }
-    .po-arrow { font-size: 1rem; color: #a0a0a0;}
+    .po-inner { padding: 1.2rem 0.8rem; gap: 1rem; width: 95vw; }
+    .po-images { gap: 0.5rem; }
+    .po-arrow { font-size: 0.9rem; color: #a0a0a0; flex-shrink: 0; }
+    .po-label { top: 0.4rem; left: 0; font-size: 0.7rem; letter-spacing: 0.08em; white-space: nowrap; }
     .po-text {
       flex-direction: column;
       align-items: center;
@@ -220,7 +259,7 @@
     }
     .po-copy { order: 1; align-items: center; }
     .po-title { white-space: normal; margin-left: 0; font-size: 1.4rem; }
-    .po-sub { margin-left: 0; font-size: 0.75rem; }
+    .po-sub { margin-left: 0; font-size: 0.65rem; }
     .po-note { text-align: center; font-size: 0.7rem; line-height: 1.7; }
     .po-note-guest { font-size: 0.75rem !important; line-height: 1.8 !important; }
     .po-btns { order: 2; }
@@ -230,7 +269,9 @@
     .po-btns .po-btn-premium { width: 100%; padding: 1rem 0 !important; font-size: 1.05rem !important; box-sizing: border-box; border: 1px solid transparent; }
     .po-btns #overlayOffframeBtn { border-color: #444; }
     .po-btns .po-btn-premium { border-color: #dbc06c; }
-    .po-label {top: 0.5rem; font-size: 0.7rem;}
+    .po-hint-pc { display: none; }
+    .po-hint-sp { display: block; text-align: center; font-size: 0.65rem; }
+    .po-note-btns { text-align: center; }
     .po-close-mobile {
       display: block;
       background: transparent;
@@ -245,7 +286,19 @@
       transition: opacity 0.2s;
     }
     .po-close-mobile:hover { opacity: 1; }
+  }
 
+  @media (min-width: 480px) and (max-width: 840px) {
+    .po-inner { width: 90vw; padding: 1.5rem; }
+    .po-title { font-size: 1.6rem; }
+    .po-sub { font-size: 0.75rem; }
+    .po-note { font-size: 0.8rem; }
+    .po-note-guest { font-size: 0.85rem !important; }
+    .po-hint-sp { font-size: 0.7rem; }
+    .po-label { font-size: 0.8rem; }
+    .po-btns .po-btn,
+    .po-btns #overlayOffframeBtn,
+    .po-btns .po-btn-premium { font-size: 1.1rem !important; }
   }
 </style>
 
@@ -262,14 +315,22 @@
 
     var offBtn = document.getElementById("overlayOffframeBtn");
     var premBtn = document.getElementById("overlayPremiumBtn");
-    var noteGuest = document.getElementById("promoNoteGuest");
+    var regBtn = document.getElementById("overlayRegisterBtn");
+    var noteBtns = document.getElementById("promoNoteBtns");
     var isPremium = localStorage.getItem("offframe_premium") === "1";
 
+    var hintPc = document.getElementById("poHintPc");
+    var hintSp = document.getElementById("poHintSp");
+
     if (isLoggedIn) {
-      if (noteGuest) { noteGuest.style.display = "none"; }
+      if (noteBtns) { noteBtns.style.display = "none"; }
+      if (regBtn) { regBtn.style.display = "none"; }
+      if (hintPc) { hintPc.style.display = ""; }
+      if (hintSp) { hintSp.style.display = ""; }
       if (isPremium) {
         if (offBtn) { offBtn.style.display = "none"; }
         if (premBtn) {
+          premBtn.style.display = "";
           var isActive = localStorage.getItem("offframe") === "1";
           premBtn.classList.toggle("active", isActive);
         }
@@ -282,7 +343,12 @@
         if (premBtn) { premBtn.style.display = ""; }
       }
     } else {
-      if (noteGuest) { noteGuest.style.display = ""; }
+      if (offBtn) { offBtn.style.display = "none"; }
+      if (premBtn) { premBtn.style.display = "none"; }
+      if (noteBtns) { noteBtns.style.display = ""; }
+      if (regBtn) { regBtn.style.display = ""; }
+      if (hintPc) { hintPc.style.display = "none"; }
+      if (hintSp) { hintSp.style.display = "none"; }
     }
   };
 
@@ -293,7 +359,6 @@
 
   window.handleOverlayStandard = function() {
     if (!isUserLoggedIn()) {
-      window.closePromoOverlay();
       window.openAuthModal?.();
       return;
     }
@@ -302,7 +367,6 @@
 
   window.handleOverlayPremium = function() {
     if (!isUserLoggedIn()) {
-      window.closePromoOverlay();
       window.openAuthModal?.();
       return;
     }
@@ -310,8 +374,7 @@
       // プレミアム: OFFフレーム切替（全画像）
       window.toggleOverlayOffframe("all");
     } else {
-      window.closePromoOverlay();
-      location.href = "/mypage#premiumCard";
+      window.openPremiumModal?.();
     }
   };
 
@@ -373,5 +436,10 @@
   // ESCで閉じる
   document.addEventListener("keydown", function(e) {
     if (e.key === "Escape") window.closePromoOverlay();
+  });
+
+  // ログイン完了で閉じる
+  document.addEventListener("offframe:loggedin", function() {
+    window.closePromoOverlay();
   });
 </script>

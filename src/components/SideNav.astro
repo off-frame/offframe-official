@@ -366,7 +366,7 @@ import OffFrameButton from "./OffFrameButton.astro";
         const sbKey = Object.keys(localStorage).find((k: string) => k.startsWith("sb-") && k.endsWith("-auth-token"));
         const isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
         if (!isLoggedIn) {
-          (window as any).openAuthModal?.();
+          (window as any).openPromoOverlay?.();
           return;
         }
         if (localStorage.getItem("offframe_premium") === "1") {
@@ -384,7 +384,7 @@ import OffFrameButton from "./OffFrameButton.astro";
             }, 300);
           });
         } else {
-          location.href = "/mypage#premiumCard";
+          (window as any).openPremiumModal?.();
         }
       };
     }
