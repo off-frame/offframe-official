@@ -156,8 +156,14 @@ const { title = "OffFrame" } = Astro.props;
         });
       }
 
-      // ログイン後に吹き出しを再表示
+      // ログイン後にドロワーを閉じて吹き出しを再表示
       document.addEventListener("offframe:loggedin", function() {
+        var drawer = document.getElementById("drawer");
+        var overlay = document.getElementById("overlay");
+        var burger = document.getElementById("burgerBtn");
+        if (drawer) drawer.classList.remove("open");
+        if (overlay) overlay.classList.remove("open");
+        if (burger) burger.classList.remove("open");
         sessionStorage.setItem("tip_phase", "1");
         setTimeout(showTipBubble, 1000);
       });

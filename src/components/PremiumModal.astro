@@ -162,6 +162,11 @@
       // overlay.classList.remove("open");
       alert("Stripe実装後にここで決済を開始します");
     });
+
+    // ログイン時にPremiumModalも閉じる
+    document.addEventListener("offframe:loggedin", () => {
+      overlay.classList.remove("open");
+    });
   }
 
   document.addEventListener("astro:page-load", initPremiumModal);

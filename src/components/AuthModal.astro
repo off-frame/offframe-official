@@ -375,13 +375,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       if (error) {
         errorEl.textContent = "メールアドレスまたはパスワードが正しくありません";
       } else {
-        const welcomed = localStorage.getItem("offframe_welcomed");
-        if (!welcomed) {
-          showForm("welcomeForm");
-          localStorage.setItem("offframe_welcomed", "1");
-        } else {
-          showForm("welcomeBackForm");
-        }
+        closeModal(overlayEl);
         updateAuthButtons(supabase);
         document.dispatchEvent(new CustomEvent("offframe:loggedin"));
       }
@@ -450,8 +444,8 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       });
       const doneOverlay = document.getElementById("logoutDoneOverlay");
       doneOverlay.classList.add("open");
-      setTimeout(() => doneOverlay.classList.remove("open"), 2000);
       document.dispatchEvent(new CustomEvent("offframe:loggedout"));
+      setTimeout(() => { location.href = "/"; }, 2000);
     });
 
     updateAuthButtons(supabase);

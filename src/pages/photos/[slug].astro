@@ -286,12 +286,12 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
     right: 5%;
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     letter-spacing: 0.1em;
   }
 
   .standard-tag { color: #aaa; }
-  .premium-tag { color: #dbc06c; }
+  .premium-tag { color: #c9a84c; }
 
   .ad-wrap {
     margin-top: 1rem;
@@ -506,6 +506,12 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
     const isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
     if (!isLoggedIn && localStorage.getItem("offframe") === "1") {
       localStorage.removeItem("offframe");
+    }
+
+    // ログイン後はボタンを非表示（サイドメニューから操作）
+    if (isLoggedIn) {
+      wrap.style.display = "none";
+      return;
     }
 
     if (isPremiumUser) {
