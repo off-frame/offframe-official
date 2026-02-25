@@ -1,392 +1,349 @@
 ---
-const SUPABASE_URL = "https://gupwbkyehfyrymybrhee.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1cHdia3llaGZ5cnlteWJyaGVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5MzAzMTgsImV4cCI6MjA4NzUwNjMxOH0.U0nVl7YCwckRRHmCIUqTvxns15L7rEQcZ28OOtxTAU0";
+import OffFrameButton from "./OffFrameButton.astro";
 ---
 
-<div class="auth-overlay" id="authOverlay">
-  <div class="auth-modal" id="authModal">
-    <button class="auth-close" id="authClose">×</button>
+<aside>
+  <a href="/" class="logo">
+    <span class="logo-main">OFF FRAME</span>
+    <span class="logo-sub">素の、<br>その時間。</span>
+  </a>
 
-    <!-- ログインフォーム -->
-    <div class="auth-form" id="loginForm">
-      <h2 class="auth-title">Login</h2>
-      <input class="auth-input" id="loginEmail" type="email" placeholder="メールアドレス" />
-      <input class="auth-input" id="loginPassword" type="password" placeholder="パスワード" />
-      <p class="auth-error" id="loginError"></p>
-      <button class="auth-btn" id="loginSubmit">ログイン</button>
-      <p class="auth-switch">アカウントをお持ちでない方は<button class="auth-link" id="toSignup">新規登録</button></p>
+  <div class="bottom">
+    <a href="/about" class="about-link">About</a>
+    <a href="/mypage" class="about-link mypage-link auth-mypage-link" style="display:none;">My Page</a>
+
+    <hr />
+
+    <div class="offframe-area">
+      <p class="offframe-copy">枠を外し、<br>写真の外側に<br>広がる世界へ。</p>
+      <p class="offframe-title">OFFフレームモード<br>無料開放中。</p>
+      <OffFrameButton id="offframeBtn" />
     </div>
 
-    <!-- 新規登録フォーム -->
-    <div class="auth-form" id="signupForm" style="display:none;">
-      <h2 class="auth-title">Sign Up</h2>
-      <input class="auth-input" id="signupEmail" type="email" placeholder="メールアドレス" />
-      <input class="auth-input" id="signupPassword" type="password" placeholder="パスワード（6文字以上）" />
-      <p class="auth-error" id="signupError"></p>
-      <button class="auth-btn" id="signupSubmit">新規登録</button>
-      <p class="auth-switch">すでにアカウントをお持ちの方は<button class="auth-link" id="toLogin">ログイン</button></p>
+    <hr />
+
+    <div class="sns-section">
+      <span class="section-label">公式SNS</span>
+      <div class="sns-links">
+        <a href="#" class="sns-btn">X</a>
+        <a href="#" class="sns-btn">TikTok</a>
+      </div>
     </div>
 
-    <!-- ようこそ（新規登録完了） -->
-    <div class="auth-form auth-greeting" id="welcomeForm" style="display:none;">
-      <p class="auth-greeting-sub">OFF FRAME へ</p>
-      <h2 class="auth-title">ようこそ。</h2>
-      <p class="auth-message">素の、その時間。<br>ごゆっくりお楽しみください。</p>
+    <div class="share-section">
+      <span class="section-label">シェア</span>
+      <div class="share-links">
+        <button class="share-icon-btn" id="shareX" aria-label="Xでシェア">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
+          </svg>
+        </button>
+        <button class="share-icon-btn" id="shareFb" aria-label="Facebookでシェア">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <!-- おかえり（ログイン完了） -->
-    <div class="auth-form auth-greeting" id="welcomeBackForm" style="display:none;">
-      <p class="auth-greeting-sub">OFF FRAME へ</p>
-      <h2 class="auth-title">おかえりなさいませ。</h2>
-      <p class="auth-message">素の、その時間。<br>ごゆっくりお楽しみください。</p>
+    <hr />
+
+    <div class="clock-wrap">
+      <span class="clock-label">日本時間</span>
+      <div class="clock" id="clock">--:--:--</div>
     </div>
 
+    <hr />
+
+    <a href="/privacy" class="link small">Privacy Policy</a>
+
+    <div class="auth-area">
+      <div class="auth-status" id="authStatus" style="display:none;">
+        <span class="auth-status-dot"></span>
+        <span class="auth-status-text">ログイン中</span>
+      </div>
+      <button class="auth-login-btn auth-nav-btn" onclick="window.openAuthModal?.()">Login</button>
+      <button class="auth-mypage-btn auth-nav-btn" onclick="window.openMyPage?.()" style="display:none;">My Page</button>
+      <button class="auth-logout-btn auth-nav-btn" onclick="window.handleLogout?.()" style="display:none;">Logout</button>
+    </div>
+
+    <p class="copyright">© 2026 OFF FRAME</p>
   </div>
-</div>
-
-<!-- ログアウト確認 -->
-<div class="logout-overlay" id="logoutOverlay">
-  <div class="logout-dialog">
-    <p class="logout-text">ログアウトしますか？</p>
-    <div class="logout-btns">
-      <button class="logout-btn-yes" id="logoutYes">はい</button>
-      <button class="logout-btn-no" id="logoutNo">いいえ</button>
-    </div>
-  </div>
-</div>
-
-<!-- ログアウト完了 -->
-<div class="logout-overlay" id="logoutDoneOverlay">
-  <div class="logout-dialog">
-    <p class="logout-text">ログアウトしました</p>
-  </div>
-</div>
+</aside>
 
 <style>
-  .auth-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 500;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .auth-overlay.open {
+  aside {
+    flex: 1;
+    background: #000;
     display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    justify-content: space-between;
+    overflow-y: auto;
   }
 
-  .auth-modal {
-    background: #fff;
-    width: 90%;
-    max-width: 360px;
-    padding: 3rem 2.5rem 2.5rem;
-    position: relative;
+  .logo {
+    text-decoration: none;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    opacity: 0.75;
+    transition: opacity 0.3s ease;
   }
 
-  .auth-close {
-    position: absolute;
-    top: 1rem;
-    right: 1.25rem;
+  .logo:hover { opacity: 1; }
+
+  .logo-main {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.7rem;
+    letter-spacing: 0.3em;
+  }
+
+  .logo-sub {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 400;
+    font-size: 1rem;
+    letter-spacing: 0.5em;
+  }
+
+  .bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #333;
+    margin: 0 -1rem;
+  }
+
+  .offframe-area {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .offframe-copy {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.95rem;
+    line-height: 2;
+    letter-spacing: 0.18em;
+    color: #fff;
+    opacity: 0.85;
+    margin: 0.6rem 0 0;
+  }
+
+  .offframe-title {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.75rem;
+    line-height: 1.8;
+    letter-spacing: 0.09em;
+    color: #fff;
+    opacity: 0.85;
+    margin: 0.2rem 0 0.9rem;
+  }
+
+  .about-link {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.4rem;
+    letter-spacing: 0.2em;
+    text-decoration: none;
+    color: #fff;
+    opacity: 0.8;
+  }
+
+  .about-link:hover { opacity: 1; }
+
+  .mypage-link {
+    font-size: 1rem;
+    opacity: 0.6;
+    margin-top: -0.5rem;
+  }
+
+  .sns-section, .share-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .section-label {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: #fff;
+    opacity: 0.4;
+  }
+
+  .sns-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .sns-btn {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: #fff;
+    opacity: 0.7;
+  }
+
+  .sns-btn:hover { opacity: 1; }
+
+  .share-section { display: none; }
+
+  .share-links {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .share-icon-btn {
     background: transparent;
     border: none;
-    font-family: "Cormorant Garamond", serif;
-    font-size: 1.5rem;
-    color: #000;
-    opacity: 0.4;
+    color: #fff;
+    opacity: 0.5;
     cursor: pointer;
-    line-height: 1;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
   }
 
-  .auth-close:hover { opacity: 1; }
+  .share-icon-btn:hover { opacity: 1; }
+  .share-icon-btn svg { width: 100%; height: 100%; }
 
-  .auth-title {
+  .clock-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+  }
+
+  .clock-label {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: #fff;
+    opacity: 0.5;
+  }
+
+  .clock {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
     font-size: 1.8rem;
-    letter-spacing: 0.3em;
-    color: #000;
-    margin: 0 0 1.5rem;
-    line-height: 1.2;
-  }
-
-  .auth-input {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    border: none;
-    border-bottom: 1px solid #ccc;
-    padding: 0.6rem 0;
-    font-family: "Shippori Mincho", serif;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-    color: #000;
-    background: transparent;
-    outline: none;
-    margin-bottom: 1.25rem;
-  }
-
-  .auth-input::placeholder { color: #aaa; }
-  .auth-input:focus { border-bottom-color: #000; }
-
-  .auth-error {
-    font-family: "Shippori Mincho", serif;
-    font-size: 0.75rem;
-    color: #c00;
-    margin: -0.5rem 0 1rem;
-    min-height: 1rem;
-  }
-
-  .auth-btn {
-    display: block;
-    width: 100%;
-    background: #000;
+    letter-spacing: 0.1em;
     color: #fff;
-    border: none;
-    padding: 0.85rem;
+    opacity: 0.6;
+  }
+
+  .link.small {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 1rem;
-    letter-spacing: 0.3em;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: #fff;
+    opacity: 0.5;
+  }
+
+  .auth-area {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .auth-status {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .auth-status-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #4ade80;
+    flex-shrink: 0;
+  }
+
+  .auth-status-text {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: #fff;
+    opacity: 0.6;
+  }
+
+  .auth-nav-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #333;
+    padding: 0.2rem 0;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: #fff;
+    opacity: 0.5;
     cursor: pointer;
-    margin-top: 0.5rem;
+    text-align: left;
     transition: opacity 0.2s;
   }
 
-  .auth-btn:hover { opacity: 0.75; }
+  .auth-nav-btn:hover { opacity: 1; }
 
-  .auth-switch {
-    font-family: "Shippori Mincho", serif;
-    font-size: 0.72rem;
-    color: #888;
-    text-align: center;
-    margin-top: 1.25rem;
-  }
-
-  .auth-link {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid #aaa;
-    padding: 0;
-    font-family: "Shippori Mincho", serif;
-    font-size: 0.72rem;
-    color: #555;
-    cursor: pointer;
-  }
-
-  .auth-link:hover { color: #000; }
-
-  .auth-greeting {
-    text-align: center;
-    padding: 1rem 0;
-  }
-
-  .auth-greeting-sub {
+  .copyright {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
-    color: #000;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: #fff;
     opacity: 0.4;
-    margin: 0 0 0.5rem;
-  }
-
-  .auth-message {
-    font-family: "Shippori Mincho", serif;
-    font-size: 0.85rem;
-    line-height: 2.2;
-    color: #555;
     margin: 0;
   }
-
-  /* ============ ログアウト確認 ============ */
-  .logout-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 600;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .logout-overlay.open {
-    display: flex;
-  }
-
-  .logout-dialog {
-    background: #fff;
-    padding: 2.5rem 2.5rem 2rem;
-    width: 90%;
-    max-width: 280px;
-    text-align: center;
-  }
-
-  .logout-text {
-    font-family: "Shippori Mincho", serif;
-    font-size: 0.9rem;
-    letter-spacing: 0.1em;
-    color: #000;
-    margin: 0 0 1.5rem;
-  }
-
-  .logout-btns {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-  }
-
-  .logout-btn-yes {
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 300;
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
-    background: #000;
-    color: #fff;
-    border: none;
-    padding: 0.5rem 1.2rem;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-
-  .logout-btn-yes:hover { opacity: 0.75; }
-
-  .logout-btn-no {
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 300;
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
-    background: transparent;
-    color: #000;
-    border: 1px solid #ccc;
-    padding: 0.5rem 1.2rem;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-
-  .logout-btn-no:hover { opacity: 0.6; }
 </style>
 
-<script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script define:vars={{ SUPABASE_URL, SUPABASE_KEY }}>
-  function showForm(id) {
-    ["loginForm", "signupForm", "welcomeForm", "welcomeBackForm"].forEach(f => {
-      document.getElementById(f).style.display = "none";
-    });
-    document.getElementById(id).style.display = "block";
+<script>
+  function initSideNav() {
+    const clock = document.getElementById("clock");
+    if (clock) {
+      setInterval(() => {
+        clock.textContent = new Date().toLocaleTimeString("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          hour12: false
+        });
+      }, 1000);
+    }
+
+    const shareX = document.getElementById("shareX");
+    if (shareX) {
+      shareX.onclick = () => {
+        const url = encodeURIComponent(location.href);
+        const text = encodeURIComponent(document.title);
+        window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, "_blank");
+      };
+    }
+
+    const shareFb = document.getElementById("shareFb");
+    if (shareFb) {
+      shareFb.onclick = () => {
+        const url = encodeURIComponent(location.href);
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+      };
+    }
   }
 
-  function closeModal(overlayEl) {
-    overlayEl.classList.remove("open");
-    // フォームをログインに戻す
-    setTimeout(() => showForm("loginForm"), 300);
-  }
-
-  function initAuth() {
-    const overlayEl = document.getElementById("authOverlay");
-    if (!overlayEl) return;
-
-    if (!window.supabase) { setTimeout(initAuth, 100); return; }
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const closeBtn = document.getElementById("authClose");
-
-    // 開く
-    window.openAuthModal = () => {
-      overlayEl.classList.add("open");
-      showForm("loginForm");
-    };
-
-    // 閉じる
-    closeBtn.addEventListener("click", () => closeModal(overlayEl));
-    overlayEl.addEventListener("click", (e) => {
-      if (e.target === overlayEl) closeModal(overlayEl);
-    });
-
-    // フォーム切り替え
-    document.getElementById("toSignup").addEventListener("click", () => showForm("signupForm"));
-    document.getElementById("toLogin").addEventListener("click", () => showForm("loginForm"));
-
-    // ログイン
-    document.getElementById("loginSubmit").addEventListener("click", async () => {
-      const email    = document.getElementById("loginEmail").value;
-      const password = document.getElementById("loginPassword").value;
-      const errorEl  = document.getElementById("loginError");
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        errorEl.textContent = "メールアドレスまたはパスワードが正しくありません";
-      } else {
-        showForm("welcomeBackForm");
-        updateAuthButtons(supabase);
-        // 手動で閉じるのを待つ（自動クローズなし）
-      }
-    });
-
-    // 新規登録
-    document.getElementById("signupSubmit").addEventListener("click", async () => {
-      const email    = document.getElementById("signupEmail").value;
-      const password = document.getElementById("signupPassword").value;
-      const errorEl  = document.getElementById("signupError");
-
-      if (password.length < 6) {
-        errorEl.textContent = "パスワードは6文字以上で入力してください。";
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) {
-        if (error.message.includes("already registered") || error.message.includes("User already registered")) {
-          errorEl.textContent = "このメールアドレスはすでに登録されています。";
-        } else {
-          errorEl.textContent = "登録に失敗しました。もう一度お試しください。";
-        }
-      } else if (data.user && data.user.identities && data.user.identities.length === 0) {
-        errorEl.textContent = "このメールアドレスはすでに登録されています。";
-      } else {
-        overlayEl.classList.remove("open");
-        updateAuthButtons(supabase);
-        setTimeout(() => window.openMyPage?.(true), 300);
-      }
-    });
-
-    // ログアウト確認
-    const logoutOverlay = document.getElementById("logoutOverlay");
-    window.handleLogout = () => {
-      logoutOverlay.classList.add("open");
-    };
-    document.getElementById("logoutNo").addEventListener("click", () => {
-      logoutOverlay.classList.remove("open");
-    });
-    document.getElementById("logoutYes").addEventListener("click", async () => {
-      await supabase.auth.signOut();
-      logoutOverlay.classList.remove("open");
-      updateAuthButtons(supabase);
-      // ログアウト完了メッセージを2秒表示
-      const doneOverlay = document.getElementById("logoutDoneOverlay");
-      doneOverlay.classList.add("open");
-      setTimeout(() => doneOverlay.classList.remove("open"), 2000);
-    });
-
-    updateAuthButtons(supabase);
-  }
-
-  async function updateAuthButtons(supabase) {
-    const { data: { session } } = await supabase.auth.getSession();
-    document.querySelectorAll(".auth-login-btn").forEach(el => {
-      el.style.display = session ? "none" : "block";
-    });
-    document.querySelectorAll(".auth-logout-btn").forEach(el => {
-      el.style.display = session ? "block" : "none";
-    });
-    document.querySelectorAll(".auth-mypage-btn").forEach(el => {
-      el.style.display = session ? "block" : "none";
-    });
-    document.querySelectorAll("#authStatus").forEach(el => {
-      el.style.display = session ? "flex" : "none";
-    });
-  }
-
-  document.addEventListener("astro:page-load", initAuth);
-  initAuth();
+  document.addEventListener("astro:page-load", initSideNav);
+  initSideNav();
 </script>

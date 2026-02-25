@@ -10,6 +10,7 @@ import OffFrameButton from "./OffFrameButton.astro";
 
   <div class="bottom">
     <a href="/about" class="about-link">About</a>
+    <a href="/mypage" class="about-link mypage-link auth-mypage-link" style="display:none;">My Page</a>
 
     <hr />
 
@@ -157,6 +158,12 @@ import OffFrameButton from "./OffFrameButton.astro";
   }
 
   .about-link:hover { opacity: 1; }
+
+  .mypage-link {
+    font-size: 1rem;
+    opacity: 0.6;
+    margin-top: -0.5rem;
+  }
 
   .sns-section, .share-section {
     display: flex;
