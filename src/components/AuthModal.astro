@@ -55,6 +55,13 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
   </div>
 </div>
 
+<!-- ログアウト完了 -->
+<div class="logout-overlay" id="logoutDoneOverlay">
+  <div class="logout-dialog">
+    <p class="logout-text">ログアウトしました</p>
+  </div>
+</div>
+
 <style>
   .auth-overlay {
     display: none;
@@ -233,12 +240,12 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
   .logout-btn-yes {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 0.9rem;
-    letter-spacing: 0.2em;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
     background: #000;
     color: #fff;
     border: none;
-    padding: 0.6rem 1.5rem;
+    padding: 0.5rem 1.2rem;
     cursor: pointer;
     transition: opacity 0.2s;
   }
@@ -248,12 +255,12 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
   .logout-btn-no {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 0.9rem;
-    letter-spacing: 0.2em;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
     background: transparent;
     color: #000;
     border: 1px solid #ccc;
-    padding: 0.6rem 1.5rem;
+    padding: 0.5rem 1.2rem;
     cursor: pointer;
     transition: opacity 0.2s;
   }
@@ -355,6 +362,10 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       await supabase.auth.signOut();
       logoutOverlay.classList.remove("open");
       updateAuthButtons(supabase);
+      // ログアウト完了メッセージを2秒表示
+      const doneOverlay = document.getElementById("logoutDoneOverlay");
+      doneOverlay.classList.add("open");
+      setTimeout(() => doneOverlay.classList.remove("open"), 2000);
     });
 
     updateAuthButtons(supabase);
