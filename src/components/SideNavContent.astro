@@ -341,6 +341,12 @@ import OffFrameButton from "./OffFrameButton.astro";
           localStorage.setItem("offframe", next);
           var active = next === "1";
           premiumBtn.classList.toggle("active", active);
+          // モバイル記事下Premiumボタンも同期
+          var mobilePrem = document.getElementById("mobilePremiumBtn");
+          if (mobilePrem) mobilePrem.classList.toggle("active", active);
+          // オーバーレイPremiumボタンも同期
+          var overlayPrem = document.getElementById("overlayPremiumBtn");
+          if (overlayPrem) overlayPrem.classList.toggle("active", active);
           document.querySelectorAll("img.switchable").forEach(function(img) {
             img.classList.add("blurring");
             setTimeout(function() {

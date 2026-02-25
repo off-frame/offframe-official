@@ -15,14 +15,16 @@
       <div class="po-arrow">→</div>
       <div class="po-img-wrap">
         <img src="/images/full_low/1602.webp" alt="off frame" />
-        <span class="po-label">Off Frame</span>
+        <span class="po-label">Premium</span>
       </div>
     </div>
 
     <div class="po-text">
-      <p class="po-catch">枠を外し、<br>写真の外側に<br>広がる世界へ。</p>
-      <p class="po-note" id="promoNoteLoggedIn" style="display:none;">OFFフレームモードは、<br>サイドメニューのボタンから<br>いつでも切り替えられます。</p>
-      <p class="po-note po-note-guest" id="promoNoteGuest">OFFフレームモードは、<br>ログインするとご使用いただけます。</p>
+      <div class="po-copy">
+        <h2 class="po-title">OFF FRAME MODE</h2>
+        <p class="po-sub">枠を外し、写真の外側に広がる世界へ。</p>
+        <p class="po-note po-note-guest" id="promoNoteGuest">OFFフレームモードは、<br>ログインするとご使用いただけます。</p>
+      </div>
       <div class="po-btns">
         <button class="po-btn" id="overlayOffframeBtn" onclick="window.handleOverlayStandard()">Standard</button>
         <button class="po-btn po-btn-premium" id="overlayPremiumBtn" onclick="window.handleOverlayPremium()">Premium</button>
@@ -89,16 +91,29 @@
     gap: 2rem;
   }
 
-  .po-catch {
-    font-family: "Shippori Mincho", serif;
-    font-size: 1.2rem;
-    line-height: 2.3rem;
+  .po-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+  }
+
+  .po-title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.8rem;
     letter-spacing: 0.3em;
     color: #fff;
     margin: 0;
-    white-space: nowrap;
-    margin-left: 2rem;
-    margin-bottom: 0.3rem;
+  }
+
+  .po-sub {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.85rem;
+    line-height: 2;
+    letter-spacing: 0.15em;
+    color: #aaa;
+    margin: 0;
   }
 
   .po-note {
@@ -189,7 +204,8 @@
 
     @media (max-width: 930px) {
     .po-note {}
-    .po-catch {margin-left: 0.2rem;}
+    .po-title {margin-left: 0.2rem;}
+    .po-sub {margin-left: 0.2rem;}
     .po-text {gap: 0.3rem;}
   }
 
@@ -202,8 +218,10 @@
       gap: 0.75rem;
       text-align: center;
     }
-    .po-catch { white-space: normal; order: 1; }
-    .po-note { text-align: center; font-size: 0.7rem; line-height: 1.7; order: 3; }
+    .po-copy { order: 1; align-items: center; }
+    .po-title { white-space: normal; margin-left: 0; font-size: 1.4rem; }
+    .po-sub { margin-left: 0; font-size: 0.75rem; }
+    .po-note { text-align: center; font-size: 0.7rem; line-height: 1.7; }
     .po-note-guest { font-size: 0.75rem !important; line-height: 1.8 !important; }
     .po-btns { order: 2; }
     .po-btns { width: 80%; align-self: center; }
@@ -244,12 +262,10 @@
 
     var offBtn = document.getElementById("overlayOffframeBtn");
     var premBtn = document.getElementById("overlayPremiumBtn");
-    var noteLoggedIn = document.getElementById("promoNoteLoggedIn");
     var noteGuest = document.getElementById("promoNoteGuest");
     var isPremium = localStorage.getItem("offframe_premium") === "1";
 
     if (isLoggedIn) {
-      if (noteLoggedIn) { noteLoggedIn.style.display = ""; }
       if (noteGuest) { noteGuest.style.display = "none"; }
       if (isPremium) {
         if (offBtn) { offBtn.style.display = "none"; }
@@ -266,7 +282,6 @@
         if (premBtn) { premBtn.style.display = ""; }
       }
     } else {
-      if (noteLoggedIn) { noteLoggedIn.style.display = "none"; }
       if (noteGuest) { noteGuest.style.display = ""; }
     }
   };
@@ -327,6 +342,12 @@
         b.textContent = "Standard";
       }
     });
+
+    // モバイル記事下ボタンも同期
+    var mobilePremBtn = document.getElementById("mobilePremiumBtn");
+    if (mobilePremBtn) mobilePremBtn.classList.toggle("active", active);
+    var mobileStdBtn = document.getElementById("mobileStandardBtn");
+    if (mobileStdBtn) mobileStdBtn.classList.toggle("active", active);
 
     // 画像切替
     var selector = scope === "all" ? "img.switchable" : 'img.switchable[data-tier="standard"]';

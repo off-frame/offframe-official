@@ -4,6 +4,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Card from "../../components/Card.astro";
 import AdBanner from "../../components/AdBanner.astro";
 import Promo from "../../components/Promo.astro";
+import { standardPhotos } from "../../data/standard";
 
 // ============ 広告設定 ============
 const SHOW_ADS = true;
@@ -37,6 +38,7 @@ const { photo } = Astro.props;
 const { title } = photo.data;
 const { Content } = await photo.render();
 const id         = title.replace(":", "");
+const isStandard = standardPhotos.includes(id);
 const generalSrc = `/images/high/${id}.webp`;
 const fullSrc    = `/images/full_high/${id}.webp`;
 
@@ -98,9 +100,14 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
               src={generalSrc}
               data-general={generalSrc}
               data-full={fullSrc}
+              data-tier={isStandard ? "standard" : "premium"}
               alt={title}
               class="switchable"
             />
+            {isStandard
+              ? <span class="tier-tag standard-tag">Standard</span>
+              : <span class="tier-tag premium-tag">Premium</span>
+            }
             <div class="text">
               <span class="title">
                 {title.split(":")[0]}<span class="colon">:</span>{title.split(":")[1]}
@@ -120,6 +127,12 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
             </AdBanner>
           </div>
         )}
+
+        <!-- モバイルボタン（サイドバー非表示時） -->
+        <div class="mobile-offframe-wrap" data-photo-tier={isStandard ? "standard" : "premium"}>
+          <button class="mobile-standard-btn" id="mobileStandardBtn">Standard</button>
+          <button class="mobile-premium-btn" id="mobilePremiumBtn">Premium</button>
+        </div>
 
         <!-- 関連カード：PC -->
         <div class="related-bottom-pc">
@@ -267,8 +280,71 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
     -webkit-box-decoration-break: clone;
   }
 
+  .tier-tag {
+    position: absolute;
+    bottom: -1.5rem;
+    right: 5%;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+  }
+
+  .standard-tag { color: #aaa; }
+  .premium-tag { color: #dbc06c; }
+
   .ad-wrap {
     margin-top: 1rem;
+  }
+
+  .mobile-offframe-wrap {
+    display: none;
+  }
+
+  .mobile-standard-btn,
+  .mobile-premium-btn {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.1rem;
+    letter-spacing: 0.25em;
+    border-radius: 100px;
+    padding: 0.8rem 2.5rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    width: 100%;
+  }
+
+  .mobile-standard-btn {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    color: #8f8f8f;
+  }
+
+  .mobile-standard-btn:hover:not(.active) {
+    border-color: #666;
+    color: #999;
+  }
+
+  .mobile-standard-btn.active {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+    box-shadow: 0 0 12px rgba(255,255,255,0.6), 0 0 24px rgba(255,255,255,0.2);
+  }
+
+  .mobile-premium-btn {
+    background: #dbc06c;
+    color: #000;
+    border: 1px solid #dbc06c;
+  }
+
+  .mobile-premium-btn:hover:not(.active) { opacity: 0.75; }
+
+  .mobile-premium-btn.active {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+    box-shadow: 0 0 12px rgba(255,255,255,0.6), 0 0 24px rgba(255,255,255,0.2);
   }
 
   .related-bottom-pc {
@@ -351,6 +427,8 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
 
     .card img { width: 100%; margin-top: 1rem; }
 
+    .tier-tag { display: none; }
+
     .text { top: 1rem; left: 1rem; align-items: flex-end; max-width: 50%; }
 
     .body :global(p) {
@@ -369,7 +447,13 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
       padding: 1rem;
     }
 
-    .ad-wrap { padding: 0 1rem; }
+    .ad-wrap { display: none; }
+
+    .mobile-offframe-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 1rem 4rem;
+    }
   }
 </style>
 
@@ -407,10 +491,120 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
     });
   }
 
+  function initMobileOffframeBtns() {
+    const wrap = document.querySelector(".mobile-offframe-wrap") as HTMLElement | null;
+    if (!wrap) return;
+
+    const stdBtn = document.getElementById("mobileStandardBtn") as HTMLButtonElement | null;
+    const premBtn = document.getElementById("mobilePremiumBtn") as HTMLButtonElement | null;
+    if (!stdBtn || !premBtn) return;
+
+    const photoTier = wrap.dataset.photoTier; // "standard" or "premium"
+    const isPremiumUser = localStorage.getItem("offframe_premium") === "1";
+
+    const sbKey = Object.keys(localStorage).find((k) => k.startsWith("sb-") && k.endsWith("-auth-token"));
+    const isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
+    if (!isLoggedIn && localStorage.getItem("offframe") === "1") {
+      localStorage.removeItem("offframe");
+    }
+
+    if (isPremiumUser) {
+      // プレミアム会員: Premiumボタンのみ表示
+      stdBtn.style.display = "none";
+      const isActive = localStorage.getItem("offframe") === "1";
+      premBtn.classList.toggle("active", isActive);
+
+      premBtn.onclick = () => {
+        const sbKey = Object.keys(localStorage).find((k) => k.startsWith("sb-") && k.endsWith("-auth-token"));
+        if (!(sbKey ? !!localStorage.getItem(sbKey) : false)) {
+          (window as any).openAuthModal?.();
+          return;
+        }
+        const next = localStorage.getItem("offframe") === "1" ? "0" : "1";
+        localStorage.setItem("offframe", next);
+        const active = next === "1";
+        premBtn.classList.toggle("active", active);
+
+        // 他ボタン同期
+        ["offframeBtn", "drawerOffframeBtn"].forEach((id) => {
+          const b = document.getElementById(id);
+          if (b) { b.classList.toggle("active", active); b.textContent = "Standard"; }
+        });
+        const drawerPrem = document.getElementById("drawerPremiumBtn");
+        if (drawerPrem) drawerPrem.classList.toggle("active", active);
+        const overlayBtn = document.getElementById("overlayPremiumBtn");
+        if (overlayBtn) overlayBtn.classList.toggle("active", active);
+
+        // 全画像切替
+        const imgs = document.querySelectorAll("img.switchable");
+        imgs.forEach((img) => img.classList.add("blurring"));
+        setTimeout(() => {
+          imgs.forEach((img) => {
+            const el = img as HTMLImageElement;
+            el.src = active ? el.dataset.full! : el.dataset.general!;
+          });
+          setTimeout(() => { imgs.forEach((img) => img.classList.remove("blurring")); }, 100);
+        }, 300);
+      };
+    } else {
+      // 無料会員: 記事のtierに応じてボタンを出し分け
+      if (photoTier === "standard") {
+        // スタンダード記事 → Standardボタン
+        premBtn.style.display = "none";
+        const isActive = localStorage.getItem("offframe") === "1";
+        stdBtn.classList.toggle("active", isActive);
+
+        stdBtn.onclick = () => {
+          const sbKey = Object.keys(localStorage).find((k) => k.startsWith("sb-") && k.endsWith("-auth-token"));
+          if (!(sbKey ? !!localStorage.getItem(sbKey) : false)) {
+            (window as any).openAuthModal?.();
+            return;
+          }
+          const next = localStorage.getItem("offframe") === "1" ? "0" : "1";
+          localStorage.setItem("offframe", next);
+          const active = next === "1";
+          stdBtn.classList.toggle("active", active);
+
+          // 他ボタン同期
+          ["offframeBtn", "drawerOffframeBtn"].forEach((id) => {
+            const b = document.getElementById(id);
+            if (b) { b.classList.toggle("active", active); b.textContent = "Standard"; }
+          });
+          const overlayBtn = document.getElementById("overlayOffframeBtn");
+          if (overlayBtn) overlayBtn.classList.toggle("active", active);
+
+          // Standard画像のみ切替
+          const imgs = document.querySelectorAll('img.switchable[data-tier="standard"]');
+          imgs.forEach((img) => img.classList.add("blurring"));
+          setTimeout(() => {
+            imgs.forEach((img) => {
+              const el = img as HTMLImageElement;
+              el.src = active ? el.dataset.full! : el.dataset.general!;
+            });
+            setTimeout(() => { imgs.forEach((img) => img.classList.remove("blurring")); }, 100);
+          }, 300);
+        };
+      } else {
+        // プレミアム記事 → Premiumボタン（マイページへ誘導）
+        stdBtn.style.display = "none";
+        premBtn.onclick = () => {
+          const sbKey = Object.keys(localStorage).find((k) => k.startsWith("sb-") && k.endsWith("-auth-token"));
+          if (!(sbKey ? !!localStorage.getItem(sbKey) : false)) {
+            (window as any).openAuthModal?.();
+            return;
+          }
+          location.href = "/mypage#premiumCard";
+        };
+      }
+    }
+  }
+
   document.addEventListener("astro:page-load", () => {
     shuffleGrids();
     applyOffframeMode();
+    initMobileOffframeBtns();
   });
   shuffleGrids();
   applyOffframeMode();
+  initMobilePremiumBtn();
 </script>

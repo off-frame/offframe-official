@@ -90,6 +90,11 @@ const { id = "offframeBtn" } = Astro.props;
       const active = next === "1";
       btn.classList.toggle("active", active);
       btn.textContent = "Standard";
+
+      // モバイル記事下ボタンも同期
+      const mobileStd = document.getElementById("mobileStandardBtn");
+      if (mobileStd) mobileStd.classList.toggle("active", active);
+
       switchImages(next);
     };
   }
