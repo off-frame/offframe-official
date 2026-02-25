@@ -6,6 +6,7 @@ import Footer from "../components/Footer.astro";
 import { ViewTransitions } from "astro:transitions";
 import PromoOverlay from "../components/PromoOverlay.astro";
 import AuthModal from "../components/AuthModal.astro";
+import MyPageModal from "../components/MyPageModal.astro";
 
 interface Props {
   title?: string;
@@ -85,6 +86,7 @@ const { title = "OffFrame" } = Astro.props;
     </div>
     <PromoOverlay />
     <AuthModal />
+    <MyPageModal />
   </body>
 </html>
 

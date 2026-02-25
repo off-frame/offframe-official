@@ -5,17 +5,13 @@ import OffFrameButton from "./OffFrameButton.astro";
 <div class="sidenav-content">
   <div class="bottom">
     <a href="/about" class="about-link">About</a>
-        <hr />
+    <hr />
 
     <div class="offframe-area">
-      <p class="offframe-copy">枠を外し、<br>写真の外側に<br>広がる世界へ。</p> 
-      <p class="offframe-title">OFFフレームモード。<br>無料開放中。</p> 
+      <p class="offframe-copy">枠を外し、<br>写真の外側に<br>広がる世界へ。</p>
+      <p class="offframe-title">OFFフレームモード。<br>無料開放中。</p>
       <OffFrameButton id="drawerOffframeBtn" />
     </div>
-
-
-
-
 
     <hr />
 
@@ -26,8 +22,6 @@ import OffFrameButton from "./OffFrameButton.astro";
         <a href="#" class="sns-btn">TikTok</a>
       </div>
     </div>
-
-   
 
     <div class="share-section">
       <span class="section-label">シェア</span>
@@ -58,11 +52,11 @@ import OffFrameButton from "./OffFrameButton.astro";
 
     <div class="auth-area">
       <button class="auth-login-btn auth-nav-btn" onclick="window.openAuthModal?.()">Login</button>
+      <button class="auth-mypage-btn auth-nav-btn" onclick="window.openMyPage?.()" style="display:none;">My Page</button>
       <button class="auth-logout-btn auth-nav-btn" onclick="window.handleLogout?.()" style="display:none;">Logout</button>
     </div>
 
     <p class="copyright">© 2026 OFF FRAME</p>
-
   </div>
 </div>
 
@@ -102,8 +96,8 @@ import OffFrameButton from "./OffFrameButton.astro";
     color: #fff;
     opacity: 0.85;
     margin: 1rem 0 0;
-    text-align: left;
   }
+
   .offframe-title {
     font-family: "Shippori Mincho", serif;
     font-size: 0.8rem;
@@ -112,12 +106,6 @@ import OffFrameButton from "./OffFrameButton.astro";
     color: #fff;
     opacity: 0.85;
     margin: 0 0 0.5rem;
-    text-align: left;
-  }
-  .offframe-mode {
-    font-size: 0.62rem;
-    opacity: 0.5;
-    letter-spacing: 0.15em;
   }
 
   .about-link {
@@ -164,9 +152,9 @@ import OffFrameButton from "./OffFrameButton.astro";
   }
 
   .sns-btn:hover { opacity: 1; }
-  
-  .share-section{display: none;}
-  
+
+  .share-section { display: none; }
+
   .share-links {
     display: flex;
     flex-direction: row;
@@ -190,11 +178,7 @@ import OffFrameButton from "./OffFrameButton.astro";
   }
 
   .share-icon-btn:hover { opacity: 1; }
-
-  .share-icon-btn svg {
-    width: 100%;
-    height: 100%;
-  }
+  .share-icon-btn svg { width: 100%; height: 100%; }
 
   .clock-wrap {
     display: flex;

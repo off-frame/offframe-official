@@ -11,7 +11,6 @@ import OffFrameButton from "./OffFrameButton.astro";
   <div class="bottom">
     <a href="/about" class="about-link">About</a>
 
-
     <hr />
 
     <div class="offframe-area">
@@ -21,8 +20,6 @@ import OffFrameButton from "./OffFrameButton.astro";
     </div>
 
     <hr />
-  
-
 
     <div class="sns-section">
       <span class="section-label">公式SNS</span>
@@ -32,18 +29,15 @@ import OffFrameButton from "./OffFrameButton.astro";
       </div>
     </div>
 
-
     <div class="share-section">
       <span class="section-label">シェア</span>
       <div class="share-links">
         <button class="share-icon-btn" id="shareX" aria-label="Xでシェア">
-          <!-- X (Twitter) logo -->
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
           </svg>
         </button>
         <button class="share-icon-btn" id="shareFb" aria-label="Facebookでシェア">
-          <!-- Facebook logo -->
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
           </svg>
@@ -57,8 +51,8 @@ import OffFrameButton from "./OffFrameButton.astro";
       <span class="clock-label">日本時間</span>
       <div class="clock" id="clock">--:--:--</div>
     </div>
-    <hr />
 
+    <hr />
 
     <a href="/privacy" class="link small">Privacy Policy</a>
 
@@ -68,10 +62,11 @@ import OffFrameButton from "./OffFrameButton.astro";
         <span class="auth-status-text">ログイン中</span>
       </div>
       <button class="auth-login-btn auth-nav-btn" onclick="window.openAuthModal?.()">Login</button>
+      <button class="auth-mypage-btn auth-nav-btn" onclick="window.openMyPage?.()" style="display:none;">My Page</button>
       <button class="auth-logout-btn auth-nav-btn" onclick="window.handleLogout?.()" style="display:none;">Logout</button>
     </div>
-    <p class="copyright">© 2026 OFF FRAME</p>
 
+    <p class="copyright">© 2026 OFF FRAME</p>
   </div>
 </aside>
 
@@ -151,12 +146,6 @@ import OffFrameButton from "./OffFrameButton.astro";
     margin: 0.2rem 0 0.9rem;
   }
 
-  .offframe-mode {
-    font-size: 0.62rem;
-    opacity: 0.5;
-    letter-spacing: 0.15em;
-  }
-
   .about-link {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
@@ -169,7 +158,6 @@ import OffFrameButton from "./OffFrameButton.astro";
 
   .about-link:hover { opacity: 1; }
 
-  /* ============ SNS ============ */
   .sns-section, .share-section {
     display: flex;
     flex-direction: column;
@@ -202,9 +190,8 @@ import OffFrameButton from "./OffFrameButton.astro";
 
   .sns-btn:hover { opacity: 1; }
 
-  /* ============ シェア ============ */
-  .share-section{display: none;}
-  
+  .share-section { display: none; }
+
   .share-links {
     display: flex;
     flex-direction: row;
@@ -228,13 +215,8 @@ import OffFrameButton from "./OffFrameButton.astro";
   }
 
   .share-icon-btn:hover { opacity: 1; }
+  .share-icon-btn svg { width: 100%; height: 100%; }
 
-  .share-icon-btn svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* ============ 時計 ============ */
   .clock-wrap {
     display: flex;
     flex-direction: column;

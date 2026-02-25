@@ -44,6 +44,17 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
   </div>
 </div>
 
+<!-- ログアウト確認 -->
+<div class="logout-overlay" id="logoutOverlay">
+  <div class="logout-dialog">
+    <p class="logout-text">ログアウトしますか？</p>
+    <div class="logout-btns">
+      <button class="logout-btn-yes" id="logoutYes">はい</button>
+      <button class="logout-btn-no" id="logoutNo">いいえ</button>
+    </div>
+  </div>
+</div>
+
 <style>
   .auth-overlay {
     display: none;
@@ -181,6 +192,73 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     color: #555;
     margin: 0;
   }
+
+  /* ============ ログアウト確認 ============ */
+  .logout-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 600;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logout-overlay.open {
+    display: flex;
+  }
+
+  .logout-dialog {
+    background: #fff;
+    padding: 2.5rem 2.5rem 2rem;
+    width: 90%;
+    max-width: 280px;
+    text-align: center;
+  }
+
+  .logout-text {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    color: #000;
+    margin: 0 0 1.5rem;
+  }
+
+  .logout-btns {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .logout-btn-yes {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .logout-btn-yes:hover { opacity: 0.75; }
+
+  .logout-btn-no {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    background: transparent;
+    color: #000;
+    border: 1px solid #ccc;
+    padding: 0.6rem 1.5rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .logout-btn-no:hover { opacity: 0.6; }
 </style>
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -234,7 +312,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       } else {
         showForm("welcomeBackForm");
         updateAuthButtons(supabase);
-        setTimeout(() => closeModal(overlayEl), 2500);
+        // 手動で閉じるのを待つ（自動クローズなし）
       }
     });
 
@@ -259,17 +337,25 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       } else if (data.user && data.user.identities && data.user.identities.length === 0) {
         errorEl.textContent = "このメールアドレスはすでに登録されています。";
       } else {
-        showForm("welcomeForm");
+        overlayEl.classList.remove("open");
         updateAuthButtons(supabase);
-        setTimeout(() => closeModal(overlayEl), 2500);
+        setTimeout(() => window.openMyPage?.(true), 300);
       }
     });
 
-    // ログアウト
-    window.handleLogout = async () => {
-      await supabase.auth.signOut();
-      updateAuthButtons(supabase);
+    // ログアウト確認
+    const logoutOverlay = document.getElementById("logoutOverlay");
+    window.handleLogout = () => {
+      logoutOverlay.classList.add("open");
     };
+    document.getElementById("logoutNo").addEventListener("click", () => {
+      logoutOverlay.classList.remove("open");
+    });
+    document.getElementById("logoutYes").addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      logoutOverlay.classList.remove("open");
+      updateAuthButtons(supabase);
+    });
 
     updateAuthButtons(supabase);
   }
@@ -280,6 +366,9 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       el.style.display = session ? "none" : "block";
     });
     document.querySelectorAll(".auth-logout-btn").forEach(el => {
+      el.style.display = session ? "block" : "none";
+    });
+    document.querySelectorAll(".auth-mypage-btn").forEach(el => {
       el.style.display = session ? "block" : "none";
     });
     document.querySelectorAll("#authStatus").forEach(el => {
