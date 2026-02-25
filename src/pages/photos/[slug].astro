@@ -395,9 +395,15 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
 
   function applyOffframeMode() {
     const isActive = localStorage.getItem("offframe") === "1";
+    const isPremium = localStorage.getItem("offframe_premium") === "1";
     document.querySelectorAll("img.switchable").forEach((img) => {
       const el = img as HTMLImageElement;
-      el.src = isActive ? el.dataset.full! : el.dataset.general!;
+      const tier = el.dataset.tier;
+      if (isActive && (isPremium || tier === "standard")) {
+        el.src = el.dataset.full!;
+      } else {
+        el.src = el.dataset.general!;
+      }
     });
   }
 

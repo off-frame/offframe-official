@@ -10,7 +10,6 @@ import OffFrameButton from "./OffFrameButton.astro";
 
   <div class="bottom">
     <a href="/about" class="about-link">About</a>
-    <a href="/mypage" class="about-link mypage-link">MyPage</a>
 
     <hr />
 
@@ -56,16 +55,17 @@ import OffFrameButton from "./OffFrameButton.astro";
 
     <hr />
 
-    <a href="/privacy" class="link small">Privacy Policy</a>
-
     <div class="auth-area">
+      <a href="/mypage" class="about-link mypage-link auth-mypage-btn" style="display:none;">MyPage</a>
       <button class="auth-status" id="authStatus" style="display:none;" onclick="window.handleLogout?.()">
         <span class="auth-status-dot"></span>
         <span class="auth-status-text">ログイン中</span>
       </button>
-      <button class="auth-login-btn auth-nav-btn" onclick="window.openAuthModal?.()">Login</button>
+      <button class="auth-login-btn auth-nav-btn" onclick="window.openAuthModal?.()">ログイン</button>
     </div>
 
+    <hr />
+    <a href="/privacy" class="link small">Privacy Policy</a>
     <p class="copyright">© 2026 OFF FRAME</p>
   </div>
 </aside>
@@ -187,8 +187,10 @@ import OffFrameButton from "./OffFrameButton.astro";
 
   .about-link:hover { opacity: 1; }
 
-  .mypage-link {
-    margin-top: -0.5rem;
+  .auth-area .mypage-link {
+    font-size: 1rem;
+    margin-top: 0;
+    margin-bottom: 0.4rem;
   }
 
   .sns-section, .share-section {
@@ -321,7 +323,6 @@ import OffFrameButton from "./OffFrameButton.astro";
   .auth-nav-btn {
     background: transparent;
     border: none;
-    border-bottom: 1px solid #333;
     padding: 0.2rem 0;
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
@@ -383,7 +384,7 @@ import OffFrameButton from "./OffFrameButton.astro";
             }, 300);
           });
         } else {
-          location.href = "/mypage";
+          location.href = "/mypage#premiumCard";
         }
       };
     }

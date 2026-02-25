@@ -41,7 +41,7 @@ const { id = "offframeBtn" } = Astro.props;
 
 <script>
   function switchImages(next: string) {
-    const imgs = document.querySelectorAll("img.switchable");
+    const imgs = document.querySelectorAll('img.switchable[data-tier="standard"]');
     imgs.forEach((img) => img.classList.add("blurring"));
     setTimeout(() => {
       imgs.forEach((img) => {
