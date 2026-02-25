@@ -2,22 +2,17 @@
 import OffFrameButton from "./OffFrameButton.astro";
 ---
 
-<aside>
-  <a href="/" class="logo">
-    <span class="logo-main">OFF FRAME</span>
-    <span class="logo-sub">素の、<br>その時間。</span>
-  </a>
-
+<div class="sidenav-content">
   <div class="bottom">
     <a href="/about" class="about-link">About</a>
-    <a href="/mypage" class="about-link mypage-link auth-mypage-link" style="display:none;">My Page</a>
-
+    <a href="/mypage" class="about-link mypage-link">MyPage</a>
     <hr />
 
     <div class="offframe-area">
       <p class="offframe-copy">枠を外し、<br>写真の外側に<br>広がる世界へ。</p>
-      <p class="offframe-title">OFFフレームモード<br>無料開放中。</p>
-      <OffFrameButton id="offframeBtn" />
+      <p class="offframe-title" id="drawerOffframeTitle">OFFフレームモード<br>を無料体験する</p>
+      <OffFrameButton id="drawerOffframeBtn" />
+      <button class="premium-btn" id="drawerPremiumBtn">Premium</button>
     </div>
 
     <hr />
@@ -33,12 +28,12 @@ import OffFrameButton from "./OffFrameButton.astro";
     <div class="share-section">
       <span class="section-label">シェア</span>
       <div class="share-links">
-        <button class="share-icon-btn" id="shareX" aria-label="Xでシェア">
+        <button class="share-icon-btn" id="drawerShareX" aria-label="Xでシェア">
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
           </svg>
         </button>
-        <button class="share-icon-btn" id="shareFb" aria-label="Facebookでシェア">
+        <button class="share-icon-btn" id="drawerShareFb" aria-label="Facebookでシェア">
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
           </svg>
@@ -50,7 +45,7 @@ import OffFrameButton from "./OffFrameButton.astro";
 
     <div class="clock-wrap">
       <span class="clock-label">日本時間</span>
-      <div class="clock" id="clock">--:--:--</div>
+      <div class="clock" id="drawerClock">--:--:--</div>
     </div>
 
     <hr />
@@ -58,60 +53,30 @@ import OffFrameButton from "./OffFrameButton.astro";
     <a href="/privacy" class="link small">Privacy Policy</a>
 
     <div class="auth-area">
-      <div class="auth-status" id="authStatus" style="display:none;">
+      <button class="drawer-auth-status" id="drawerAuthStatus" style="display:none;" onclick="window.handleLogout?.()">
         <span class="auth-status-dot"></span>
         <span class="auth-status-text">ログイン中</span>
-      </div>
+      </button>
       <button class="auth-login-btn auth-nav-btn" onclick="window.openAuthModal?.()">Login</button>
-      <button class="auth-mypage-btn auth-nav-btn" onclick="window.openMyPage?.()" style="display:none;">My Page</button>
-      <button class="auth-logout-btn auth-nav-btn" onclick="window.handleLogout?.()" style="display:none;">Logout</button>
     </div>
 
     <p class="copyright">© 2026 OFF FRAME</p>
   </div>
-</aside>
+</div>
 
 <style>
-  aside {
-    flex: 1;
-    background: #000;
-    display: flex;
-    flex-direction: column;
+  .sidenav-content {
     padding: 1rem;
-    justify-content: space-between;
-    overflow-y: auto;
-  }
-
-  .logo {
-    text-decoration: none;
-    color: #fff;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    opacity: 0.75;
-    transition: opacity 0.3s ease;
-  }
-
-  .logo:hover { opacity: 1; }
-
-  .logo-main {
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 300;
-    font-size: 1.7rem;
-    letter-spacing: 0.3em;
-  }
-
-  .logo-sub {
-    font-family: "Shippori Mincho", serif;
-    font-weight: 400;
-    font-size: 1rem;
-    letter-spacing: 0.5em;
+    height: 100%;
   }
 
   .bottom {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    margin-top: auto;
   }
 
   hr {
@@ -123,45 +88,73 @@ import OffFrameButton from "./OffFrameButton.astro";
   .offframe-area {
     display: flex;
     flex-direction: column;
-    gap: 0rem;
-    margin-bottom: 0.9rem;
+    gap: 0.7rem;
+    margin-bottom: 1.5rem;
   }
 
   .offframe-copy {
     font-family: "Shippori Mincho", serif;
-    font-size: 0.95rem;
-    line-height: 2;
-    letter-spacing: 0.18em;
+    font-size: 1rem;
+    line-height: 1.9;
+    letter-spacing: 0.2em;
     color: #fff;
     opacity: 0.85;
-    margin: 0.6rem 0 0;
+    margin: 1rem 0 0;
   }
 
   .offframe-title {
     font-family: "Shippori Mincho", serif;
-    font-size: 0.75rem;
-    line-height: 1.8;
-    letter-spacing: 0.09em;
+    font-size: 0.8rem;
+    line-height: 1.9;
+    letter-spacing: 0.1em;
     color: #fff;
     opacity: 0.85;
-    margin: 0.2rem 0 0.9rem;
+    margin: 0 0 0.5rem;
   }
+
+  .premium-btn {
+    display: block;
+    width: 100%;
+    background: #dbc06c;
+    color: #000;
+    text-align: center;
+    text-decoration: none;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    padding: 0.7rem 0.75rem;
+    border: none;
+    border-radius: 100px;
+    box-sizing: border-box;
+    transition: opacity 0.25s ease;
+    margin-top: 0.5rem;
+    cursor: pointer;
+  }
+
+  .premium-btn:hover { opacity: 0.75; }
+
+  .premium-btn.active {
+    background: #fff;
+    color: #000;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6), 0 0 24px rgba(255, 255, 255, 0.2);
+  }
+
 
   .about-link {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     letter-spacing: 0.2em;
     text-decoration: none;
     color: #fff;
     opacity: 0.8;
+    margin-top: 5rem;
   }
 
   .about-link:hover { opacity: 1; }
 
   .mypage-link {
-    font-size: 1rem;
-    opacity: 0.6;
     margin-top: -0.5rem;
   }
 
@@ -182,13 +175,13 @@ import OffFrameButton from "./OffFrameButton.astro";
   .sns-links {
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
+    gap: 0.5rem;
   }
 
   .sns-btn {
     font-family: "Cormorant Garamond", serif;
-    font-weight: 300;
-    font-size: 0.95rem;
+    font-weight: 100;
+    font-size: 1.3rem;
     letter-spacing: 0.1em;
     text-decoration: none;
     color: #fff;
@@ -202,7 +195,7 @@ import OffFrameButton from "./OffFrameButton.astro";
   .share-links {
     display: flex;
     flex-direction: row;
-    gap: 0.75rem;
+    gap: 1.3rem;
     align-items: center;
   }
 
@@ -213,8 +206,8 @@ import OffFrameButton from "./OffFrameButton.astro";
     opacity: 0.5;
     cursor: pointer;
     padding: 0;
-    width: 16px;
-    height: 16px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -227,7 +220,6 @@ import OffFrameButton from "./OffFrameButton.astro";
   .clock-wrap {
     display: flex;
     flex-direction: column;
-    gap: 0rem;
   }
 
   .clock-label {
@@ -263,11 +255,18 @@ import OffFrameButton from "./OffFrameButton.astro";
     gap: 0.4rem;
   }
 
-  .auth-status {
+  .drawer-auth-status {
     display: flex;
     align-items: center;
     gap: 0.4rem;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: opacity 0.2s;
   }
+
+  .drawer-auth-status:hover { opacity: 0.7; }
 
   .auth-status-dot {
     width: 5px;
@@ -311,12 +310,50 @@ import OffFrameButton from "./OffFrameButton.astro";
     color: #fff;
     opacity: 0.4;
     margin: 0;
+    padding-bottom: 3rem;
   }
 </style>
 
-<script>
-  function initSideNav() {
-    const clock = document.getElementById("clock");
+<script is:inline>
+  function initDrawer() {
+    var offframeTitle = document.getElementById("drawerOffframeTitle");
+    var isPremium = localStorage.getItem("offframe_premium") === "1";
+    if (offframeTitle && isPremium) {
+      offframeTitle.style.display = "none";
+    }
+
+    var premiumBtn = document.getElementById("drawerPremiumBtn");
+    if (premiumBtn) {
+      if (isPremium) {
+        var isActive = localStorage.getItem("offframe") === "1";
+        premiumBtn.classList.toggle("active", isActive);
+      }
+      premiumBtn.onclick = function() {
+        var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
+        var isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
+        if (!isLoggedIn) {
+          window.openAuthModal?.();
+          return;
+        }
+        if (localStorage.getItem("offframe_premium") === "1") {
+          var next = localStorage.getItem("offframe") === "1" ? "0" : "1";
+          localStorage.setItem("offframe", next);
+          var active = next === "1";
+          premiumBtn.classList.toggle("active", active);
+          document.querySelectorAll("img.switchable").forEach(function(img) {
+            img.classList.add("blurring");
+            setTimeout(function() {
+              img.src = active ? img.dataset.full : img.dataset.general;
+              setTimeout(function() { img.classList.remove("blurring"); }, 100);
+            }, 300);
+          });
+        } else {
+          location.href = "/mypage";
+        }
+      };
+    }
+
+    const clock = document.getElementById("drawerClock");
     if (clock) {
       setInterval(() => {
         clock.textContent = new Date().toLocaleTimeString("ja-JP", {
@@ -326,24 +363,24 @@ import OffFrameButton from "./OffFrameButton.astro";
       }, 1000);
     }
 
-    const shareX = document.getElementById("shareX");
+    const shareX = document.getElementById("drawerShareX");
     if (shareX) {
       shareX.onclick = () => {
         const url = encodeURIComponent(location.href);
         const text = encodeURIComponent(document.title);
-        window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, "_blank");
+        window.open("https://twitter.com/intent/tweet?url=" + url + "&text=" + text, "_blank");
       };
     }
 
-    const shareFb = document.getElementById("shareFb");
+    const shareFb = document.getElementById("drawerShareFb");
     if (shareFb) {
       shareFb.onclick = () => {
         const url = encodeURIComponent(location.href);
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+        window.open("https://www.facebook.com/sharer/sharer.php?u=" + url, "_blank");
       };
     }
   }
 
-  document.addEventListener("astro:page-load", initSideNav);
-  initSideNav();
+  document.addEventListener("astro:page-load", initDrawer);
+  initDrawer();
 </script>

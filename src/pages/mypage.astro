@@ -5,50 +5,50 @@ const SUPABASE_URL = "https://gupwbkyehfyrymybrhee.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1cHdia3llaGZ5cnlteWJyaGVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5MzAzMTgsImV4cCI6MjA4NzUwNjMxOH0.U0nVl7YCwckRRHmCIUqTvxns15L7rEQcZ28OOtxTAU0";
 ---
 
-<BaseLayout title="My Page | OFF FRAME">
+<BaseLayout title="MyPage | OFF FRAME">
   <main>
     <div class="card">
       <div class="content">
 
-        <h1 class="heading">My Page</h1>
+        <h1 class="heading">MyPage</h1>
 
         <!-- 未ログイン -->
         <div id="stateGuest">
           <p class="desc">ログインが必要です。</p>
-          <button class="cta-btn" onclick="window.openAuthModal?.()">ログイン / 新規登録</button>
+          <button class="guest-btn" onclick="window.openAuthModal?.()">ログイン / 新規登録</button>
         </div>
 
         <!-- ログイン済み・未課金 -->
         <div id="stateFree" style="display:none;">
           <div class="plan-box">
             <p class="plan-label">現在のプラン</p>
-            <p class="plan-name">無料会員</p>
+            <p class="plan-name">無料会員<br><span class="plan-name-sub">OFF FRAME Standard</span></p>
+            <p class="plan-desc">数枚のオフフレーム写真を閲覧できます。<br>すべての写真にアクセスするにはプレミアム登録が必要です。</p>
           </div>
 
           <div class="premium-card">
-            <p class="premium-label">OFF FRAME Premium</p>
-            <h2 class="premium-title">全画像に、フルアクセス。</h2>
-            <p class="premium-desc">素の写真を、余すことなく。<br>月額500円でプレミアム会員に。</p>
+            <h2 class="premium-catch">全画像に、<br>フルアクセス。</h2>
+            <p class="premium-heading">OFF FRAME Premium</p>
+            <p class="premium-desc">素の写真を、余すことなく。</p>
             <div class="price-row">
               <span class="price-amount">¥500</span>
               <span class="price-period">/ 月</span>
             </div>
             <button class="cta-btn" id="subscribeBtn">プレミアムに登録する</button>
           </div>
+
+          <button class="logout-link" onclick="window.handleLogout?.()">ログアウト</button>
         </div>
 
         <!-- ログイン済み・プレミアム -->
-        <div id="statePremium" style="display:none;">
-          <div class="plan-box">
-            <p class="plan-label">現在のプラン</p>
-            <div class="plan-row">
-              <span class="status-dot"></span>
-              <p class="plan-name premium">OFF FRAME Premium</p>
-            </div>
-            <p class="plan-sub">月額 ¥500 / 全画像フルアクセス</p>
+        <div id="statePremium" class="state-premium" style="display:none;">
+          <div class="premium-block">
+            <p class="premium-plan-label">現在のプラン</p>
+            <h2 class="premium-plan-name">OFF FRAME Premium</h2>
+            <p class="premium-plan-desc">全画像のオフフレームにフルアクセス。<br>素の写真を、余すことなく。</p>
+            <button class="cancel-btn" id="cancelBtn">解約する</button>
           </div>
-
-          <button class="cancel-btn" id="cancelBtn">解約する</button>
+          <button class="logout-link" onclick="window.handleLogout?.()">ログアウト</button>
         </div>
 
       </div>
@@ -98,19 +98,50 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     line-height: 2;
   }
 
+  .state-guest {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .guest-btn {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 0.75rem 2rem;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.95rem;
+    letter-spacing: 0.25em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .guest-btn:hover { opacity: 0.75; }
+
+  .guest-btn-outline {
+    background: transparent;
+    color: #000;
+    border: 1px solid #ccc;
+  }
+
+  .guest-btn-outline:hover { opacity: 0.6; }
+
   /* ============ プランボックス ============ */
   .plan-box {
-    border: 1px solid #eee;
+    background: #efefef;
+    border: none;
     padding: 1.5rem 2rem;
     margin-bottom: 2rem;
   }
 
   .plan-label {
-    font-family: "Cormorant Garamond", serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    color: #aaa;
-    margin: 0 0 0.5rem;
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.22em;
+    color: #666;
+    margin: 0 0 0.75rem;
   }
 
   .plan-row {
@@ -128,15 +159,32 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
   }
 
   .plan-name {
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 300;
+    font-family: "Shippori Mincho", serif;
+    font-weight: 400;
     font-size: 1.3rem;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.15em;
     color: #000;
     margin: 0;
+    line-height: 1.8;
+  }
+
+  .plan-name-sub {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    color: #000;
   }
 
   .plan-name.premium { color: #000; }
+
+  .plan-desc {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.78rem;
+    line-height: 2;
+    color: #888;
+    margin: 0.75rem 0 0;
+  }
 
   .plan-sub {
     font-family: "Shippori Mincho", serif;
@@ -152,22 +200,24 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     color: #fff;
   }
 
-  .premium-label {
-    font-family: "Cormorant Garamond", serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.3em;
+  .premium-catch {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 300;
+    font-size: 1.8rem;
+    letter-spacing: 0.12em;
+    line-height: 1.6;
     color: #fff;
-    opacity: 0.5;
     margin: 0 0 0.5rem;
   }
 
-  .premium-title {
+  .premium-heading {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
     font-size: 1.6rem;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.25em;
     color: #fff;
-    margin: 0 0 1rem;
+    opacity: 0.8;
+    margin: 0 0 0.6rem;
   }
 
   .premium-desc {
@@ -204,7 +254,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
   /* ============ ボタン ============ */
   .cta-btn {
     display: inline-block;
-    background: #fff;
+    background: #dbc06c;
     color: #000;
     border: none;
     padding: 0.85rem 2rem;
@@ -218,20 +268,92 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
   .cta-btn:hover { opacity: 0.75; }
 
+  .premium-block {
+    background: #000;
+    border: none;
+    padding: 2rem;
+  }
+
+  .premium-plan-label {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.22em;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 0 0.75rem;
+  }
+
+  .premium-plan-name {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.8rem;
+    letter-spacing: 0.15em;
+    color: #dbc06c;
+    margin: 0 0 1rem;
+    line-height: 1.2;
+  }
+
+  .premium-plan-desc {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.85rem;
+    line-height: 2.2;
+    color: #fff;
+    opacity: 0.6;
+    margin: 0 0 1.5rem;
+  }
+
+  .state-premium {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .cancel-btn {
     background: transparent;
     border: none;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     padding: 0.2rem 0;
     font-family: "Shippori Mincho", serif;
     font-size: 0.75rem;
-    color: #aaa;
+    color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
     letter-spacing: 0.1em;
     transition: color 0.2s;
   }
 
   .cancel-btn:hover { color: #000; }
+
+  .logout-btn-large {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 2.5rem;
+  }
+
+  .logout-btn-large:hover { opacity: 0.75; }
+
+  .logout-link {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    padding: 0.2rem 0;
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.78rem;
+    color: #aaa;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: color 0.2s;
+    margin-top: 2rem;
+    align-self: flex-start;
+  }
+
+  .logout-link:hover { color: #000; }
 
   /* ============ 解約確認 ============ */
   .cancel-overlay {
@@ -308,6 +430,10 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     main { padding: 1.5rem; }
     .card { padding: 3rem 2rem; }
     .heading { font-size: 1.1rem; }
+    .premium-catch { font-size: 1.4rem; }
+    .premium-heading { font-size: 1.3rem; }
+    .premium-card { padding: 1.5rem 2rem; }
+    .premium-plan-name { font-size: 1.4rem; }
   }
 </style>
 
@@ -324,7 +450,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
       document.getElementById("stateGuest").style.display   = !session ? "block" : "none";
       document.getElementById("stateFree").style.display    = session && !isPremium ? "block" : "none";
-      document.getElementById("statePremium").style.display = session && isPremium  ? "block" : "none";
+      document.getElementById("statePremium").style.display = session && isPremium  ? "flex" : "none";
     }
 
     updateState();

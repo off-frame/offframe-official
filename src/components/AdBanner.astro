@@ -12,6 +12,18 @@ const { variant = "horizontal" } = Astro.props;
   </slot>
 </div>
 
+<script is:inline>
+  function hideAdsForPremium() {
+    if (localStorage.getItem("offframe_premium") === "1") {
+      document.querySelectorAll(".ad-banner").forEach(function(el) {
+        el.style.display = "none";
+      });
+    }
+  }
+  document.addEventListener("astro:page-load", hideAdsForPremium);
+  hideAdsForPremium();
+</script>
+
 <style>
   .ad-banner {
     background: #fff;

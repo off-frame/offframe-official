@@ -10,14 +10,15 @@ import OffFrameButton from "./OffFrameButton.astro";
 
   <div class="bottom">
     <a href="/about" class="about-link">About</a>
-    <a href="/mypage" class="about-link mypage-link auth-mypage-link" style="display:none;">My Page</a>
+    <a href="/mypage" class="about-link mypage-link">MyPage</a>
 
     <hr />
 
     <div class="offframe-area">
       <p class="offframe-copy">枠を外し、<br>写真の外側に<br>広がる世界へ。</p>
-      <p class="offframe-title">OFFフレームモード<br>無料開放中。</p>
+      <p class="offframe-title" id="sidenavOffframeTitle">OFFフレームモード<br>を無料体験する</p>
       <OffFrameButton id="offframeBtn" />
+      <button class="premium-btn" id="sidenavPremiumBtn">Premium</button>
     </div>
 
     <hr />
@@ -58,13 +59,11 @@ import OffFrameButton from "./OffFrameButton.astro";
     <a href="/privacy" class="link small">Privacy Policy</a>
 
     <div class="auth-area">
-      <div class="auth-status" id="authStatus" style="display:none;">
+      <button class="auth-status" id="authStatus" style="display:none;" onclick="window.handleLogout?.()">
         <span class="auth-status-dot"></span>
         <span class="auth-status-text">ログイン中</span>
-      </div>
+      </button>
       <button class="auth-login-btn auth-nav-btn" onclick="window.openAuthModal?.()">Login</button>
-      <button class="auth-mypage-btn auth-nav-btn" onclick="window.openMyPage?.()" style="display:none;">My Page</button>
-      <button class="auth-logout-btn auth-nav-btn" onclick="window.handleLogout?.()" style="display:none;">Logout</button>
     </div>
 
     <p class="copyright">© 2026 OFF FRAME</p>
@@ -147,6 +146,35 @@ import OffFrameButton from "./OffFrameButton.astro";
     margin: 0.2rem 0 0.9rem;
   }
 
+  .premium-btn {
+    display: block;
+    width: 100%;
+    background: #dbc06c;
+    color: #000;
+    text-align: center;
+    text-decoration: none;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    padding: 0.7rem 0.75rem;
+    border: none;
+    border-radius: 100px;
+    box-sizing: border-box;
+    transition: opacity 0.25s ease;
+    margin-top: 0.5rem;
+    cursor: pointer;
+  }
+
+  .premium-btn:hover { opacity: 0.75; }
+
+  .premium-btn.active {
+    background: #fff;
+    color: #000;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6), 0 0 24px rgba(255, 255, 255, 0.2);
+  }
+
+
   .about-link {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
@@ -160,8 +188,6 @@ import OffFrameButton from "./OffFrameButton.astro";
   .about-link:hover { opacity: 1; }
 
   .mypage-link {
-    font-size: 1rem;
-    opacity: 0.6;
     margin-top: -0.5rem;
   }
 
@@ -267,7 +293,14 @@ import OffFrameButton from "./OffFrameButton.astro";
     display: flex;
     align-items: center;
     gap: 0.4rem;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: opacity 0.2s;
   }
+
+  .auth-status:hover { opacity: 0.7; }
 
   .auth-status-dot {
     width: 5px;
@@ -316,6 +349,45 @@ import OffFrameButton from "./OffFrameButton.astro";
 
 <script>
   function initSideNav() {
+    const offframeTitle = document.getElementById("sidenavOffframeTitle");
+    const isPremium = localStorage.getItem("offframe_premium") === "1";
+    if (offframeTitle && isPremium) {
+      offframeTitle.style.display = "none";
+    }
+
+    const premiumBtn = document.getElementById("sidenavPremiumBtn");
+    if (premiumBtn) {
+      if (isPremium) {
+        const isActive = localStorage.getItem("offframe") === "1";
+        premiumBtn.classList.toggle("active", isActive);
+      }
+      premiumBtn.onclick = () => {
+        const sbKey = Object.keys(localStorage).find((k: string) => k.startsWith("sb-") && k.endsWith("-auth-token"));
+        const isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
+        if (!isLoggedIn) {
+          (window as any).openAuthModal?.();
+          return;
+        }
+        if (localStorage.getItem("offframe_premium") === "1") {
+          // プレミアム: OFFフレーム切替
+          const next = localStorage.getItem("offframe") === "1" ? "0" : "1";
+          localStorage.setItem("offframe", next);
+          const active = next === "1";
+          premiumBtn.classList.toggle("active", active);
+          document.querySelectorAll("img.switchable").forEach((img: Element) => {
+            img.classList.add("blurring");
+            setTimeout(() => {
+              const el = img as HTMLImageElement;
+              el.src = active ? el.dataset.full! : el.dataset.general!;
+              setTimeout(() => img.classList.remove("blurring"), 100);
+            }, 300);
+          });
+        } else {
+          location.href = "/mypage";
+        }
+      };
+    }
+
     const clock = document.getElementById("clock");
     if (clock) {
       setInterval(() => {

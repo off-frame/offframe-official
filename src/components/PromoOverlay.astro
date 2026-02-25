@@ -21,8 +21,12 @@
 
     <div class="po-text">
       <p class="po-catch">枠を外し、<br>写真の外側に<br>広がる世界へ。</p>
-      <p class="po-note">OFFフレームモード、無料開放中。<br>サイドメニューのボタンから切り替えられます。</p>
-      <button class="po-btn" id="overlayOffframeBtn" onclick="window.toggleOverlayOffframe()">OFF FRAME MODE</button>
+      <p class="po-note" id="promoNoteLoggedIn" style="display:none;">OFFフレームモード、無料開放中。<br>サイドメニューのボタンから切り替えられます。</p>
+      <p class="po-note po-note-guest" id="promoNoteGuest">OFFフレームモードは、<br>ログインするとご使用いただけます。</p>
+      <div class="po-btns">
+        <button class="po-btn" id="overlayOffframeBtn" onclick="window.handleOverlayStandard()">Standard</button>
+        <button class="po-btn po-btn-premium" id="overlayPremiumBtn" onclick="window.handleOverlayPremium()">Premium</button>
+      </div>
     </div>
   </div>
 </div>
@@ -31,7 +35,7 @@
   .po-inner {
     background: #000;
     border: 1px solid #888888;
-    width: min(900px, 94vw);
+    width: min(900px, 82vw);
     position: relative;
     padding: 2rem;
     display: flex;
@@ -106,20 +110,69 @@
     flex: 1;
   }
 
+  .po-note-guest {
+    font-size: 0.95rem;
+    line-height: 2.2;
+    letter-spacing: 0.1em;
+    color: #ccc;
+  }
+
   .po-btn {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 1.4rem;
+    font-size: 0.85rem;
     letter-spacing: 0.2em;
+    background: #fff;
+    border: none;
+    color: #000;
+    padding: 0.5rem 1.5rem;
+    cursor: pointer;
+    border-radius: 0;
+    transition: opacity 0.25s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .po-btn:hover { opacity: 0.75; }
+
+  .po-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .po-btn-premium {
+    background: #dbc06c !important;
+    color: #000 !important;
+    border-radius: 100px;
+    text-decoration: none;
+    text-align: center;
+    font-size: 1.1rem !important;
+    padding: 0.8rem 2.5rem !important;
+    letter-spacing: 0.25em !important;
+  }
+
+  #overlayOffframeBtn {
     background: #2a2a2a;
     border: 1px solid #444;
     color: #8f8f8f;
-    padding: 0.8rem 2.5rem;
-    cursor: pointer;
     border-radius: 100px;
-    transition: all 0.25s ease;
-    flex-shrink: 0;
-    white-space: nowrap;
+    font-size: 1.1rem;
+    padding: 0.8rem 2.5rem;
+    letter-spacing: 0.25em;
+  }
+
+  #overlayOffframeBtn:hover {
+    border-color: #666;
+    color: #999;
+  }
+
+  #overlayOffframeBtn.active {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6), 0 0 24px rgba(255, 255, 255, 0.2);
   }
 
   .po-btn.active {
@@ -146,7 +199,12 @@
     }
     .po-catch { white-space: normal; }
     .po-note { text-align: center; }
-    .po-btn { width: 60%; padding: 0.7rem 0;}
+    .po-btns { width: 55%; align-self: center; }
+    .po-btns .po-btn,
+    .po-btns #overlayOffframeBtn,
+    .po-btns .po-btn-premium { width: 100%; padding: 0.75rem 0 !important; font-size: 0.95rem !important; box-sizing: border-box; border: 1px solid transparent; }
+    .po-btns #overlayOffframeBtn { border-color: #444; }
+    .po-btns .po-btn-premium { border-color: #dbc06c; }
     .po-label {top: 0.5rem; font-size: 0.7rem;}
 
   }
@@ -158,12 +216,66 @@
     if (!el) return;
     el.style.display = "flex";
     document.body.style.overflow = "hidden";
-    // ボタン状態を同期
-    var btn = document.getElementById("overlayOffframeBtn");
-    if (btn) {
-      var isActive = localStorage.getItem("offframe") === "1";
-      btn.classList.toggle("active", isActive);
-      btn.textContent = isActive ? "OFF Frame" : "ON Frame";
+
+    // ログイン状態チェック
+    var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
+    var isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
+
+    var offBtn = document.getElementById("overlayOffframeBtn");
+    var premBtn = document.getElementById("overlayPremiumBtn");
+    var noteLoggedIn = document.getElementById("promoNoteLoggedIn");
+    var noteGuest = document.getElementById("promoNoteGuest");
+    var isPremium = localStorage.getItem("offframe_premium") === "1";
+
+    if (isLoggedIn) {
+      if (noteLoggedIn) { noteLoggedIn.style.display = ""; }
+      if (noteGuest) { noteGuest.style.display = "none"; }
+      if (isPremium) {
+        if (offBtn) { offBtn.style.display = "none"; }
+        if (premBtn) {
+          var isActive = localStorage.getItem("offframe") === "1";
+          premBtn.classList.toggle("active", isActive);
+        }
+      } else {
+        if (offBtn) {
+          offBtn.style.display = "";
+          var isActive = localStorage.getItem("offframe") === "1";
+          offBtn.classList.toggle("active", isActive);
+        }
+        if (premBtn) { premBtn.style.display = ""; }
+      }
+    } else {
+      if (noteLoggedIn) { noteLoggedIn.style.display = "none"; }
+      if (noteGuest) { noteGuest.style.display = ""; }
+    }
+  };
+
+  function isUserLoggedIn() {
+    var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
+    return sbKey ? !!localStorage.getItem(sbKey) : false;
+  }
+
+  window.handleOverlayStandard = function() {
+    if (!isUserLoggedIn()) {
+      window.closePromoOverlay();
+      window.openAuthModal?.();
+      return;
+    }
+    window.toggleOverlayOffframe();
+  };
+
+  window.handleOverlayPremium = function() {
+    if (!isUserLoggedIn()) {
+      window.closePromoOverlay();
+      window.openAuthModal?.();
+      return;
+    }
+    if (localStorage.getItem("offframe_premium") === "1") {
+      // プレミアム: OFFフレーム切替
+      window.toggleOverlayOffframe();
+    } else {
+      window.closePromoOverlay();
+      location.href = "/mypage";
     }
   };
 
@@ -183,7 +295,7 @@
     var btn = document.getElementById("overlayOffframeBtn");
     if (btn) {
       btn.classList.toggle("active", active);
-      btn.textContent = active ? "OFF Frame" : "ON Frame";
+      btn.textContent = "Standard";
     }
 
     // サイドナビのボタンも同期
@@ -191,7 +303,7 @@
       var b = document.getElementById(id);
       if (b) {
         b.classList.toggle("active", active);
-        b.textContent = active ? "OFF Frame" : "ON Frame";
+        b.textContent = "Standard";
       }
     });
 
