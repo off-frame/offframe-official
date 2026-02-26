@@ -208,6 +208,7 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
   .main-col {
     flex: 1;
     min-width: 0;
+    max-width: 600px;
   }
 
   .card {
@@ -387,33 +388,33 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
   .related-side > :global(a:nth-child(n+7)) { display: block; }
 
   @media (min-width: 850px) {
-    .related-side { display: block; columns: 1; width: 300px; }
+    .related-side { display: block; columns: 1; width: 350px; }
   }
 
   @media (min-width: 1000px) {
-    .related-side { width: 350px; }
+    .related-side { width: 400px; }
   }
 
   @media (min-width: 1200px) {
-    .related-side { columns: 2; width: 450px; }
+    .related-side { columns: 2; width: 550px; }
     .related-side > :global(a:nth-child(n+13)) { display: none; }
   }
 
   @media (min-width: 1300px) {
-    .related-side { width: 500px; }
-  }
-
-  @media (min-width: 1400px) {
     .related-side { width: 600px; }
   }
 
+  @media (min-width: 1400px) {
+    .related-side { width: 700px; }
+  }
+
   @media (min-width: 1500px) {
-    .related-side { columns: 3; width: 700px; }
+    .related-side { columns: 3; width: 800px; }
     .related-side > :global(a:nth-child(n+13)) { display: block; }
   }
 
   @media (min-width: 1600px) {
-    .related-side { width: 750px; }
+    .related-side { width: 900px; }
   }
 
   @media (max-width: 728px) {

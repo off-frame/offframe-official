@@ -155,12 +155,10 @@
 
     const subscribeBtn = document.getElementById("premiumModalSubscribeBtn");
     subscribeBtn?.addEventListener("click", () => {
-      // TODO: Stripe実装後にここで決済を開始
-      // 決済完了後に以下を実行:
-      // localStorage.setItem("offframe_premium", "1");
-      // document.dispatchEvent(new CustomEvent("offframe:premium"));
-      // overlay.classList.remove("open");
-      alert("Stripe実装後にここで決済を開始します");
+      // TODO: Stripe実装後に差し替え（現在はテスト用）
+      localStorage.setItem("offframe_premium", "1");
+      sessionStorage.setItem("show_premium_welcome", "1");
+      location.href = "/";
     });
 
     // ログイン時にPremiumModalも閉じる

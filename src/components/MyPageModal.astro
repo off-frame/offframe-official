@@ -43,11 +43,20 @@
 <!-- 解約確認 -->
 <div class="cancel-overlay" id="cancelOverlay">
   <div class="cancel-dialog">
-    <p class="cancel-text">解約しますか？<br><span class="cancel-sub">解約後は即時アクセスが停止されます。</span></p>
+    <p class="cancel-text">解約しますか？<br><span class="cancel-sub">解約後は即時アクセスが<br>停止されます。</span></p>
     <div class="cancel-btns">
       <button class="cancel-btn-yes" id="cancelYes">解約する</button>
       <button class="cancel-btn-no" id="cancelNo">戻る</button>
     </div>
+  </div>
+</div>
+
+<!-- 解約完了 -->
+<div class="cancel-overlay" id="cancelDoneOverlay">
+  <div class="cancel-done-dialog">
+    <p class="cancel-done-title">解約完了いたしました。</p>
+    <p class="cancel-done-message">お楽しみいただき<br>ありがとうございました。</p>
+    <p class="cancel-done-message">今後ともOFF FRAMEを<br>よろしくお願いいたします。</p>
   </div>
 </div>
 
@@ -314,6 +323,31 @@
   }
 
   .cancel-btn-no:hover { opacity: 0.6; }
+
+  /* ============ 解約完了 ============ */
+  .cancel-done-dialog {
+    background: #fff;
+    padding: 2.5rem 2.5rem 2rem;
+    width: 90%;
+    max-width: 320px;
+    text-align: center;
+  }
+
+  .cancel-done-title {
+    font-family: "Shippori Mincho", serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    color: #000;
+    margin: 0 0 1.5rem;
+  }
+
+  .cancel-done-message {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.8rem;
+    line-height: 2;
+    color: #555;
+    margin: 0 0 0.5rem;
+  }
 </style>
 
 <script is:inline>
@@ -353,8 +387,10 @@
 
     // プレミアム登録ボタン（Stripe実装後に差し替え）
     document.getElementById("mypageSubscribeBtn").addEventListener("click", () => {
-      // TODO: Stripe決済フローへ
-      alert("Stripe実装後にここで決済を開始します");
+      // TODO: Stripe実装後に差し替え（現在はテスト用）
+      localStorage.setItem("offframe_premium", "1");
+      sessionStorage.setItem("show_premium_welcome", "1");
+      location.href = "/";
     });
 
     // 解約ボタン
@@ -371,7 +407,15 @@
       localStorage.removeItem("offframe_premium");
       cancelOverlay.classList.remove("open");
       overlay.classList.remove("open");
-      alert("解約しました");
+      var doneOverlay = document.getElementById("cancelDoneOverlay");
+      doneOverlay.classList.add("open");
+      var cancelTimer = setTimeout(function() { location.href = "/"; }, 6000);
+      doneOverlay.addEventListener("click", function(e) {
+        if (e.target === doneOverlay) {
+          clearTimeout(cancelTimer);
+          doneOverlay.classList.remove("open");
+        }
+      });
     });
   }
 

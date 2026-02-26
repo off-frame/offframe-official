@@ -52,18 +52,22 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       <p class="auth-message confirm-note">メール内のリンクをクリックして<br>登録を完了してください。</p>
     </div>
 
-    <!-- ようこそ（メール確認後のログイン） -->
+    <!-- 新規登録完了（メール確認後の初回ログイン） -->
     <div class="auth-form auth-greeting" id="welcomeForm" style="display:none;">
-      <p class="auth-greeting-sub">OFF FRAME へ</p>
-      <h2 class="auth-title">ようこそ。</h2>
-      <p class="auth-message">素の、その時間。<br>ごゆっくりお楽しみください。</p>
+      <h2 class="auth-title welcome-title-main">OFF FRAME へようこそ。</h2>
+      <p class="auth-message">サイドメニューのボタンを押すと、<br>スタンダード写真を<br>オフフレームモードで<br>閲覧いただけます。</p>
     </div>
 
-    <!-- おかえり（ログイン完了） -->
+    <!-- ログイン（無料会員） -->
     <div class="auth-form auth-greeting" id="welcomeBackForm" style="display:none;">
-      <p class="auth-greeting-sub">OFF FRAME へ</p>
-      <h2 class="auth-title">おかえりなさいませ。</h2>
-      <p class="auth-message">素の、その時間。<br>ごゆっくりお楽しみください。</p>
+      <h2 class="auth-title welcome-title-main">ログインしました。</h2>
+      <p class="auth-message">サイドメニューのボタンを押すと、<br>スタンダード写真を<br>オフフレームモードで<br>閲覧いただけます。</p>
+    </div>
+
+    <!-- プレミアム会員ログイン -->
+    <div class="auth-form auth-greeting" id="welcomePremiumForm" style="display:none;">
+      <h2 class="auth-title welcome-title-main">OFF FRAME PREMIUM<br>にようこそ。</h2>
+      <p class="auth-message">サイドメニューのボタンを押すと、<br>すべての写真を<br>オフフレームモードで<br>閲覧いただけます。</p>
     </div>
 
   </div>
@@ -229,6 +233,20 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     opacity: 0.7;
   }
 
+  .welcome-title-main {
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 320px) {
+    .welcome-title-main {
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+    }
+  }
+
   .auth-sub-text {
     font-family: "Shippori Mincho", serif;
     font-size: 0.78rem;
@@ -305,7 +323,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script define:vars={{ SUPABASE_URL, SUPABASE_KEY }}>
   function showForm(id) {
-    ["loginForm", "signupForm", "resetForm", "resetSentForm", "confirmEmailForm", "welcomeForm", "welcomeBackForm"].forEach(f => {
+    ["loginForm", "signupForm", "resetForm", "resetSentForm", "confirmEmailForm", "welcomeForm", "welcomeBackForm", "welcomePremiumForm"].forEach(f => {
       document.getElementById(f).style.display = "none";
     });
     document.getElementById(id).style.display = "block";
@@ -371,12 +389,26 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
         errorEl.textContent = "正しいメールアドレスを入力してください。";
         return;
       }
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         errorEl.textContent = "メールアドレスまたはパスワードが正しくありません";
       } else {
-        closeModal(overlayEl);
         updateAuthButtons(supabase);
+
+        // 初回ログイン判定（welcomed フラグがまだない）
+        var isFirstLogin = !localStorage.getItem("offframe_welcomed");
+        // プレミアム判定
+        var isPremium = localStorage.getItem("offframe_premium") === "1";
+
+        if (isPremium) {
+          showForm("welcomePremiumForm");
+        } else if (isFirstLogin) {
+          showForm("welcomeForm");
+          localStorage.setItem("offframe_welcomed", "1");
+        } else {
+          showForm("welcomeBackForm");
+        }
+
         document.dispatchEvent(new CustomEvent("offframe:loggedin"));
       }
     });
@@ -447,6 +479,23 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       document.dispatchEvent(new CustomEvent("offframe:loggedout"));
       setTimeout(() => { location.href = "/"; }, 2000);
     });
+
+    // プレミアム加入後、TOPに戻ってきたらモーダル+吹き出し
+    if (sessionStorage.getItem("show_premium_welcome") === "1") {
+      sessionStorage.removeItem("show_premium_welcome");
+      // 初回の showTipBubble を抑制するため dismissed をセット
+      sessionStorage.setItem("tip_phase", "2");
+      sessionStorage.setItem("tip_dismissed", "2");
+      showForm("welcomePremiumForm");
+      overlayEl.classList.add("open");
+      // モーダル表示後に吹き出しを出す
+      setTimeout(function() {
+        sessionStorage.removeItem("tip_dismissed");
+        if (typeof showTipBubble === "function") {
+          showTipBubble();
+        }
+      }, 800);
+    }
 
     updateAuthButtons(supabase);
   }
