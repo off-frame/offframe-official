@@ -310,8 +310,22 @@ const { title = "OffFrame" } = Astro.props;
         }
       }
 
+      // Checkout成功でTOPに戻ってきた場合
+      async function handleCheckoutSuccess() {
+        var params = new URLSearchParams(location.search);
+        if (params.get("checkout") === "success") {
+          if (window.syncPremiumStatus) {
+            await window.syncPremiumStatus();
+          }
+          history.replaceState({}, "", "/");
+          sessionStorage.setItem("show_premium_welcome", "1");
+          location.reload();
+        }
+      }
+
       document.addEventListener("astro:page-load", autoSyncPremium);
       autoSyncPremium();
+      handleCheckoutSuccess();
     </script>
   </body>
 </html>

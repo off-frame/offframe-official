@@ -84,7 +84,7 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `${origin}/mypage?checkout=success`,
+      success_url: `${origin}/?checkout=success`,
       cancel_url: `${origin}/mypage?checkout=cancel`,
     });
 

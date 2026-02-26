@@ -55,7 +55,7 @@
 <!-- 解約完了 -->
 <div class="cancel-overlay" id="cancelDoneOverlay">
   <div class="cancel-done-dialog">
-    <p class="cancel-done-title">解約完了いたしました。</p>
+    <p class="cancel-done-title">契約完了しました。</p>
     <p class="cancel-done-message" id="cancelDoneMessage"></p>
   </div>
 </div>
@@ -502,9 +502,9 @@
             if (periodEnd) {
               var d = new Date(periodEnd);
               var dateStr = d.getFullYear() + "年" + (d.getMonth() + 1) + "月" + d.getDate() + "日";
-              doneMsg.innerHTML = dateStr + "までは<br>引き続きご利用いただけます。";
+              doneMsg.innerHTML = "引き続き" + dateStr + "までは<br>プレミアム機能をご利用いただけます。";
             } else {
-              doneMsg.innerHTML = "現在の請求期間の終了までは<br>引き続きご利用いただけます。";
+              doneMsg.innerHTML = "引き続き請求期間の終了までは<br>プレミアム機能をご利用いただけます。";
             }
           }
           overlay.classList.remove("open");

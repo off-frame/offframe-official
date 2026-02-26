@@ -73,7 +73,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 <!-- 解約完了 -->
 <div class="cancel-overlay" id="pageCancelDoneOverlay">
   <div class="cancel-done-dialog">
-    <p class="cancel-done-title">解約完了しております。</p>
+    <p class="cancel-done-title">契約完了しました。</p>
     <p class="cancel-done-message" id="pageCancelDoneMessage"></p>
   </div>
 </div>
@@ -650,7 +650,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       if (isPremium && isCancelling && periodEnd) {
         // 解約予定
         renewalDate.style.display = "none";
-        cancelNotice.textContent = "解約完了したため" + formatDate(periodEnd) + "にプレミアム機能が停止されます。";
+        cancelNotice.innerHTML = "解約完了しました。<br>" + formatDate(periodEnd) + "にプレミアム機能が停止されます。";
         cancelNotice.style.display = "block";
         cancelBtn.style.display = "none";
       } else if (isPremium && periodEnd) {
@@ -675,15 +675,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       }
     });
 
-    // Checkout成功時の処理
-    const params = new URLSearchParams(location.search);
-    if (params.get("checkout") === "success") {
-      if (window.syncPremiumStatus) {
-        await window.syncPremiumStatus();
-      }
-      history.replaceState({}, "", "/mypage");
-      await updateState();
-    }
+    // Checkout成功はBaseLayoutで処理（TOPにリダイレクト）
 
     // 登録ボタン → 確認モーダル → Stripe Checkout
     const subscribeBtn = document.getElementById("subscribeBtn");
@@ -777,9 +769,9 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
           var doneMsg = document.getElementById("pageCancelDoneMessage");
           if (doneMsg) {
             if (periodEnd) {
-              doneMsg.innerHTML = formatDate(periodEnd) + "に<br>プレミアム機能が停止されます。";
+              doneMsg.innerHTML = "引き続き" + formatDate(periodEnd) + "までは<br>プレミアム機能をご利用いただけます。";
             } else {
-              doneMsg.innerHTML = "請求期間の終了時に<br>プレミアム機能が停止されます。";
+              doneMsg.innerHTML = "引き続き請求期間の終了までは<br>プレミアム機能をご利用いただけます。";
             }
           }
           doneOverlay.classList.add("open");
