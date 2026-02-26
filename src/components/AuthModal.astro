@@ -395,13 +395,20 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       } else {
         updateAuthButtons(supabase);
 
+        // DBからPremium状態を同期してからUI表示
+        if (window.syncPremiumStatus) {
+          await window.syncPremiumStatus();
+        }
+
         // 初回ログイン判定（welcomed フラグがまだない）
         var isFirstLogin = !localStorage.getItem("offframe_welcomed");
-        // プレミアム判定
+        // プレミアム判定（syncPremiumStatus でlocalStorageが更新済み）
         var isPremium = localStorage.getItem("offframe_premium") === "1";
 
         if (isPremium) {
-          showForm("welcomePremiumForm");
+          sessionStorage.setItem("show_premium_welcome", "1");
+          location.href = "/";
+          return;
         } else if (isFirstLogin) {
           showForm("welcomeForm");
           localStorage.setItem("offframe_welcomed", "1");

@@ -48,6 +48,8 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
           <p class="plan-label">現在のプラン</p>
           <h2 class="premium-plan-name"><span class="gold-band">OFF FRAME Premium</span></h2>
           <p class="premium-plan-desc">全画像のオフフレームにフルアクセス。<br>素の写真を、余すことなく。</p>
+          <p class="renewal-date" id="renewalDate" style="display:none;"></p>
+          <p class="cancel-notice" id="cancelNotice" style="display:none;"></p>
           <button class="cancel-btn" id="cancelBtn">解約する</button>
           <button class="logout-btn-block" onclick="window.handleLogout?.()">ログアウト</button>
         </div>
@@ -57,13 +59,32 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
   </main>
 </BaseLayout>
 
-<!-- 解約確認 -->
-<div class="cancel-overlay" id="cancelOverlay">
+<!-- 登録確認 -->
+<div class="cancel-overlay" id="subscribeOverlay">
   <div class="cancel-dialog">
-    <p class="cancel-text">解約しますか？<br><span class="cancel-sub">解約後は即時アクセスが停止されます。</span></p>
+    <p class="cancel-text">決済画面に進みます。<br><span class="cancel-sub">Stripeの安全な決済画面で<br>お支払い情報をご入力ください。</span></p>
     <div class="cancel-btns">
-      <button class="cancel-btn-yes" id="cancelYes">解約する</button>
-      <button class="cancel-btn-no" id="cancelNo">戻る</button>
+      <button class="cancel-btn-yes" id="subscribeYes">進む</button>
+      <button class="cancel-btn-no" id="subscribeNo">戻る</button>
+    </div>
+  </div>
+</div>
+
+<!-- 解約完了 -->
+<div class="cancel-overlay" id="pageCancelDoneOverlay">
+  <div class="cancel-done-dialog">
+    <p class="cancel-done-title">解約完了しております。</p>
+    <p class="cancel-done-message" id="pageCancelDoneMessage"></p>
+  </div>
+</div>
+
+<!-- 解約確認 -->
+<div class="cancel-overlay" id="pageCancelOverlay">
+  <div class="cancel-dialog">
+    <p class="cancel-text" id="pageCancelText">解約しますか？</p>
+    <div class="cancel-btns">
+      <button class="cancel-btn-yes" id="pageCancelYes">解約する</button>
+      <button class="cancel-btn-no" id="pageCancelNo">戻る</button>
     </div>
   </div>
 </div>
@@ -407,6 +428,24 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
   .cancel-btn:hover { color: #000; }
 
+  .renewal-date {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.13em;
+    line-height: 2;
+    color: #888;
+    margin: 0 0 1rem;
+  }
+
+  .cancel-notice {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.85rem;
+    line-height: 2.2;
+    color: #c00;
+    margin: 0 0 1rem;
+  }
+
+
   .logout-btn-large {
     background: #000;
     color: #fff;
@@ -478,16 +517,20 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
   .cancel-text {
     font-family: "Shippori Mincho", serif;
-    font-size: 0.9rem;
-    letter-spacing: 0.05em;
+    font-size: 1.2rem;
+    letter-spacing: 0.12em;
     color: #000;
-    line-height: 2;
+    line-height: 1.8;
     margin: 0 0 1.5rem;
   }
 
-  .cancel-sub {
-    font-size: 0.75rem;
+  :global(.cancel-sub) {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    line-height: 1.7;
     color: #888;
+    margin-top: 0.5rem;
   }
 
   .cancel-btns {
@@ -526,6 +569,30 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
   .cancel-btn-no:hover { opacity: 0.6; }
 
+  .cancel-done-dialog {
+    background: #fff;
+    padding: 2.5rem 2.5rem 2rem;
+    width: 90%;
+    max-width: 320px;
+    text-align: center;
+  }
+
+  .cancel-done-title {
+    font-family: "Shippori Mincho", serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    color: #000;
+    margin: 0 0 1.5rem;
+  }
+
+  .cancel-done-message {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.8rem;
+    line-height: 2;
+    color: #555;
+    margin: 0 0 0.5rem;
+  }
+
   @media (max-width: 900px) {
     main { padding: 1.5rem; }
     .card { padding: 3rem 2rem; }
@@ -550,18 +617,52 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script define:vars={{ SUPABASE_URL, SUPABASE_KEY }}>
-  function initMyPage() {
+  async function initMyPage() {
     if (!window.supabase) { setTimeout(initMyPage, 100); return; }
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    function formatDate(isoStr) {
+      var d = new Date(isoStr);
+      return d.getFullYear() + "年" + (d.getMonth() + 1) + "月" + d.getDate() + "日";
+    }
+
+    function getAccessToken() {
+      var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
+      if (!sbKey) return null;
+      var tokenData = JSON.parse(localStorage.getItem(sbKey) || "{}");
+      return tokenData.access_token || null;
+    }
+
     async function updateState() {
       const { data: { session } } = await supabase.auth.getSession();
       const isPremium = localStorage.getItem("offframe_premium") === "1";
+      const isCancelling = localStorage.getItem("offframe_cancel_at") === "1";
+      const periodEnd = localStorage.getItem("offframe_period_end");
 
       document.getElementById("stateGuest").style.display   = !session ? "block" : "none";
       document.getElementById("stateFree").style.display    = session && !isPremium ? "block" : "none";
       document.getElementById("statePremium").style.display = session && isPremium  ? "flex" : "none";
+
+      var renewalDate = document.getElementById("renewalDate");
+      var cancelNotice = document.getElementById("cancelNotice");
+      var cancelBtn = document.getElementById("cancelBtn");
+      if (isPremium && isCancelling && periodEnd) {
+        // 解約予定
+        renewalDate.style.display = "none";
+        cancelNotice.textContent = "解約完了したため" + formatDate(periodEnd) + "にプレミアム機能が停止されます。";
+        cancelNotice.style.display = "block";
+        cancelBtn.style.display = "none";
+      } else if (isPremium && periodEnd) {
+        // 通常のプレミアム
+        renewalDate.textContent = "次回更新日: " + formatDate(periodEnd);
+        renewalDate.style.display = "block";
+        cancelNotice.style.display = "none";
+        cancelBtn.style.display = "";
+      } else {
+        renewalDate.style.display = "none";
+        cancelNotice.style.display = "none";
+      }
     }
 
     updateState().then(() => {
@@ -574,30 +675,131 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       }
     });
 
-    // 登録ボタン（Stripe実装後に差し替え）
+    // Checkout成功時の処理
+    const params = new URLSearchParams(location.search);
+    if (params.get("checkout") === "success") {
+      if (window.syncPremiumStatus) {
+        await window.syncPremiumStatus();
+      }
+      history.replaceState({}, "", "/mypage");
+      await updateState();
+    }
+
+    // 登録ボタン → 確認モーダル → Stripe Checkout
     const subscribeBtn = document.getElementById("subscribeBtn");
+    const subscribeOverlay = document.getElementById("subscribeOverlay");
     if (subscribeBtn) {
-      subscribeBtn.addEventListener("click", () => {
-        alert("Stripe実装後にここで決済を開始します");
+      subscribeBtn.addEventListener("click", function() {
+        var accessToken = getAccessToken();
+        if (!accessToken) { window.openAuthModal?.(); return; }
+        subscribeOverlay.classList.add("open");
       });
     }
 
+    document.getElementById("subscribeNo").addEventListener("click", function() {
+      subscribeOverlay.classList.remove("open");
+    });
+
+    document.getElementById("subscribeYes").addEventListener("click", async function() {
+      var accessToken = getAccessToken();
+      if (!accessToken) { window.openAuthModal?.(); return; }
+
+      this.textContent = "処理中...";
+      this.disabled = true;
+
+      try {
+        var res = await fetch("https://gupwbkyehfyrymybrhee.supabase.co/functions/v1/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + accessToken,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ return_url: location.origin })
+        });
+        var data = await res.json();
+        if (data.url) {
+          location.href = data.url;
+        } else {
+          alert(data.error || "エラーが発生しました");
+          this.textContent = "進む";
+          this.disabled = false;
+        }
+      } catch (e) {
+        console.error(e);
+        alert("エラーが発生しました");
+        this.textContent = "進む";
+        this.disabled = false;
+      }
+    });
+
     // 解約
-    const cancelOverlay = document.getElementById("cancelOverlay");
+    const pageCancelOverlay = document.getElementById("pageCancelOverlay");
     const cancelBtn = document.getElementById("cancelBtn");
     if (cancelBtn) {
-      cancelBtn.addEventListener("click", () => cancelOverlay.classList.add("open"));
+      cancelBtn.addEventListener("click", function() {
+        var periodEnd = localStorage.getItem("offframe_period_end");
+        var cancelText = document.getElementById("pageCancelText");
+        if (periodEnd) {
+          cancelText.innerHTML = "解約しますか？<br><span class='cancel-sub'>解約しても" + formatDate(periodEnd) + "までは<br>引き続きご利用いただけます。</span>";
+        } else {
+          cancelText.innerHTML = "解約しますか？<br><span class='cancel-sub'>解約しても現在の請求期間の終了までは<br>引き続きご利用いただけます。</span>";
+        }
+        pageCancelOverlay.classList.add("open");
+      });
     }
 
-    document.getElementById("cancelNo").addEventListener("click", () => {
-      cancelOverlay.classList.remove("open");
+    document.getElementById("pageCancelNo").addEventListener("click", function() {
+      pageCancelOverlay.classList.remove("open");
     });
 
-    document.getElementById("cancelYes").addEventListener("click", () => {
-      localStorage.removeItem("offframe_premium");
-      cancelOverlay.classList.remove("open");
-      updateState();
+    document.getElementById("pageCancelYes").addEventListener("click", async function() {
+      var accessToken = getAccessToken();
+      if (!accessToken) { alert("認証エラーが発生しました"); return; }
+
+      this.textContent = "処理中...";
+      this.disabled = true;
+
+      try {
+        var res = await fetch("https://gupwbkyehfyrymybrhee.supabase.co/functions/v1/cancel-subscription", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + accessToken,
+            "Content-Type": "application/json"
+          }
+        });
+        var data = await res.json();
+        if (data.success) {
+          localStorage.setItem("offframe_cancel_at", "1");
+          pageCancelOverlay.classList.remove("open");
+          // 解約完了モーダル表示
+          var periodEnd = localStorage.getItem("offframe_period_end");
+          var doneOverlay = document.getElementById("pageCancelDoneOverlay");
+          var doneMsg = document.getElementById("pageCancelDoneMessage");
+          if (doneMsg) {
+            if (periodEnd) {
+              doneMsg.innerHTML = formatDate(periodEnd) + "に<br>プレミアム機能が停止されます。";
+            } else {
+              doneMsg.innerHTML = "請求期間の終了時に<br>プレミアム機能が停止されます。";
+            }
+          }
+          doneOverlay.classList.add("open");
+          doneOverlay.addEventListener("click", function(e) {
+            if (e.target === doneOverlay) { doneOverlay.classList.remove("open"); }
+          });
+          await updateState();
+        } else {
+          alert(data.error || "解約に失敗しました");
+          this.textContent = "解約する";
+          this.disabled = false;
+        }
+      } catch (e) {
+        console.error(e);
+        alert("エラーが発生しました");
+        this.textContent = "解約する";
+        this.disabled = false;
+      }
     });
+
   }
 
   document.addEventListener("astro:page-load", initMyPage);

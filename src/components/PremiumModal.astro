@@ -2,7 +2,7 @@
 <div class="premium-overlay" id="premiumOverlay">
   <div class="premium-modal">
     <button class="premium-close" id="premiumClose">×</button>
-    <div class="premium-modal-card">
+    <div class="premium-modal-card" id="premiumInfo">
       <h2 class="premium-catch">全画像に、<br>フルアクセス。</h2>
       <p class="premium-heading">OFF FRAME Premium</p>
       <p class="premium-desc">素の写真を、余すことなく。</p>
@@ -11,6 +11,14 @@
         <span class="price-period">/ 月</span>
       </div>
       <button class="cta-btn" id="premiumModalSubscribeBtn">プレミアムに登録する</button>
+    </div>
+    <div class="premium-modal-card premium-confirm" id="premiumConfirm" style="display:none;">
+      <p class="premium-confirm-text">決済画面に進みます。</p>
+      <p class="premium-confirm-sub">Stripeの安全な決済画面で<br>お支払い情報をご入力ください。</p>
+      <div class="premium-confirm-btns">
+        <button class="cta-btn" id="premiumConfirmYes">進む</button>
+        <button class="premium-confirm-back" id="premiumConfirmNo">戻る</button>
+      </div>
     </div>
   </div>
 </div>
@@ -132,6 +140,44 @@
     .premium-modal-card { padding: 2rem 1.5rem 1.5rem; }
     .price-amount { font-size: 2rem; }
   }
+
+  .premium-confirm-text {
+    font-family: "Shippori Mincho", serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    color: #fff;
+    margin: 0 0 1rem;
+  }
+
+  .premium-confirm-sub {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.78rem;
+    line-height: 2;
+    color: #fff;
+    opacity: 0.7;
+    margin: 0 0 2rem;
+  }
+
+  .premium-confirm-btns {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .premium-confirm-back {
+    background: transparent;
+    border: 1px solid #555;
+    color: #fff;
+    padding: 0.85rem 2rem;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    letter-spacing: 0.25em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .premium-confirm-back:hover { opacity: 0.75; }
 </style>
 
 <script>
@@ -141,24 +187,83 @@
 
     const closeBtn = document.getElementById("premiumClose");
 
+    const infoEl = document.getElementById("premiumInfo");
+    const confirmEl = document.getElementById("premiumConfirm");
+
+    function showInfo() {
+      infoEl.style.display = "";
+      confirmEl.style.display = "none";
+    }
+
     window.openPremiumModal = () => {
+      showInfo();
       overlay.classList.add("open");
     };
 
     closeBtn?.addEventListener("click", () => {
       overlay.classList.remove("open");
+      showInfo();
     });
 
     overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) overlay.classList.remove("open");
+      if (e.target === overlay) { overlay.classList.remove("open"); showInfo(); }
     });
 
+    // Step 1: 登録ボタン → 確認画面
     const subscribeBtn = document.getElementById("premiumModalSubscribeBtn");
     subscribeBtn?.addEventListener("click", () => {
-      // TODO: Stripe実装後に差し替え（現在はテスト用）
-      localStorage.setItem("offframe_premium", "1");
-      sessionStorage.setItem("show_premium_welcome", "1");
-      location.href = "/";
+      var sbKey = Object.keys(localStorage).find(k => k.startsWith("sb-") && k.endsWith("-auth-token"));
+      if (!sbKey) {
+        overlay.classList.remove("open");
+        window.openAuthModal?.();
+        return;
+      }
+      var tokenData = JSON.parse(localStorage.getItem(sbKey) || "{}");
+      if (!tokenData.access_token) {
+        overlay.classList.remove("open");
+        window.openAuthModal?.();
+        return;
+      }
+      infoEl.style.display = "none";
+      confirmEl.style.display = "";
+    });
+
+    // 戻る
+    document.getElementById("premiumConfirmNo")?.addEventListener("click", showInfo);
+
+    // Step 2: 確認 → Stripe Checkout
+    const confirmYes = document.getElementById("premiumConfirmYes");
+    confirmYes?.addEventListener("click", async () => {
+      try {
+        var sbKey = Object.keys(localStorage).find(k => k.startsWith("sb-") && k.endsWith("-auth-token"));
+        var tokenData = JSON.parse(localStorage.getItem(sbKey) || "{}");
+        var accessToken = tokenData.access_token;
+
+        confirmYes.textContent = "処理中...";
+        confirmYes.disabled = true;
+
+        var res = await fetch("https://gupwbkyehfyrymybrhee.supabase.co/functions/v1/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + accessToken,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ return_url: location.origin })
+        });
+        var data = await res.json();
+        if (data.url) {
+          location.href = data.url;
+        } else {
+          alert(data.error || "エラーが発生しました");
+          confirmYes.textContent = "進む";
+          confirmYes.disabled = false;
+        }
+      } catch (e) {
+        console.error(e);
+        alert("エラーが発生しました");
+        confirmYes.textContent = "進む";
+        subscribeBtn.disabled = false;
+      }
     });
 
     // ログイン時にPremiumModalも閉じる
