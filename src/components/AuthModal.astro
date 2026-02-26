@@ -58,12 +58,6 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       <p class="auth-message">サイドメニューのボタンを押すと、<br>スタンダード写真を<br>オフフレームモードで<br>閲覧いただけます。</p>
     </div>
 
-    <!-- ログイン（無料会員） -->
-    <div class="auth-form auth-greeting" id="welcomeBackForm" style="display:none;">
-      <h2 class="auth-title welcome-title-main">ログインしました。</h2>
-      <p class="auth-message">サイドメニューのボタンを押すと、<br>スタンダード写真を<br>オフフレームモードで<br>閲覧いただけます。</p>
-    </div>
-
     <!-- プレミアム会員ログイン -->
     <div class="auth-form auth-greeting" id="welcomePremiumForm" style="display:none;">
       <h2 class="auth-title welcome-title-main">OFF FRAME PREMIUM<br>にようこそ。</h2>
@@ -323,7 +317,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script define:vars={{ SUPABASE_URL, SUPABASE_KEY }}>
   function showForm(id) {
-    ["loginForm", "signupForm", "resetForm", "resetSentForm", "confirmEmailForm", "welcomeForm", "welcomeBackForm", "welcomePremiumForm"].forEach(f => {
+    ["loginForm", "signupForm", "resetForm", "resetSentForm", "confirmEmailForm", "welcomeForm", "welcomePremiumForm"].forEach(f => {
       document.getElementById(f).style.display = "none";
     });
     document.getElementById(id).style.display = "block";
@@ -413,7 +407,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
           showForm("welcomeForm");
           localStorage.setItem("offframe_welcomed", "1");
         } else {
-          showForm("welcomeBackForm");
+          showForm("welcomeForm");
         }
 
         document.dispatchEvent(new CustomEvent("offframe:loggedin"));

@@ -166,34 +166,74 @@ const col2 = withAds.filter((_, i) => i % 2 === 1);
   window.addEventListener("resize", applyLayout);
   document.addEventListener("astro:page-load", applyLayout);
 
-  // カードをリロードのたびにランダムシャッフル
+  // Fisher-Yatesシャッフル
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  }
+
+  // 無料会員ならStandard先、それ以外はランダム
+  function sortCards(cards) {
+    var isPremium = localStorage.getItem("offframe_premium") === "1";
+    if (isPremium) {
+      return shuffle(cards);
+    }
+    // 無料会員: Standard → Premium（各グループ内はシャッフル）
+    var std = cards.filter(function(el) { return el.querySelector("img[data-tier='standard']"); });
+    var prm = cards.filter(function(el) { return !el.querySelector("img[data-tier='standard']"); });
+    return shuffle(std).concat(shuffle(prm));
+  }
+
+  // PCカラム数を取得
+  function getColCount() {
+    var w = window.innerWidth;
+    if (w >= 1600) return 5;
+    if (w >= 1400) return 4;
+    return 3;
+  }
+
+  // CSS columnsは上→下に流れるので、行優先の並びを列優先に変換
+  // 入力: [row0col0, row0col1, row0col2, row1col0, ...]
+  // 出力: [col0row0, col0row1, ..., col1row0, col1row1, ...]
+  function transposeForColumns(arr, cols) {
+    var n = arr.length;
+    if (cols <= 1 || n <= cols) return arr;
+    var rows = Math.ceil(n / cols);
+    var result = [];
+    for (var c = 0; c < cols; c++) {
+      for (var r = 0; r < rows; r++) {
+        var srcIdx = r * cols + c;
+        if (srcIdx < n) {
+          result.push(arr[srcIdx]);
+        }
+      }
+    }
+    return result;
+  }
+
+  // カードをリロードのたびにシャッフル
   function shuffleGrids() {
     ["grid-mobile", "grid-pc"].forEach(function(gridId) {
       var grid = document.getElementById(gridId);
       if (!grid) return;
-      // 広告以外のカード要素を取得
       var items = Array.from(grid.querySelectorAll(":scope > a, :scope > .ad-banner, :scope > .col"));
-      // grid-mobileはcolが2つなので中身をシャッフル
       if (gridId === "grid-mobile") {
         var cols = grid.querySelectorAll(".col");
         cols.forEach(function(col) {
-          var cards = Array.from(col.children);
-          for (var i = cards.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            col.appendChild(cards[j]);
-            cards.splice(j, 1);
-          }
+          var cards = sortCards(Array.from(col.children));
+          cards.forEach(function(card) { col.appendChild(card); });
         });
       } else {
-        // grid-pcは直接シャッフル（広告を固定位置に保ちつつカードだけ入れ替え）
         var cards = items.filter(function(el) { return !el.classList.contains("ad-banner"); });
-        var ads = items.filter(function(el) { return el.classList.contains("ad-banner"); });
-        // カードをシャッフル
-        for (var i = cards.length - 1; i > 0; i--) {
-          var j = Math.floor(Math.random() * (i + 1));
-          var tmp = cards[i]; cards[i] = cards[j]; cards[j] = tmp;
+        cards = sortCards(cards);
+        // 無料会員: 各カラムの上部にStandardが来るよう並び替え
+        var isPremium = localStorage.getItem("offframe_premium") === "1";
+        if (!isPremium) {
+          cards = transposeForColumns(cards, getColCount());
         }
-        // 全アイテムを元の順序で再挿入（広告は元位置、カードはシャッフル済み）
         var cardIdx = 0;
         items.forEach(function(el) {
           if (el.classList.contains("ad-banner")) {

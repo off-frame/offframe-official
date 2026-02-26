@@ -2,6 +2,11 @@
 ---
 
 <footer>
+  <div class="footer-links">
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/terms">Terms</a>
+    <a href="/legal">特定商取引法に基づく表記</a>
+  </div>
   <p>© 2026 OFF FRAME</p>
 </footer>
 
@@ -17,6 +22,27 @@
     color: #fff;
     opacity: 0.4;
   }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: #fff;
+    text-decoration: none;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+
+  .footer-links a:hover { opacity: 1; }
 
   @media (max-width: 1024px) {
     footer { display: block; }

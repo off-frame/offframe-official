@@ -11,4 +11,6 @@ export const standardPhotos: string[] = [
   "1403",
   "0742",
   "0751",
+  "1632",
+  "1629",
 ];

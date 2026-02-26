@@ -1,0 +1,145 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="利用規約 | OFF FRAME">
+  <main>
+    <div class="card">
+      <div class="content">
+
+        <h1 class="heading">利用規約</h1>
+
+        <section class="section">
+          <h2 class="section-title">第1条（適用）</h2>
+          <p class="section-text">本規約は、OFF FRAME（以下「当サービス」）の利用に関する条件を定めるものです。ユーザーは本規約に同意の上、当サービスをご利用ください。</p>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">第2条（サービス内容）</h2>
+          <p class="section-text">当サービスは、写真コンテンツの閲覧サービスです。無料会員はスタンダード画像を、プレミアム会員（月額¥500・税込）は全画像をオフフレームモードで閲覧できます。</p>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">第3条（アカウント）</h2>
+          <p class="section-text">ユーザーは正確な情報を登録し、アカウントを適切に管理する責任を負います。アカウントの不正利用による損害について、当サービスは責任を負いません。</p>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">第4条（料金と決済）</h2>
+          <p class="section-text">プレミアム会員の料金は月額¥500（税込）です。決済はStripeを通じて処理されます。登録時に初回決済が行われ、以降毎月自動更新されます。</p>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">第5条（解約）</h2>
+          <p class="section-text">プレミアム会員はマイページからいつでも解約できます。解約後も現在の請求期間の終了まで引き続きサービスをご利用いただけます。日割り返金は行いません。</p>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">第6条（禁止事項）</h2>
+          <p class="section-text">以下の行為を禁止します。</p>
+          <ul class="section-list">
+            <li>コンテンツの無断転載・複製・再配布</li>
+            <li>不正アクセスやサービスの妨害行為</li>
+            <li>他のユーザーへの迷惑行為</li>
+            <li>法令または公序良俗に反する行為</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">第7条（著作権）</h2>
+          <p class="section-text">当サービスで提供される写真およびコンテンツの著作権は、当サービスまたは正当な権利者に帰属します。個人の閲覧目的以外での使用を禁止します。</p>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">第8条（免責事項）</h2>
+          <p class="section-text">当サービスは、サービスの中断・停止・変更により生じた損害について、一切の責任を負いません。また、ユーザー間またはユーザーと第三者間のトラブルについても責任を負いません。</p>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">第9条（サービスの変更・終了）</h2>
+          <p class="section-text">当サービスは、事前の通知なくサービス内容の変更または終了を行うことがあります。</p>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">第10条（規約の変更）</h2>
+          <p class="section-text">本規約は予告なく変更することがあります。変更後の規約は、当サービス上に掲載した時点で効力を生じます。</p>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">第11条（準拠法・管轄）</h2>
+          <p class="section-text">本規約は日本法に準拠し、紛争が生じた場合は東京地方裁判所を第一審の専属的合意管轄裁判所とします。</p>
+        </section>
+
+        <p class="updated">制定日: 2026年2月27日</p>
+
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    background: #000;
+    padding: 2rem;
+    min-height: 100%;
+  }
+
+  .card {
+    background: #fff;
+    width: 100%;
+    max-width: 800px;
+    padding: 6% 8%;
+  }
+
+  .heading {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+    color: #000;
+    margin: 0 0 3rem;
+  }
+
+  .section {
+    margin-bottom: 2rem;
+  }
+
+  .section-title {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 400;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: #000;
+    margin: 0 0 0.5rem;
+  }
+
+  .section-text {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.78rem;
+    line-height: 2;
+    color: #666;
+    margin: 0;
+  }
+
+  .section-list {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.78rem;
+    line-height: 2;
+    color: #666;
+    margin: 0.5rem 0 0;
+    padding-left: 1.5rem;
+  }
+
+  .updated {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.72rem;
+    color: #aaa;
+    margin: 3rem 0 0;
+  }
+
+  @media (max-width: 900px) {
+    main { padding: 1.5rem; }
+    .card { padding: 3rem 2rem; }
+    .heading { font-size: 1rem; }
+  }
+</style>

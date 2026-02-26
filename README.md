@@ -43,9 +43,9 @@ All commands are run from the root of the project, from a terminal:
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
 
 
-＝＝＝トリミングなしraw-->low/high/raw画像フォルダに振り分ける＝＝＝poweshell
+### ＝＝＝premiumトリミングなしraw-->low/high画像フォルダに振り分ける＝＝＝poweshell
 
-$src     = "C:\OffFrame\raw\good"
+$src     = "C:\OffFrame\raw\select\premium"
 $outBase = "C:\dev\OffFrame\public\images"
 
 foreach ($d in @("full_low","full_high")) {
@@ -57,8 +57,8 @@ $images = Get-ChildItem -Path $src -File | Where-Object { $_.Extension -match "\
 foreach ($img in $images) {
     $name = $img.BaseName
 
-    magick "$($img.FullName)" -resize 500x -quality 80 "$outBase\full_low\$name.webp"
-    magick "$($img.FullName)" -resize 1600x -quality 100 "$outBase\full_high\$name.webp"
+    magick "$($img.FullName)" -resize 400x -quality 80 "$outBase\full_low\$name.webp"
+    magick "$($img.FullName)" -resize 1200x -quality 80 "$outBase\full_high\$name.webp"
 
     Write-Host "[$name] → 完了"
 }
@@ -66,9 +66,9 @@ foreach ($img in $images) {
 Write-Host "全て完了！"
 
 
-# ＝＝＝general-->low/high画像フォルダに振り分ける＝＝＝
+### ＝＝＝standard画像-->low/high画像フォルダに振り分ける＝＝＝
 
-$src     = "C:\OffFrame\raw\good\general"
+$src     = "C:\OffFrame\raw\select\standard"
 $outBase = "C:\dev\OffFrame\public\images"
 
 foreach ($d in @("low", "high")) {
@@ -82,8 +82,8 @@ $images = Get-ChildItem -Path $src -File |
 foreach ($img in $images) {
     $name = $img.BaseName
 
-    magick "$($img.FullName)" -resize 500x  -quality 80 "$outBase\low\$name.webp"
-    magick "$($img.FullName)" -resize 1200x -quality 80 "$outBase\high\$name.webp"
+    magick "$($img.FullName)" -resize 400x  -quality 80 "$outBase\low\$name.webp"
+    magick "$($img.FullName)" -resize 800x -quality 80 "$outBase\high\$name.webp"
 
     Write-Host "[$name] → 完了"
 }
