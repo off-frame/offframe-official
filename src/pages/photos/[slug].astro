@@ -509,11 +509,9 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
       localStorage.removeItem("offframe");
     }
 
-    // ログイン後はボタンを非表示（サイドメニューから操作）
-    if (isLoggedIn) {
-      wrap.style.display = "none";
-      return;
-    }
+    // 未ログイン・ログイン後ともにボタンを非表示（サイドメニューから操作）
+    wrap.style.display = "none";
+    return;
 
     if (isPremiumUser) {
       // プレミアム会員: Premiumボタンのみ表示
