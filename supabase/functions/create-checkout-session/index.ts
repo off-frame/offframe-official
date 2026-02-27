@@ -54,12 +54,22 @@ serve(async (req) => {
     let stripeCustomerId = existingSub?.stripe_customer_id;
 
     if (!stripeCustomerId) {
-      // Stripeカスタマー作成
-      const customer = await stripe.customers.create({
+      // Stripe側でメールで既存カスタマーを検索（重複防止）
+      const existingCustomers = await stripe.customers.list({
         email: user.email,
-        metadata: { supabase_user_id: user.id },
+        limit: 1,
       });
-      stripeCustomerId = customer.id;
+
+      if (existingCustomers.data.length > 0) {
+        stripeCustomerId = existingCustomers.data[0].id;
+      } else {
+        // Stripeカスタマー作成
+        const customer = await stripe.customers.create({
+          email: user.email,
+          metadata: { supabase_user_id: user.id },
+        });
+        stripeCustomerId = customer.id;
+      }
 
       // subscriptions テーブルにレコード作成
       await supabaseAdmin.from("subscriptions").upsert({

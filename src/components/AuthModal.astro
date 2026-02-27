@@ -59,9 +59,9 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     </div>
 
     <!-- プレミアム会員ログイン -->
-    <div class="auth-form auth-greeting" id="welcomePremiumForm" style="display:none;">
-      <h2 class="auth-title welcome-title-main">OFF FRAME PREMIUM<br>にようこそ。</h2>
-      <p class="auth-message">サイドメニューのボタンを押すと、<br>すべての写真を<br>オフフレームモードで<br>閲覧いただけます。</p>
+    <div class="auth-form auth-greeting auth-greeting--premium" id="welcomePremiumForm" style="display:none;">
+      <h2 class="auth-title welcome-title--gold">OFF<br>FRAME<br>Premium<br><span class="welcome-yokoso">へようこそ。</span></h2>
+      <p class="auth-message welcome-message--white">サイドメニューのボタンを押すと、<br>すべての写真を<br>オフフレームモードで<br>閲覧いただけます。</p>
     </div>
 
   </div>
@@ -234,10 +234,53 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     line-height: 1.8;
   }
 
+  .auth-greeting--premium {
+    background: #000;
+    border: 1px solid #555;
+    margin: -3rem -2.5rem -2.5rem;
+    padding: 3rem 2.5rem 2.5rem;
+    text-align: left;
+  }
+
+  .welcome-title--gold {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 2.2rem;
+    letter-spacing: 0.2em;
+    line-height: 1.5;
+    color: #dbc06c;
+    margin: 0 0 1.5rem;
+  }
+
+  .welcome-yokoso {
+    font-family: "Shippori Mincho", serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+  }
+
+  .welcome-message--white {
+    color: #fff;
+    opacity: 0.8;
+    text-align: left;
+  }
+
   @media (max-width: 320px) {
     .welcome-title-main {
       font-size: 1rem;
       letter-spacing: 0.05em;
+    }
+
+    .auth-greeting--premium {
+      margin: -3rem -2.5rem -2.5rem;
+      padding: 3rem 2.5rem 2.5rem;
+    }
+
+    .welcome-title--gold {
+      font-size: 1.8rem;
+    }
+
+    .welcome-yokoso {
+      font-size: 1rem;
     }
   }
 
@@ -321,6 +364,11 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       document.getElementById(f).style.display = "none";
     });
     document.getElementById(id).style.display = "block";
+    // プレミアムようこそ画面は黒背景なので閉じるボタンを白に
+    var closeBtn = document.getElementById("authClose");
+    if (closeBtn) {
+      closeBtn.style.color = id === "welcomePremiumForm" ? "#fff" : "";
+    }
   }
 
   function closeModal(overlayEl) {
