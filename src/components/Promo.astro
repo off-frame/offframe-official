@@ -1,6 +1,6 @@
 ---
 interface Props {
-  variant?: "offframe" | "new" | "about";
+  variant?: "offframe" | "new" | "about" | "premium";
   size?:    "card" | "horizontal";
 }
 
@@ -8,12 +8,12 @@ const { variant = "offframe", size = "card" } = Astro.props;
 
 const content = {
   offframe: {
-    titleMulti:  "枠を外し、\n写真の外側に\n広がる世界へ。",
-    titleSingle: "枠を外し、写真の外側に広がる世界へ。",
-    sub:         "OFFフレームモードを\n無料体験する",
-    subSingle:   "OFFフレームモードを無料体験する",
+    titleMulti:  "OFF\nFRAME\nMODE",
+    titleSingle: "OFF FRAME MODE",
+    sub:         "写真の外側が見える、\nオフフレームモードを\nログインして体験する。",
+    subSingle:   "写真の外側が見える、\nオフフレームモードをログインして\n体験する。",
     hTitle:      "OFF FRAME MODE",
-    cta:         "詳しくは",
+    cta:         "今すぐ体験",
     href:        "/mypage",
   },
   new: {
@@ -36,20 +36,35 @@ const content = {
   },
 } as const;
 
-const c = content[variant];
+const c = variant !== "premium" ? content[variant] : null;
 ---
 
-<a class={`promo promo--${size}${variant === "offframe" ? " promo--trigger" : ""}`} href={c.href} data-variant={variant}>
-  <div class="promo-inner">
-    <p class="promo-title promo-title--multi">{size === "horizontal" ? c.hTitle : c.titleMulti}</p>
-    <p class="promo-title promo-title--single">{c.titleSingle}</p>
-    <div class="promo-right">
-      <p class="promo-sub promo-sub--multi">{c.sub}</p>
-      <p class="promo-sub promo-sub--single">{c.subSingle}</p>
-      <span class="promo-cta">{c.cta} →</span>
+{variant === "premium" ? (
+  <div class={`promo promo--${size} promo--premium-upsell`} data-variant="premium" style="display:none;">
+    <div class="promo-premium-inner">
+      <h2 class="pp-catch">全画像に、<br>フルアクセス。</h2>
+      <p class="pp-heading">OFF FRAME Premium</p>
+      <p class="pp-desc">素の写真を、余すことなく。</p>
+      <div class="pp-price">
+        <span class="pp-amount">¥500</span>
+        <span class="pp-period">/ 月（税込）</span>
+      </div>
+      <button class="pp-cta">プレミアムに<br class="pp-cta-br">登録する</button>
     </div>
   </div>
-</a>
+) : (
+  <a class={`promo promo--${size}${variant === "offframe" ? " promo--trigger" : ""}`} href={c.href} data-variant={variant}>
+    <div class="promo-inner">
+      <p class="promo-title promo-title--multi">{size === "horizontal" ? c.hTitle : c.titleMulti}</p>
+      <p class="promo-title promo-title--single">{c.titleSingle}</p>
+      <div class="promo-right">
+        <p class="promo-sub promo-sub--multi">{c.sub}</p>
+        <p class="promo-sub promo-sub--single">{c.subSingle}</p>
+        <span class={`promo-cta${variant === "offframe" ? " promo-cta--black" : ""}`}>{c.cta}{variant !== "offframe" && " →"}</span>
+      </div>
+    </div>
+  </a>
+)}
 
 <style>
   /* ============ 共通 ============ */
@@ -60,6 +75,10 @@ const c = content[variant];
     width: 100%;
     box-sizing: border-box;
     transition: transform 0.2s ease;
+  }
+
+  .promo[data-variant="offframe"] {
+    background: #dbc06c;
   }
 
   .promo:hover { transform: translateX(-2px) scale(1.01); }
@@ -97,6 +116,21 @@ const c = content[variant];
     display: inline-block;
   }
 
+  .promo-cta--black {
+    background: #000;
+    color: #fff;
+    border: none;
+    border-bottom: none;
+    padding: 0.6rem 1.5rem;
+    opacity: 1;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+  }
+
+  .promo-cta--black:hover {
+    opacity: 0.7;
+  }
+
   /* デフォルト：single非表示 */
   .promo-title--single { display: none; }
   .promo-sub--single   { display: none; }
@@ -120,12 +154,35 @@ const c = content[variant];
     gap: 0.5rem;
   }
 
-  .promo--card .promo-title { font-size: 1.5rem; letter-spacing: 0.4rem; margin-right: -1.5rem;}
+  .promo--card .promo-title { font-size: 1.5rem; letter-spacing: 0.4rem; margin-right: -1.5rem; }
+  .promo--card[data-variant="offframe"] .promo-title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 2.4rem;
+    letter-spacing: 0.3em;
+    line-height: 1.4;
+    margin-right: 0;
+  }
+  .promo--card[data-variant="offframe"] .promo-inner { gap: 1.2rem; }
+  .promo--card[data-variant="offframe"] .promo-right { gap: 1rem; }
+  .promo--card[data-variant="offframe"] { padding: 14% 12%; }
   .promo--card .promo-sub   { font-size: 1.05rem; letter-spacing: 0.25rem; line-height: 2rem;}
+  .promo--card[data-variant="offframe"] .promo-sub--multi { display: none; }
+  .promo--card[data-variant="offframe"] .promo-sub--single { display: block; font-size: 0.75rem; letter-spacing: 0.2em; line-height: 2.2; white-space: pre-line; }
+  .promo--card[data-variant="offframe"] .promo-sub { font-size: 0.75rem; letter-spacing: 0.2em; line-height: 2.2; }
   .promo--card .promo-cta   { font-size: 1.2rem; margin-top: 2rem; }
+  .promo--card[data-variant="offframe"] .promo-cta { font-size: 0.85rem; margin-top: 0.5rem; padding: 0.7rem 2rem; letter-spacing: 0.2em; }
+
+  @container promo-c (max-width: 299px) {
+    .promo--card[data-variant="offframe"] .promo-sub,
+    .promo--card[data-variant="offframe"] .promo-sub--single {
+      font-size: 0.66rem !important;
+    }
+  }
 
   @container promo-c (min-width: 300px) {
     .promo--card .promo-title { font-size: 1.8rem; }
+    .promo--card[data-variant="offframe"] .promo-title { font-size: 2.8rem; }
     .promo--card .promo-sub   { font-size: 1rem;}
     .promo--card .promo-cta   { font-size: 0.78rem; }
   }
@@ -133,15 +190,22 @@ const c = content[variant];
   @container promo-c (max-width: 200px) {
     .promo--card { padding: 8%; }
     .promo--card .promo-title { font-size: 1.2rem; letter-spacing: 0.3rem;}
+    .promo--card[data-variant="offframe"] .promo-title { font-size: 1.8rem; letter-spacing: 0.3em; }
     .promo--card .promo-sub   { font-size: 0.95rem; letter-spacing: 0.15rem; line-height: 1.7rem;}
+    .promo--card[data-variant="offframe"] .promo-sub--single { display: none; }
+    .promo--card[data-variant="offframe"] .promo-sub--multi { display: block; font-size: 0.6rem; letter-spacing: 0.15em; line-height: 2; }
     .promo--card .promo-cta   { font-size: 1rem; margin-top: 1rem;}
+    .promo--card[data-variant="offframe"] .promo-cta { font-size: 0.7rem; margin-top: 0.5rem; padding: 0.5rem 1.5rem; }
   }
 
   @container promo-c (max-width: 150px) {
     .promo--card { padding: 8%; }
     .promo--card .promo-title { font-size: 1.05rem; letter-spacing: 0.25rem; line-height: 1.8rem; margin-right: -1.5rem;}
+    .promo--card[data-variant="offframe"] .promo-title { font-size: 1.5rem; letter-spacing: 0.3em; margin-right: 0; }
     .promo--card .promo-sub   { font-size: 0.75rem; letter-spacing: 0.14rem; line-height: 1.5rem;}
+    .promo--card[data-variant="offframe"] .promo-sub--multi { font-size: 0.5rem; letter-spacing: 0.12em; line-height: 1.9; }
     .promo--card .promo-cta   { font-size: 0.9rem; margin-top: 1rem;}
+    .promo--card[data-variant="offframe"] .promo-cta { font-size: 0.6rem; margin-top: 0.4rem; padding: 0.4rem 1.2rem; }
   }
 
   /* ============ 横長型 ============ */
@@ -189,12 +253,37 @@ const c = content[variant];
 
   .promo--horizontal .promo-sub--single { display: none; }
 
+  .promo--horizontal[data-variant="offframe"] .promo-title--single {
+    display: none;
+  }
+
+  .promo--horizontal[data-variant="offframe"] .promo-sub--multi {
+    display: block;
+    flex: 1;
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    line-height: 1.8;
+    white-space: nowrap;
+    order: 2;
+  }
+
   .promo--horizontal .promo-cta {
     font-size: 0.82rem;
     align-self: center;
     flex-shrink: 0;
     margin-top: 0;
     order: 3;
+  }
+
+  .promo--horizontal[data-variant="offframe"] .promo-cta {
+    background: #000;
+    color: #fff;
+    border: none;
+    border-bottom: none;
+    padding: 0.5rem 1.5rem;
+    opacity: 1;
+    letter-spacing: 0.15em;
   }
 
     @container promo-h (min-width: 900px) {
@@ -251,10 +340,29 @@ const c = content[variant];
       align-self: center;
     }
 
+    .promo--horizontal[data-variant="offframe"] .promo-inner {
+      padding: 1.2rem 1.5rem 1rem;
+      gap: 0.6rem 1rem;
+    }
+
+    .promo--horizontal[data-variant="offframe"] .promo-sub--multi { display: none; }
+
+    .promo--horizontal[data-variant="offframe"] .promo-sub--single {
+      display: block;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      opacity: 0.7;
+    }
+
     .promo--horizontal .promo-cta {
       grid-area: cta;
       font-size: 0.78rem;
       align-self: center;
+    }
+
+    .promo--horizontal[data-variant="offframe"] .promo-cta {
+      font-size: 0.7rem;
+      padding: 0.4rem 1rem;
     }
   }
 
@@ -262,6 +370,137 @@ const c = content[variant];
     .promo--horizontal .promo-title--multi { font-size: 1.3rem; text-align: left;}
     .promo--horizontal .promo-sub--single  { font-size: 0.6rem; }
     .promo--horizontal .promo-cta          { font-size: 0.7rem; }
+    .promo--horizontal[data-variant="offframe"] .promo-inner { padding: 1rem 1.2rem 0.8rem; }
+    .promo--horizontal[data-variant="offframe"] .promo-sub--single { font-size: 0.48rem; }
+    .promo--horizontal[data-variant="offframe"] .promo-cta { font-size: 0.6rem; padding: 0.35rem 0.8rem; }
+  }
+
+  /* ============ プレミアム誘導カード ============ */
+  .promo--premium-upsell {
+    background: #000 !important;
+    border: 1px solid #555;
+  }
+
+  .promo--premium-upsell:hover {
+    transform: none;
+  }
+
+  .promo-premium-inner {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pp-catch {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 400;
+    font-size: 1.6rem;
+    letter-spacing: 0.12em;
+    line-height: 1.6;
+    color: #fff;
+    margin: 0 0 0.5rem;
+  }
+
+  .pp-heading {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.4rem;
+    letter-spacing: 0.2em;
+    line-height: 1.4;
+    color: #fff;
+    opacity: 0.8;
+    margin: 0 0 0.5rem;
+  }
+
+  .pp-desc {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    line-height: 2;
+    color: #fff;
+    opacity: 0.7;
+    margin: 0 0 1.2rem;
+  }
+
+  .pp-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.2rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .pp-amount {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 2.2rem;
+    letter-spacing: 0.05em;
+    color: #fff;
+  }
+
+  .pp-period {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.72rem;
+    color: #fff;
+    opacity: 0.6;
+  }
+
+  .pp-cta {
+    display: inline-block;
+    background: #dbc06c;
+    color: #000;
+    border: none;
+    padding: 0.75rem 1.8rem;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    align-self: flex-start;
+  }
+
+  .pp-cta:hover { opacity: 0.75; }
+
+  .pp-cta-br { display: none; }
+
+  .pp-cta {
+    text-align: center;
+  }
+
+  .promo--card.promo--premium-upsell {
+    container-type: inline-size;
+    container-name: promo-p;
+    padding: 12% 10%;
+  }
+
+  @container promo-p (min-width: 300px) {
+    .pp-catch { font-size: 1.8rem; }
+    .pp-heading { font-size: 1.5rem; }
+    .pp-desc { font-size: 0.8rem; }
+    .pp-amount { font-size: 2.4rem; }
+    .pp-cta { font-size: 0.9rem; padding: 0.8rem 2rem; }
+  }
+
+  @container promo-p (max-width: 200px) {
+    .promo--card.promo--premium-upsell { padding: 10% 8%; }
+    .pp-catch { font-size: 1.2rem; }
+    .pp-heading { font-size: 1.1rem; }
+    .pp-desc { font-size: 0.65rem; margin-bottom: 0.8rem; }
+    .pp-amount { font-size: 1.7rem; }
+    .pp-period { font-size: 0.62rem; }
+    .pp-price { margin-bottom: 0.8rem; }
+    .pp-cta { font-size: 0.7rem; padding: 0.55rem 1.2rem; }
+    .pp-cta-br { display: inline; }
+  }
+
+  @container promo-p (max-width: 150px) {
+    .promo--card.promo--premium-upsell { padding: 8% 7%; }
+    .pp-catch { font-size: 1rem; }
+    .pp-heading { font-size: 0.9rem; }
+    .pp-desc { font-size: 0.58rem; margin-bottom: 0.6rem; }
+    .pp-amount { font-size: 1.4rem; }
+    .pp-period { font-size: 0.55rem; }
+    .pp-price { margin-bottom: 0.6rem; }
+    .pp-cta { font-size: 0.6rem; padding: 0.45rem 1rem; }
   }
 </style>
 
@@ -271,6 +510,12 @@ const c = content[variant];
       el.addEventListener("click", (e) => {
         e.preventDefault();
         (window as any).openPromoOverlay?.();
+      });
+    });
+    // プレミアム誘導カードのCTAクリック
+    document.querySelectorAll<HTMLElement>(".pp-cta").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        (window as any).openPremiumModal?.();
       });
     });
   }

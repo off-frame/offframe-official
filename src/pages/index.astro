@@ -7,16 +7,19 @@ import Promo from "../components/Promo.astro";
 
 // ============ 広告設定 ============
 const SHOW_ADS = true;
-const AD_POSITIONS = [5, 8, 11, 14, 18];
+const AD_POSITIONS = [1, 5, 9, 13, 17, 21, 25, 29];
 
 // 各位置の告知内容（undefinedは広告枠の空白）
 type PromoVariant = "offframe" | "new" | "about";
 const AD_PROMOS: (PromoVariant | undefined)[] = [
-  "offframe",   // 位置5
-  "offframe",        // 位置8
-  "offframe",      // 位置11
-  "offframe",   // 位置14
-  "offframe",    // 位置18 → 空白
+  "offframe",
+  "offframe",
+  "offframe",
+  "offframe",
+  "offframe",
+  "offframe",
+  "offframe",
+  "offframe",
 ];
 
 // ============ データ取得 ============
@@ -43,23 +46,19 @@ const col2 = withAds.filter((_, i) => i % 2 === 1);
 <BaseLayout>
   <main>
 
-    <!-- トップバナー（スマホ） -->
-    {SHOW_ADS && (
-      <div id="ad-mobile-wrap" style="overflow:hidden; height:0; margin-bottom:0;">
-        <AdBanner variant="horizontal">
-          <Promo variant="offframe" size="horizontal" />
-        </AdBanner>
-      </div>
-    )}
+    <!-- トップバナー（スマホ）※非表示 -->
+    <!-- <div id="ad-mobile-wrap" style="overflow:hidden; height:0; margin-bottom:0;">
+      <AdBanner variant="horizontal">
+        <Promo variant="offframe" size="horizontal" />
+      </AdBanner>
+    </div> -->
 
-    <!-- トップバナー（PC） -->
-    {SHOW_ADS && (
-      <div id="ad-pc-wrap" style="overflow:hidden; height:0; margin-bottom:0;">
-        <AdBanner variant="horizontal">
-          <Promo variant="offframe" size="horizontal" />
-        </AdBanner>
-      </div>
-    )}
+    <!-- トップバナー（PC）※非表示 -->
+    <!-- <div id="ad-pc-wrap" style="overflow:hidden; height:0; margin-bottom:0;">
+      <AdBanner variant="horizontal">
+        <Promo variant="offframe" size="horizontal" />
+      </AdBanner>
+    </div> -->
 
     <!-- グリッド：スマホ（flex 2カラム） -->
     <div id="grid-mobile" style="display:none;">
@@ -67,7 +66,10 @@ const col2 = withAds.filter((_, i) => i % 2 === 1);
         {col1.map((item) =>
           "__ad" in item ? (
             <AdBanner variant="card">
-              {item.promo && <Promo variant={item.promo} size="card" />}
+              {item.promo && <>
+                <Promo variant={item.promo} size="card" />
+                <Promo variant="premium" size="card" />
+              </>}
             </AdBanner>
           ) : (
             <Card title={item.data.title} />
@@ -78,7 +80,10 @@ const col2 = withAds.filter((_, i) => i % 2 === 1);
         {col2.map((item) =>
           "__ad" in item ? (
             <AdBanner variant="card">
-              {item.promo && <Promo variant={item.promo} size="card" />}
+              {item.promo && <>
+                <Promo variant={item.promo} size="card" />
+                <Promo variant="premium" size="card" />
+              </>}
             </AdBanner>
           ) : (
             <Card title={item.data.title} />
@@ -92,7 +97,10 @@ const col2 = withAds.filter((_, i) => i % 2 === 1);
       {withAds.map((item) =>
         "__ad" in item ? (
           <AdBanner variant="card">
-            {item.promo && <Promo variant={item.promo} size="card" />}
+            {item.promo && <>
+              <Promo variant={item.promo} size="card" />
+              <Promo variant="premium" size="card" />
+            </>}
           </AdBanner>
         ) : (
           <Card title={item.data.title} />
@@ -214,38 +222,103 @@ const col2 = withAds.filter((_, i) => i % 2 === 1);
     return result;
   }
 
+  // 高さベースで広告を挿入
+  // cards: カード要素配列、ads: 広告要素配列、threshold: 広告を入れる累積高さ間隔
+  // offset: 最初の広告を入れるまでの高さオフセット（0なら先頭から）
+  function insertAdsByHeight(container, cards, ads, threshold, offset) {
+    // まずカードだけ配置して高さを測る
+    cards.forEach(function(c) { container.appendChild(c); });
+
+    // 各カードの高さを取得
+    var heights = cards.map(function(c) { return c.getBoundingClientRect().height; });
+
+    // 広告挿入位置を計算
+    var adPositions = [];
+    var cumHeight = 0;
+    var nextAdHeight = offset > 0 ? offset : threshold;
+    for (var i = 0; i < cards.length; i++) {
+      cumHeight += heights[i];
+      if (cumHeight >= nextAdHeight && adPositions.length < ads.length) {
+        adPositions.push(i + 1); // このカードの後に広告
+        nextAdHeight = cumHeight + threshold;
+      }
+    }
+
+    // カードと広告を再配置
+    while (container.firstChild) container.removeChild(container.firstChild);
+    var adIdx = 0;
+    for (var i = 0; i < cards.length; i++) {
+      container.appendChild(cards[i]);
+      if (adIdx < adPositions.length && i + 1 === adPositions[adIdx]) {
+        container.appendChild(ads[adIdx]);
+        adIdx++;
+      }
+    }
+  }
+
+  // ログイン済み無料会員ならプレミアム誘導カードに切替
+  function togglePromoVariant() {
+    var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
+    var isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
+    var isPremium = localStorage.getItem("offframe_premium") === "1";
+    var showPremiumUpsell = isLoggedIn && !isPremium;
+
+    document.querySelectorAll(".promo--premium-upsell").forEach(function(el) {
+      el.style.display = showPremiumUpsell ? "" : "none";
+    });
+    document.querySelectorAll('.promo[data-variant="offframe"]').forEach(function(el) {
+      el.style.display = showPremiumUpsell ? "none" : "";
+    });
+  }
+
   // カードをリロードのたびにシャッフル
   function shuffleGrids() {
+    var vh = window.innerHeight;
+    var isPC = window.innerWidth >= 800;
+
     ["grid-mobile", "grid-pc"].forEach(function(gridId) {
       var grid = document.getElementById(gridId);
       if (!grid) return;
       var items = Array.from(grid.querySelectorAll(":scope > a, :scope > .ad-banner, :scope > .col"));
+
       if (gridId === "grid-mobile") {
         var cols = grid.querySelectorAll(".col");
-        cols.forEach(function(col) {
-          var cards = sortCards(Array.from(col.children));
-          cards.forEach(function(card) { col.appendChild(card); });
+        cols.forEach(function(col, colIdx) {
+          var allChildren = Array.from(col.children);
+          var cards = allChildren.filter(function(el) { return !el.classList.contains("ad-banner"); });
+          var ads = allChildren.filter(function(el) { return el.classList.contains("ad-banner"); });
+          cards = sortCards(cards);
+          // スマホ：各列2画面ごと、左右1画面ずらし→合計で1画面1枚
+          var offset = colIdx === 0 ? vh * 1.5 : vh * 0.5;
+          insertAdsByHeight(col, cards, ads, vh * 2, offset);
         });
       } else {
         var cards = items.filter(function(el) { return !el.classList.contains("ad-banner"); });
+        var ads = items.filter(function(el) { return el.classList.contains("ad-banner"); });
         cards = sortCards(cards);
-        // 無料会員: 各カラムの上部にStandardが来るよう並び替え
         var isPremium = localStorage.getItem("offframe_premium") === "1";
         if (!isPremium) {
           cards = transposeForColumns(cards, getColCount());
         }
-        var cardIdx = 0;
-        items.forEach(function(el) {
-          if (el.classList.contains("ad-banner")) {
-            grid.appendChild(el);
-          } else {
-            grid.appendChild(cards[cardIdx++]);
-          }
-        });
+        // PC：2.5画面ごとに1枚
+        insertAdsByHeight(grid, cards, ads, vh * 2.5, vh * 2.5);
       }
     });
   }
 
-  document.addEventListener("astro:page-load", shuffleGrids);
-  shuffleGrids();
+  // レイアウト確定後に高さ計算するためrAFで実行
+  function initGrids() {
+    togglePromoVariant();
+    requestAnimationFrame(function() {
+      shuffleGrids();
+    });
+  }
+
+  document.addEventListener("astro:page-load", initGrids);
+  initGrids();
+
+  // ログイン後にプロモ切替
+  document.addEventListener("offframe:loggedin", function() {
+    togglePromoVariant();
+  });
 </script>

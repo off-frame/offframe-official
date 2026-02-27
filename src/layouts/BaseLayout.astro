@@ -98,36 +98,66 @@ const { title = "OffFrame" } = Astro.props;
       <button class="bottom-banner-close" id="bottomBannerClose">×</button>
     </div>
 
+    <!-- 無料会員向け下部バナー -->
+    <div class="bottom-banner-premium" id="bottomBannerPremium">
+      <span class="bbp-catch">全画像に、フルアクセス</span>
+      <span class="bbp-heading">OFF FRAME Premium</span>
+      <span class="bbp-price"><span class="bbp-amount">¥500</span><span class="bbp-period">/ 月（税込）</span></span>
+      <button class="bbp-cta" id="bottomBannerPremiumBtn"><span class="bbp-cta-full">プレミアムに登録する</span><span class="bbp-cta-short">プレミアムに登録</span></button>
+      <button class="bbp-close" id="bottomBannerPremiumClose">×</button>
+    </div>
+
     <script is:inline>
       function initBottomBanner() {
         var banner = document.getElementById("bottomBanner");
-        if (!banner) return;
-        // ログイン済み or 閉じ済みなら非表示
+        var premBanner = document.getElementById("bottomBannerPremium");
         var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
         var isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
-        if (isLoggedIn || sessionStorage.getItem("banner_closed") === "1") {
-          banner.classList.remove("show");
-          return;
-        }
-        banner.classList.add("show");
+        var isPremium = localStorage.getItem("offframe_premium") === "1";
 
-        document.getElementById("bottomBannerBtn").onclick = function() {
-          window.openPromoOverlay?.();
-        };
-        document.getElementById("bottomBannerClose").onclick = function() {
-          banner.classList.remove("show");
-          sessionStorage.setItem("banner_closed", "1");
-          document.body.style.paddingBottom = "";
-          var left = document.querySelector(".left");
-          if (left) left.style.paddingBottom = "";
-        };
+        // ゲスト向けバナー
+        if (banner) {
+          if (isLoggedIn || sessionStorage.getItem("banner_closed") === "1") {
+            banner.classList.remove("show");
+          } else {
+            banner.classList.add("show");
+          }
+
+          document.getElementById("bottomBannerBtn").onclick = function() {
+            window.openPromoOverlay?.();
+          };
+          document.getElementById("bottomBannerClose").onclick = function() {
+            banner.classList.remove("show");
+            sessionStorage.setItem("banner_closed", "1");
+            updateBannerPadding();
+          };
+        }
+
+        // 無料会員向けバナー
+        if (premBanner) {
+          if (isLoggedIn && !isPremium && sessionStorage.getItem("prem_banner_closed") !== "1") {
+            premBanner.classList.add("show");
+          } else {
+            premBanner.classList.remove("show");
+          }
+
+          document.getElementById("bottomBannerPremiumBtn").onclick = function() {
+            window.openPremiumModal?.();
+          };
+          document.getElementById("bottomBannerPremiumClose").onclick = function() {
+            premBanner.classList.remove("show");
+            sessionStorage.setItem("prem_banner_closed", "1");
+            updateBannerPadding();
+          };
+        }
       }
 
       function updateBannerPadding() {
-        var banner = document.getElementById("bottomBanner");
-        if (!banner) return;
-        var isVisible = banner.classList.contains("show");
-        var h = isVisible ? banner.offsetHeight : 0;
+        var guestBanner = document.getElementById("bottomBanner");
+        var premBanner = document.getElementById("bottomBannerPremium");
+        var h = 0;
+        if (guestBanner && guestBanner.classList.contains("show")) h = guestBanner.offsetHeight;
+        if (premBanner && premBanner.classList.contains("show")) h = Math.max(h, premBanner.offsetHeight);
         var px = h ? (h + "px") : "";
         document.body.style.paddingBottom = px;
         var left = document.querySelector(".left");
@@ -141,13 +171,22 @@ const { title = "OffFrame" } = Astro.props;
       initBottomBanner();
       updateBannerPadding();
 
-      // ログイン後にバナーを消す
+      // ログイン後にゲストバナーを消し、無料会員バナーを表示
       document.addEventListener("offframe:loggedin", function() {
         var banner = document.getElementById("bottomBanner");
         if (banner) banner.classList.remove("show");
-        document.body.style.paddingBottom = "";
-        var left = document.querySelector(".left");
-        if (left) left.style.paddingBottom = "";
+        var premBanner = document.getElementById("bottomBannerPremium");
+        if (premBanner && localStorage.getItem("offframe_premium") !== "1" && sessionStorage.getItem("prem_banner_closed") !== "1") {
+          premBanner.classList.add("show");
+        }
+        updateBannerPadding();
+      });
+
+      // プレミアム決済後にバナーを消す
+      document.addEventListener("offframe:premium", function() {
+        var premBanner = document.getElementById("bottomBannerPremium");
+        if (premBanner) premBanner.classList.remove("show");
+        updateBannerPadding();
       });
     </script>
 
@@ -595,6 +634,7 @@ const { title = "OffFrame" } = Astro.props;
     right: 0;
     z-index: 9998;
     background: #dbc06c;
+    border-top: 0.5px solid #b8a050;
     padding: 0.7rem 1.2rem;
     align-items: center;
     justify-content: center;
@@ -663,5 +703,162 @@ const { title = "OffFrame" } = Astro.props;
       font-size: 0.7rem;
       padding: 0.4rem 0.8rem;
     }
+  }
+
+  /* ============ 無料会員向け下部バナー ============ */
+  .bottom-banner-premium {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    background: #000;
+    border-top: 1px solid #333;
+    padding: 0.7rem 1.2rem;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+  }
+
+  .bottom-banner-premium.show {
+    display: flex;
+  }
+
+  .bbp-catch {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  .bbp-heading {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    color: #fff;
+    opacity: 0.8;
+    white-space: nowrap;
+  }
+
+  .bbp-price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.15rem;
+    white-space: nowrap;
+  }
+
+  .bbp-amount {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    color: #fff;
+  }
+
+  .bbp-period {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.65rem;
+    color: #fff;
+    opacity: 0.6;
+  }
+
+  .bbp-cta {
+    background: #dbc06c;
+    color: #000;
+    border: none;
+    padding: 0.45rem 1.2rem;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+  }
+
+  .bbp-cta:hover { opacity: 0.75; }
+  .bbp-cta-short { display: none; }
+
+  .bbp-close {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #fff;
+    opacity: 0.4;
+    cursor: pointer;
+    padding: 0 0.3rem;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: opacity 0.2s;
+  }
+
+  .bbp-close:hover { opacity: 1; }
+
+  /* タブレット：全要素を小さめに表示 */
+  @media (max-width: 1024px) {
+    .bottom-banner-premium {
+      padding: 0.6rem 0.8rem;
+      gap: 0.5rem;
+    }
+
+    .bbp-catch {
+      font-size: 0.6rem;
+    }
+
+    .bbp-heading {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+    }
+
+    .bbp-amount {
+      font-size: 1rem;
+    }
+
+    .bbp-period {
+      font-size: 0.55rem;
+    }
+
+    .bbp-cta {
+      font-size: 0.7rem;
+      padding: 0.4rem 0.8rem;
+    }
+  }
+
+  /* スマホ：catch + price + CTA のみ */
+  @media (max-width: 600px) {
+    .bottom-banner-premium {
+      gap: 0.5rem;
+      padding: 0.8rem 0.8rem;
+    }
+
+    .bbp-catch {
+      font-size: 0.65rem;
+      letter-spacing: 0.04em;
+    }
+
+    .bbp-heading {
+      display: none;
+    }
+
+    .bbp-amount {
+      font-size: 0.95rem;
+    }
+
+    .bbp-period {
+      font-size: 0.5rem;
+    }
+
+    .bbp-cta {
+      font-size: 0.5rem;
+      padding: 0.3rem 0.5rem;
+      letter-spacing: 0.08em;
+    }
+
+    .bbp-cta-full { display: none; }
+    .bbp-cta-short { display: inline; }
   }
 </style>
