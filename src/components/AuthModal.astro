@@ -702,6 +702,9 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     var hash = window.location.hash;
     if (hash && hash.includes("type=signup")) {
       // セッション確立を待つ
+      // 初回の showTipBubble を抑制するため dismissed をセット
+      sessionStorage.setItem("tip_phase", "2");
+      sessionStorage.setItem("tip_dismissed", "2");
       supabase.auth.onAuthStateChange(function(event, session) {
         if (session) {
           updateAuthButtons(supabase);
@@ -710,6 +713,13 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
           document.dispatchEvent(new CustomEvent("offframe:loggedin"));
           // ハッシュをクリーン
           history.replaceState(null, "", location.pathname);
+          // モーダル表示後に吹き出しを出す
+          setTimeout(function() {
+            sessionStorage.removeItem("tip_dismissed");
+            if (typeof showTipBubble === "function") {
+              showTipBubble();
+            }
+          }, 800);
         }
       });
     }
