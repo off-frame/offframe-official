@@ -32,7 +32,8 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     <div class="auth-form auth-greeting" id="resetSentForm" style="display:none;">
       <h2 class="auth-title">メールを<br>送信しました</h2>
       <p class="auth-message">パスワード再設定用のリンクを<br>お送りしました。</p>
-      <p class="auth-message confirm-note">メール内のリンクから<br>新しいパスワードを設定してください。</p>
+      <p class="auth-message" style="margin-top:1rem;">メール内のリンクから<br>新しいパスワードを設定してください。</p>
+      <p class="auth-message confirm-note spam-note">※ メールが届かない場合は<br>迷惑メールフォルダをご確認ください。</p>
     </div>
 
     <!-- 新規登録フォーム -->
@@ -49,7 +50,8 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     <div class="auth-form auth-greeting" id="confirmEmailForm" style="display:none;">
       <h2 class="auth-title">メールを<br>ご確認ください</h2>
       <p class="auth-message">ご入力いただいたメールアドレスに<br>確認メールをお送りしました。</p>
-      <p class="auth-message confirm-note">メール内のリンクをクリックして<br>登録を完了してください。</p>
+      <p class="auth-message" style="margin-top:1rem;">メール内のリンクをクリックして<br>登録を完了してください。</p>
+      <p class="auth-message confirm-note spam-note">※ メールが届かない場合は<br>迷惑メールフォルダをご確認ください。</p>
     </div>
 
     <!-- 新規登録完了（メール確認後の初回ログイン） -->
@@ -112,7 +114,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
   }
 
   @media (min-width: 550px) {
-    .auth-modal { width: 360px; }
+    .auth-modal { width: 360px; margin-bottom: 5rem; }
   }
 
   .auth-close {
@@ -238,10 +240,23 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     line-height: 1.8;
   }
 
+  #resetSentForm,
+  #confirmEmailForm {
+    padding-bottom: 2rem;
+  }
+
   .confirm-note {
     margin-top: 1rem;
     font-size: 0.75rem;
-    opacity: 0.7;
+    opacity: 1;
+    color: #333;
+  }
+
+  .spam-note {
+    margin-top: 1.5rem;
+    font-size: 0.65rem;
+    opacity: 1;
+    color: #333;
   }
 
   .welcome-label {
