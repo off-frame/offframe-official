@@ -36,7 +36,7 @@ const content = {
   },
 } as const;
 
-const c = variant !== "premium" ? content[variant] : null;
+const c = variant !== "premium" ? content[variant] : content["offframe"];
 ---
 
 {variant === "premium" ? (
@@ -382,7 +382,7 @@ const c = variant !== "premium" ? content[variant] : null;
   }
 
   .promo--premium-upsell:hover {
-    transform: none;
+    transform: translateX(-2px) scale(1.01);
   }
 
   .promo-premium-inner {

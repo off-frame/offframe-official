@@ -15,7 +15,7 @@ import OffFrameButton from "./OffFrameButton.astro";
 
     <div class="offframe-area">
       <p class="offframe-copy">枠を外し、<br>写真の外側に<br>広がる世界へ。</p>
-      <p class="offframe-title" id="sidenavOffframeTitle">OFFフレームモード<br>を無料体験する</p>
+      <p class="offframe-title" id="sidenavOffframeTitle">OFF FRAME MODE</p>
       <OffFrameButton id="offframeBtn" />
       <button class="premium-btn" id="sidenavPremiumBtn">Premium</button>
     </div>
@@ -65,9 +65,11 @@ import OffFrameButton from "./OffFrameButton.astro";
     </div>
 
     <hr />
-    <a href="/privacy" class="link small">Privacy Policy</a>
-    <a href="/terms" class="link small">Terms</a>
-    <a href="/legal" class="link legal">特定商取引法に基づく表記</a>
+    <div class="legal-links">
+      <a href="/privacy" class="link small">Privacy Policy</a>
+      <a href="/terms" class="link small">Terms</a>
+      <a href="/legal" class="link legal">特定商取引法に基づく表記</a>
+    </div>
     <p class="copyright">© 2026 OFF FRAME</p>
   </div>
 </aside>
@@ -98,14 +100,14 @@ import OffFrameButton from "./OffFrameButton.astro";
   .logo-main {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 1.7rem;
+    font-size: 1.6rem;
     letter-spacing: 0.3em;
   }
 
   .logo-sub {
     font-family: "Shippori Mincho", serif;
     font-weight: 400;
-    font-size: 1rem;
+    font-size: 0.92rem;
     letter-spacing: 0.5em;
   }
 
@@ -125,27 +127,27 @@ import OffFrameButton from "./OffFrameButton.astro";
     display: flex;
     flex-direction: column;
     gap: 0rem;
-    margin-bottom: 0.9rem;
+    margin-bottom: 0.7rem;
   }
 
   .offframe-copy {
     font-family: "Shippori Mincho", serif;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     line-height: 2;
     letter-spacing: 0.18em;
     color: #fff;
     opacity: 0.85;
-    margin: 0.6rem 0 0;
+    margin: 0.3rem 0 0;
   }
 
   .offframe-title {
-    font-family: "Shippori Mincho", serif;
-    font-size: 0.75rem;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.65rem;
     line-height: 1.8;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.25em;
     color: #fff;
     opacity: 0.85;
-    margin: 0.2rem 0 0.9rem;
+    margin: 0.1rem 0 0.5rem;
   }
 
   .premium-btn {
@@ -180,7 +182,7 @@ import OffFrameButton from "./OffFrameButton.astro";
   .about-link {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     letter-spacing: 0.2em;
     text-decoration: none;
     color: #fff;
@@ -275,6 +277,12 @@ import OffFrameButton from "./OffFrameButton.astro";
     letter-spacing: 0.1em;
     color: #fff;
     opacity: 0.6;
+  }
+
+  .legal-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
   }
 
   .link.small {

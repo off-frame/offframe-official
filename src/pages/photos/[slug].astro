@@ -644,8 +644,6 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
         });
         const drawerPrem = document.getElementById("drawerPremiumBtn");
         if (drawerPrem) drawerPrem.classList.toggle("active", active);
-        const overlayBtn = document.getElementById("overlayPremiumBtn");
-        if (overlayBtn) overlayBtn.classList.toggle("active", active);
 
         // 全画像切替
         const imgs = document.querySelectorAll("img.switchable");
@@ -682,8 +680,6 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
             const b = document.getElementById(id);
             if (b) { b.classList.toggle("active", active); b.textContent = "Standard"; }
           });
-          const overlayBtn = document.getElementById("overlayOffframeBtn");
-          if (overlayBtn) overlayBtn.classList.toggle("active", active);
 
           // Standard画像のみ切替
           const imgs = document.querySelectorAll('img.switchable[data-tier="standard"]');

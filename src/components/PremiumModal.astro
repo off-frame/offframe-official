@@ -61,6 +61,7 @@
 
   .premium-modal-card {
     background: #000;
+    border: 1px solid #555;
     padding: 2.5rem 2.5rem 2rem;
     color: #fff;
   }
@@ -188,16 +189,15 @@
     if (!overlay) return;
 
     const closeBtn = document.getElementById("premiumClose");
-
-    const infoEl = document.getElementById("premiumInfo");
-    const confirmEl = document.getElementById("premiumConfirm");
+    const infoEl = document.getElementById("premiumInfo") as HTMLElement;
+    const confirmEl = document.getElementById("premiumConfirm") as HTMLElement;
 
     function showInfo() {
       infoEl.style.display = "";
       confirmEl.style.display = "none";
     }
 
-    window.openPremiumModal = () => {
+    (window as any).openPremiumModal = () => {
       showInfo();
       overlay.classList.add("open");
     };
@@ -212,18 +212,18 @@
     });
 
     // Step 1: 登録ボタン → 確認画面
-    const subscribeBtn = document.getElementById("premiumModalSubscribeBtn");
+    const subscribeBtn = document.getElementById("premiumModalSubscribeBtn") as HTMLButtonElement | null;
     subscribeBtn?.addEventListener("click", () => {
       var sbKey = Object.keys(localStorage).find(k => k.startsWith("sb-") && k.endsWith("-auth-token"));
       if (!sbKey) {
         overlay.classList.remove("open");
-        window.openAuthModal?.();
+        (window as any).openAuthModal?.();
         return;
       }
       var tokenData = JSON.parse(localStorage.getItem(sbKey) || "{}");
       if (!tokenData.access_token) {
         overlay.classList.remove("open");
-        window.openAuthModal?.();
+        (window as any).openAuthModal?.();
         return;
       }
       infoEl.style.display = "none";
@@ -234,11 +234,11 @@
     document.getElementById("premiumConfirmNo")?.addEventListener("click", showInfo);
 
     // Step 2: 確認 → Stripe Checkout
-    const confirmYes = document.getElementById("premiumConfirmYes");
+    const confirmYes = document.getElementById("premiumConfirmYes") as HTMLButtonElement | null;
     confirmYes?.addEventListener("click", async () => {
       try {
         var sbKey = Object.keys(localStorage).find(k => k.startsWith("sb-") && k.endsWith("-auth-token"));
-        var tokenData = JSON.parse(localStorage.getItem(sbKey) || "{}");
+        var tokenData = JSON.parse(localStorage.getItem(sbKey!) || "{}");
         var accessToken = tokenData.access_token;
 
         confirmYes.textContent = "処理中...";
@@ -264,7 +264,7 @@
         console.error(e);
         alert("エラーが発生しました");
         confirmYes.textContent = "進む";
-        subscribeBtn.disabled = false;
+        confirmYes.disabled = false;
       }
     });
 

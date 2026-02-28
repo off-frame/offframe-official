@@ -322,3 +322,28 @@ const col2 = withAds.filter((_, i) => i % 2 === 1);
     togglePromoVariant();
   });
 </script>
+
+<!-- TODO: デザイン検証用（後で削除） -->
+<script is:inline>
+  function debugShowAuth(id) {
+    document.querySelectorAll('.auth-form').forEach(function(f){f.style.display='none';});
+    document.getElementById(id).style.display='block';
+    var c=document.getElementById('authClose');
+    if(c){c.style.display='';c.style.color='';}
+    document.getElementById('authOverlay').classList.add('open');
+  }
+</script>
+<div id="debugBtns" style="position:fixed;bottom:80px;right:16px;z-index:99999;display:flex;flex-direction:column;gap:6px;font-size:11px;">
+  <div style="color:#888;font-size:10px;text-align:right;">Debug Panel</div>
+  <button onclick="debugShowAuth('loginForm')" style="background:#fff;color:#000;border:1px solid #ccc;padding:4px 10px;cursor:pointer;">Login</button>
+  <button onclick="debugShowAuth('signupForm')" style="background:#fff;color:#000;border:1px solid #ccc;padding:4px 10px;cursor:pointer;">Sign Up</button>
+  <button onclick="debugShowAuth('resetForm')" style="background:#fff;color:#000;border:1px solid #ccc;padding:4px 10px;cursor:pointer;">Reset PW</button>
+  <button onclick="debugShowAuth('resetSentForm')" style="background:#fff;color:#000;border:1px solid #ccc;padding:4px 10px;cursor:pointer;">Reset Sent</button>
+  <button onclick="debugShowAuth('confirmEmailForm')" style="background:#fff;color:#000;border:1px solid #ccc;padding:4px 10px;cursor:pointer;">Confirm Email</button>
+  <button onclick="debugShowAuth('welcomeForm')" style="background:#fff;color:#000;border:1px solid #ccc;padding:4px 10px;cursor:pointer;">Welcome 無料</button>
+  <button onclick="debugShowAuth('welcomePremiumForm')" style="background:#000;color:#dbc06c;border:1px solid #555;padding:4px 10px;cursor:pointer;">Welcome Premium</button>
+  <button onclick="window.openPremiumModal?.()" style="background:#000;color:#dbc06c;border:1px solid #555;padding:4px 10px;cursor:pointer;">Premium Modal</button>
+  <button onclick="window.openPremiumModal?.();setTimeout(function(){document.getElementById('premiumInfo').style.display='none';document.getElementById('premiumConfirm').style.display='';},100)" style="background:#000;color:#dbc06c;border:1px solid #555;padding:4px 10px;cursor:pointer;">Premium確認</button>
+  <button onclick="window.openPromoOverlay?.()" style="background:#dbc06c;color:#000;border:none;padding:4px 10px;cursor:pointer;">Promo Overlay</button>
+  <button onclick="sessionStorage.removeItem('tip_dismissed');showTipBubble?.()" style="background:#fff;color:#000;border:1px solid #ccc;padding:4px 10px;cursor:pointer;">吹き出し</button>
+</div>

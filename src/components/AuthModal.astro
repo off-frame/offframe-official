@@ -20,7 +20,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
     <!-- パスワードリセット -->
     <div class="auth-form" id="resetForm" style="display:none;">
-      <h2 class="auth-title">Reset Password</h2>
+      <h2 class="auth-title" style="letter-spacing:0.08em;">Reset Password</h2>
       <p class="auth-sub-text">ご登録のメールアドレスに<br>再設定用のリンクをお送りします。</p>
       <input class="auth-input" id="resetEmail" type="email" placeholder="メールアドレス" />
       <p class="auth-error" id="resetError"></p>
@@ -30,7 +30,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
     <!-- リセットメール送信完了 -->
     <div class="auth-form auth-greeting" id="resetSentForm" style="display:none;">
-      <h2 class="auth-title">メールを送信しました</h2>
+      <h2 class="auth-title">メールを<br>送信しました</h2>
       <p class="auth-message">パスワード再設定用のリンクを<br>お送りしました。</p>
       <p class="auth-message confirm-note">メール内のリンクから<br>新しいパスワードを設定してください。</p>
     </div>
@@ -47,21 +47,23 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
     <!-- メール確認案内 -->
     <div class="auth-form auth-greeting" id="confirmEmailForm" style="display:none;">
-      <h2 class="auth-title">メールをご確認ください</h2>
+      <h2 class="auth-title">メールを<br>ご確認ください</h2>
       <p class="auth-message">ご入力いただいたメールアドレスに<br>確認メールをお送りしました。</p>
       <p class="auth-message confirm-note">メール内のリンクをクリックして<br>登録を完了してください。</p>
     </div>
 
     <!-- 新規登録完了（メール確認後の初回ログイン） -->
     <div class="auth-form auth-greeting" id="welcomeForm" style="display:none;">
-      <h2 class="auth-title welcome-title-main">OFF FRAME へようこそ。</h2>
-      <p class="auth-message">サイドメニューのボタンを押すと、<br>スタンダード写真を<br>オフフレームモードで<br>閲覧いただけます。</p>
+      <p class="welcome-label">ようこそ</p>
+      <h2 class="auth-title welcome-title-main">OFF FRAME<br><span class="welcome-yokoso-free">Standard</span></h2>
+      <p class="auth-message">サイドメニューのボタンを押すと、<br>スタンダードの写真を<br>オフフレームモードに<br>いつでも切り替えいただけます。</p>
     </div>
 
     <!-- プレミアム会員ログイン -->
     <div class="auth-form auth-greeting auth-greeting--premium" id="welcomePremiumForm" style="display:none;">
-      <h2 class="auth-title welcome-title--gold">OFF<br>FRAME<br>Premium<br><span class="welcome-yokoso">へようこそ。</span></h2>
-      <p class="auth-message welcome-message--white">サイドメニューのボタンを押すと、<br>すべての写真を<br>オフフレームモードで<br>閲覧いただけます。</p>
+      <p class="welcome-label">ようこそ</p>
+      <h2 class="auth-title welcome-title--gold">OFF FRAME<br><span class="welcome-yokoso">Premium</span></h2>
+      <p class="auth-message welcome-message--white">サイドメニューのボタンを押すと、<br>すべての写真を<br>オフフレームモードに<br>いつでも切り替えいただけます。</p>
     </div>
 
   </div>
@@ -100,10 +102,17 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
   .auth-modal {
     background: #fff;
-    width: 72%;
-    max-width: 360px;
+    width: 270px;
     padding: 3rem 2.5rem 2.5rem;
     position: relative;
+  }
+
+  @media (min-width: 410px) {
+    .auth-modal { width: 300px; }
+  }
+
+  @media (min-width: 550px) {
+    .auth-modal { width: 360px; }
   }
 
   .auth-close {
@@ -126,10 +135,10 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
     font-size: 1.8rem;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.15em;
     color: #000;
     margin: 0 0 1.5rem;
-    line-height: 1.2;
+    line-height: 1.6;
   }
 
   .auth-input {
@@ -138,6 +147,9 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     box-sizing: border-box;
     border: none;
     border-bottom: 1px solid #ccc;
+    border-radius: 0;
+    -webkit-appearance: none;
+    appearance: none;
     padding: 0.6rem 0;
     font-family: "Shippori Mincho", serif;
     font-size: 16px;
@@ -199,7 +211,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
   .auth-link:hover { color: #000; }
 
   .auth-greeting {
-    text-align: center;
+    text-align: left;
     padding: 1rem 0;
   }
 
@@ -221,66 +233,230 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     margin: 0;
   }
 
+  #resetSentForm .auth-message,
+  #confirmEmailForm .auth-message {
+    line-height: 1.8;
+  }
+
   .confirm-note {
     margin-top: 1rem;
     font-size: 0.75rem;
     opacity: 0.7;
   }
 
+  .welcome-label {
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    color: #000;
+    margin: 0 0 0.5rem;
+  }
+
+  #welcomeForm {
+    text-align: left;
+    padding-left: 2rem;
+    padding-top: 1.5rem;
+    padding-bottom: 2.5rem;
+    position: relative;
+  }
+
+  #welcomeForm::after {
+    content: "";
+    position: absolute;
+    bottom: -2.5rem;
+    left: -2.5rem;
+    right: -2.5rem;
+    height: 8px;
+    background: #000;
+  }
+
   .welcome-title-main {
-    font-size: 1.2rem;
-    letter-spacing: 0.1em;
+    font-size: 3rem;
+    letter-spacing: 0.2em;
     margin-bottom: 1.5rem;
-    line-height: 1.8;
+    line-height: 1.2;
+  }
+
+  .welcome-yokoso-free {
+    display: block;
+    font-family: "Shippori Mincho", serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+    margin-top: 0.55rem;
   }
 
   .auth-greeting--premium {
-    background: #000;
-    border: 1px solid #555;
-    margin: -3rem -2.5rem -2.5rem;
-    padding: 3rem 2.5rem 2.5rem;
     text-align: left;
+    padding-left: 2rem;
+    padding-top: 1.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  #welcomePremiumForm {
+    position: relative;
+  }
+
+  #welcomePremiumForm::after {
+    content: "";
+    position: absolute;
+    bottom: -2.5rem;
+    left: -2.5rem;
+    right: -2.5rem;
+    height: 8px;
+    background: #dbc06c;
   }
 
   .welcome-title--gold {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
-    font-size: 2.2rem;
+    font-size: 3rem;
     letter-spacing: 0.2em;
-    line-height: 1.5;
-    color: #dbc06c;
+    line-height: 1.2;
+    color: #000;
     margin: 0 0 1.5rem;
   }
 
   .welcome-yokoso {
+    display: block;
     font-family: "Shippori Mincho", serif;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     letter-spacing: 0.15em;
+    margin-top: 0.55rem;
+    color: #b8952e;
   }
 
   .welcome-message--white {
-    color: #fff;
+    color: #555;
     opacity: 0.8;
     text-align: left;
   }
 
-  @media (max-width: 320px) {
-    .welcome-title-main {
-      font-size: 1rem;
-      letter-spacing: 0.05em;
+  .welcome-close-btn {
+    display: block;
+    margin-top: 2rem;
+    background: transparent;
+    border: none;
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: #000;
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.2s;
+  }
+
+  .welcome-close-btn:hover { opacity: 1; }
+
+  .welcome-close-btn--dark {
+    color: #fff;
+  }
+
+  /* 300pxカード（410〜549px）: リセット系 */
+  @media (min-width: 410px) and (max-width: 549px) {
+    #resetSentForm .auth-title,
+    #confirmEmailForm .auth-title {
+      font-size: 1.4rem;
     }
 
+    #resetSentForm .auth-message,
+    #confirmEmailForm .auth-message {
+      font-size: 0.74rem;
+    }
+
+    #resetSentForm .confirm-note,
+    #confirmEmailForm .confirm-note {
+      font-size: 0.65rem;
+    }
+
+    #resetForm .auth-sub-text {
+      font-size: 0.7rem;
+    }
+
+    #signupForm .auth-input {
+      font-size: 14px;
+    }
+  }
+
+  /* 270pxカード（〜409px）: リセット系 */
+  @media (max-width: 409px) {
+    #resetSentForm .auth-title,
+    #confirmEmailForm .auth-title {
+      font-size: 1.2rem;
+    }
+
+    #resetSentForm .auth-message,
+    #confirmEmailForm .auth-message {
+      font-size: 0.65rem;
+    }
+
+    #resetSentForm .confirm-note,
+    #confirmEmailForm .confirm-note {
+      font-size: 0.55rem;
+    }
+
+    #resetForm .auth-sub-text {
+      font-size: 0.55rem;
+    }
+
+    #signupForm .auth-input {
+      font-size: 14px;
+    }
+  }
+
+  /* 300pxカード（410〜549px） */
+  @media (min-width: 410px) and (max-width: 549px) {
+    #welcomeForm,
     .auth-greeting--premium {
-      margin: -3rem -2.5rem -2.5rem;
-      padding: 3rem 2.5rem 2.5rem;
+      padding-left: 0;
+      padding-right: 0;
+      padding-top: 0.5rem;
+      padding-bottom: 1.5rem;
     }
 
+    .welcome-title-main,
     .welcome-title--gold {
-      font-size: 1.8rem;
+      font-size: 2.5rem;
+      margin-bottom: 1.8rem;
     }
 
+    .welcome-yokoso-free,
     .welcome-yokoso {
-      font-size: 1rem;
+      font-size: 1.5rem;
+      margin-top: 0.44rem;
+    }
+
+    #welcomeForm .auth-message,
+    #welcomePremiumForm .auth-message {
+      font-size: 0.8rem;
+    }
+  }
+
+  /* 270pxカード（〜409px） */
+  @media (max-width: 409px) {
+    #welcomeForm,
+    .auth-greeting--premium {
+      padding-left: 0.2rem;
+      padding-right: 0.2rem;
+      padding-top: 0.5rem;
+      padding-bottom: 1rem;
+    }
+
+    .welcome-title-main,
+    .welcome-title--gold {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .welcome-yokoso-free,
+    .welcome-yokoso {
+      font-size: 1.3rem;
+      margin-top: 0.4rem;
+    }
+
+    #welcomeForm .auth-message,
+    #welcomePremiumForm .auth-message {
+      font-size: 0.7rem;
     }
   }
 
@@ -355,6 +531,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
   }
 
   .logout-btn-no:hover { opacity: 0.6; }
+
 </style>
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -364,10 +541,10 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       document.getElementById(f).style.display = "none";
     });
     document.getElementById(id).style.display = "block";
-    // プレミアムようこそ画面は黒背景なので閉じるボタンを白に
     var closeBtn = document.getElementById("authClose");
     if (closeBtn) {
-      closeBtn.style.color = id === "welcomePremiumForm" ? "#fff" : "";
+      closeBtn.style.display = "";
+      closeBtn.style.color = "";
     }
   }
 
@@ -442,18 +619,11 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
           await window.syncPremiumStatus();
         }
 
-        // 初回ログイン判定（welcomed フラグがまだない）
-        var isFirstLogin = !localStorage.getItem("offframe_welcomed");
         // プレミアム判定（syncPremiumStatus でlocalStorageが更新済み）
         var isPremium = localStorage.getItem("offframe_premium") === "1";
 
         if (isPremium) {
-          sessionStorage.setItem("show_premium_welcome", "1");
-          location.href = "/";
-          return;
-        } else if (isFirstLogin) {
-          showForm("welcomeForm");
-          localStorage.setItem("offframe_welcomed", "1");
+          showForm("welcomePremiumForm");
         } else {
           showForm("welcomeForm");
         }
@@ -502,16 +672,15 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       await supabase.auth.signOut();
       localStorage.removeItem("offframe");
       localStorage.removeItem("offframe_premium");
-      localStorage.removeItem("offframe_welcomed");
       logoutOverlay.classList.remove("open");
       updateAuthButtons(supabase);
       // OffFrameボタンをリセット（表示も復元）
-      ["offframeBtn", "drawerOffframeBtn", "overlayOffframeBtn"].forEach(function(id) {
+      ["offframeBtn", "drawerOffframeBtn"].forEach(function(id) {
         var b = document.getElementById(id);
         if (b) { b.classList.remove("active"); b.textContent = "Standard"; b.style.display = ""; }
       });
       // Premiumボタンをリセット
-      ["sidenavPremiumBtn", "drawerPremiumBtn", "overlayPremiumBtn"].forEach(function(id) {
+      ["sidenavPremiumBtn", "drawerPremiumBtn"].forEach(function(id) {
         var b = document.getElementById(id);
         if (b) { b.classList.remove("active"); }
       });

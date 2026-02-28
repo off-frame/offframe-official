@@ -23,14 +23,12 @@
       <div class="po-copy">
         <p class="po-sub">枠を外し、写真の外側に広がる世界へ。</p>
         <h2 class="po-title">OFF FRAME MODE</h2>
-        <p class="po-hint po-hint-pc" id="poHintPc">ボタンを押すとサイトの画像が切り替わります。<br>サイドメニューからいつでも切り替えが可能です。</p>
+        <p class="po-hint po-hint-pc" id="poHintPc">ボタンを押すとオフフレームモードに切り替わります。<br>サイドメニューからいつでも切り替えが可能です。</p>
       </div>
       <div class="po-btns">
-        <p class="po-note-btns" id="promoNoteBtns" style="display:none;">オフフレームモードは、<br>ログインするとご使用いただけます。</p>
-        <button class="po-btn" id="overlayOffframeBtn" onclick="window.handleOverlayStandard()">Standard</button>
-        <button class="po-btn po-btn-premium" id="overlayPremiumBtn" onclick="window.handleOverlayPremium()">Premium</button>
-        <button class="po-btn po-btn-register" id="overlayRegisterBtn" style="display:none;" onclick="window.openAuthModal?.()">会員登録 / ログイン</button>
-        <p class="po-hint po-hint-sp" id="poHintSp">ボタンを押すとサイトの画像が切り替わります。<br>サイドメニューからいつでも切り替えが可能です。</p>
+        <p class="po-note-btns">オフフレームモードは、<br>ログインするとご使用いただけます。</p>
+        <button class="po-btn po-btn-register" onclick="window.openAuthModal?.()">会員登録 / ログイン</button>
+        <p class="po-hint po-hint-sp" id="poHintSp">ボタンを押すとオフフレームモードに切り替わります。<br>サイドメニューからいつでも切り替えが可能です。</p>
       </div>
     </div>
     <button class="po-close-mobile" onclick="window.closePromoOverlay()">閉じる</button>
@@ -162,17 +160,6 @@
     flex-shrink: 0;
   }
 
-  .po-btn-premium {
-    background: #dbc06c !important;
-    color: #000 !important;
-    border-radius: 100px;
-    text-decoration: none;
-    text-align: center;
-    font-size: 1.1rem !important;
-    padding: 0.8rem 2.5rem !important;
-    letter-spacing: 0.25em !important;
-  }
-
   .po-note-btns {
     font-family: "Shippori Mincho", serif;
     font-size: 0.75rem;
@@ -190,28 +177,6 @@
     font-size: 1.1rem;
     padding: 0.8rem 2.5rem;
     letter-spacing: 0.25em;
-  }
-
-  #overlayOffframeBtn {
-    background: #2a2a2a;
-    border: 1px solid #444;
-    color: #8f8f8f;
-    border-radius: 100px;
-    font-size: 1.1rem;
-    padding: 0.8rem 2.5rem;
-    letter-spacing: 0.25em;
-  }
-
-  #overlayOffframeBtn:hover {
-    border-color: #666;
-    color: #999;
-  }
-
-  #overlayOffframeBtn.active {
-    background: #fff;
-    border-color: #fff;
-    color: #000;
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6), 0 0 24px rgba(255, 255, 255, 0.2);
   }
 
   .po-hint {
@@ -233,13 +198,6 @@
 
   .po-close-mobile {
     display: none;
-  }
-
-  .po-btn.active {
-    background: #fff;
-    border-color: #fff;
-    color: #000;
-    box-shadow: 0 0 12px rgba(255,255,255,0.6), 0 0 24px rgba(255,255,255,0.2);
   }
 
   @media (max-width: 950px) {
@@ -264,13 +222,9 @@
     .po-note-guest { font-size: 0.75rem !important; line-height: 1.8 !important; }
     .po-btns { order: 2; }
     .po-btns { width: 80%; align-self: center; }
-    .po-btns .po-btn,
-    .po-btns #overlayOffframeBtn,
-    .po-btns .po-btn-premium { width: 100%; padding: 1rem 0 !important; font-size: 1.05rem !important; box-sizing: border-box; border: 1px solid transparent; }
-    .po-btns #overlayOffframeBtn { border-color: #444; }
-    .po-btns .po-btn-premium { border-color: #dbc06c; }
+    .po-btns .po-btn { width: 100%; padding: 1rem 0 !important; font-size: 1.05rem !important; box-sizing: border-box; border: 1px solid transparent; }
     .po-hint-pc { display: none; }
-    .po-hint-sp { display: block; text-align: center; font-size: 0.65rem; }
+    .po-hint-sp { display: block; text-align: center; font-size: 0.5rem; }
     .po-note-btns { text-align: center; }
     .po-close-mobile {
       display: block;
@@ -296,9 +250,7 @@
     .po-note-guest { font-size: 0.85rem !important; }
     .po-hint-sp { font-size: 0.7rem; }
     .po-label { font-size: 0.8rem; }
-    .po-btns .po-btn,
-    .po-btns #overlayOffframeBtn,
-    .po-btns .po-btn-premium { font-size: 1.1rem !important; }
+    .po-btns .po-btn { font-size: 1.1rem !important; }
   }
 </style>
 
@@ -308,74 +260,6 @@
     if (!el) return;
     el.style.display = "flex";
     document.body.style.overflow = "hidden";
-
-    // ログイン状態チェック
-    var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
-    var isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
-
-    var offBtn = document.getElementById("overlayOffframeBtn");
-    var premBtn = document.getElementById("overlayPremiumBtn");
-    var regBtn = document.getElementById("overlayRegisterBtn");
-    var noteBtns = document.getElementById("promoNoteBtns");
-    var isPremium = localStorage.getItem("offframe_premium") === "1";
-
-    var hintPc = document.getElementById("poHintPc");
-    var hintSp = document.getElementById("poHintSp");
-
-    if (isLoggedIn) {
-      if (noteBtns) { noteBtns.style.display = "none"; }
-      if (regBtn) { regBtn.style.display = "none"; }
-      if (hintPc) { hintPc.style.display = ""; }
-      if (hintSp) { hintSp.style.display = ""; }
-      if (isPremium) {
-        if (offBtn) { offBtn.style.display = "none"; }
-        if (premBtn) {
-          premBtn.style.display = "";
-          var isActive = localStorage.getItem("offframe") === "1";
-          premBtn.classList.toggle("active", isActive);
-        }
-      } else {
-        if (offBtn) {
-          offBtn.style.display = "";
-          var isActive = localStorage.getItem("offframe") === "1";
-          offBtn.classList.toggle("active", isActive);
-        }
-        if (premBtn) { premBtn.style.display = ""; }
-      }
-    } else {
-      if (offBtn) { offBtn.style.display = "none"; }
-      if (premBtn) { premBtn.style.display = "none"; }
-      if (noteBtns) { noteBtns.style.display = ""; }
-      if (regBtn) { regBtn.style.display = ""; }
-      if (hintPc) { hintPc.style.display = "none"; }
-      if (hintSp) { hintSp.style.display = "none"; }
-    }
-  };
-
-  function isUserLoggedIn() {
-    var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
-    return sbKey ? !!localStorage.getItem(sbKey) : false;
-  }
-
-  window.handleOverlayStandard = function() {
-    if (!isUserLoggedIn()) {
-      window.openAuthModal?.();
-      return;
-    }
-    window.toggleOverlayOffframe("standard");
-  };
-
-  window.handleOverlayPremium = function() {
-    if (!isUserLoggedIn()) {
-      window.openAuthModal?.();
-      return;
-    }
-    if (localStorage.getItem("offframe_premium") === "1") {
-      // プレミアム: OFFフレーム切替（全画像）
-      window.toggleOverlayOffframe("all");
-    } else {
-      window.openPremiumModal?.();
-    }
   };
 
   window.closePromoOverlay = function() {
@@ -383,47 +267,6 @@
     if (!el) return;
     el.style.display = "none";
     document.body.style.overflow = "";
-  };
-
-  window.toggleOverlayOffframe = function(scope) {
-    var next = localStorage.getItem("offframe") === "1" ? "0" : "1";
-    localStorage.setItem("offframe", next);
-    var active = next === "1";
-
-    // オーバーレイ内ボタン
-    var btn = document.getElementById("overlayOffframeBtn");
-    if (btn) {
-      btn.classList.toggle("active", active);
-      btn.textContent = "Standard";
-    }
-
-    // サイドナビのボタンも同期
-    ["offframeBtn", "drawerOffframeBtn"].forEach(function(id) {
-      var b = document.getElementById(id);
-      if (b) {
-        b.classList.toggle("active", active);
-        b.textContent = "Standard";
-      }
-    });
-
-    // モバイル記事下ボタンも同期
-    var mobilePremBtn = document.getElementById("mobilePremiumBtn");
-    if (mobilePremBtn) mobilePremBtn.classList.toggle("active", active);
-    var mobileStdBtn = document.getElementById("mobileStandardBtn");
-    if (mobileStdBtn) mobileStdBtn.classList.toggle("active", active);
-
-    // 画像切替
-    var selector = scope === "all" ? "img.switchable" : 'img.switchable[data-tier="standard"]';
-    var imgs = document.querySelectorAll(selector);
-    imgs.forEach(function(img) { img.classList.add("blurring"); });
-    setTimeout(function() {
-      imgs.forEach(function(img) {
-        img.src = active ? img.dataset.full : img.dataset.general;
-      });
-      setTimeout(function() {
-        imgs.forEach(function(img) { img.classList.remove("blurring"); });
-      }, 100);
-    }, 300);
   };
 
   // 背景クリックで閉じる
