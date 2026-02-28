@@ -634,16 +634,14 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
           await window.syncPremiumStatus();
         }
 
+        document.dispatchEvent(new CustomEvent("offframe:loggedin"));
+
         // プレミアム判定（syncPremiumStatus でlocalStorageが更新済み）
         var isPremium = localStorage.getItem("offframe_premium") === "1";
 
-        if (isPremium) {
-          showForm("welcomePremiumForm");
-        } else {
-          showForm("welcomeForm");
-        }
-
-        document.dispatchEvent(new CustomEvent("offframe:loggedin"));
+        // TOPへリダイレクト → リダイレクト先でようこそモーダル表示
+        sessionStorage.setItem("show_welcome", isPremium ? "premium" : "standard");
+        location.href = "/";
       }
     });
 
@@ -723,18 +721,10 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       supabase.auth.onAuthStateChange(function(event, session) {
         if (session) {
           updateAuthButtons(supabase);
-          showForm("welcomeForm");
-          overlayEl.classList.add("open");
           document.dispatchEvent(new CustomEvent("offframe:loggedin"));
-          // ハッシュをクリーン
-          history.replaceState(null, "", location.pathname);
-          // モーダル表示後に吹き出しを出す
-          setTimeout(function() {
-            sessionStorage.removeItem("tip_dismissed");
-            if (typeof showTipBubble === "function") {
-              showTipBubble();
-            }
-          }, 800);
+          // TOPへリダイレクト → リダイレクト先でようこそモーダル表示
+          sessionStorage.setItem("show_welcome", "standard");
+          location.href = "/";
         }
       });
     }
@@ -742,17 +732,27 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     // プレミアム加入後、TOPに戻ってきたらモーダル+吹き出し
     if (sessionStorage.getItem("show_premium_welcome") === "1") {
       sessionStorage.removeItem("show_premium_welcome");
-      // 初回の showTipBubble を抑制するため dismissed をセット
       sessionStorage.setItem("tip_phase", "2");
       sessionStorage.setItem("tip_dismissed", "2");
       showForm("welcomePremiumForm");
       overlayEl.classList.add("open");
-      // モーダル表示後に吹き出しを出す
       setTimeout(function() {
         sessionStorage.removeItem("tip_dismissed");
-        if (typeof showTipBubble === "function") {
-          showTipBubble();
-        }
+        if (typeof showTipBubble === "function") { showTipBubble(); }
+      }, 800);
+    }
+
+    // ログイン後、TOPに戻ってきたらようこそモーダル表示
+    var welcomeType = sessionStorage.getItem("show_welcome");
+    if (welcomeType) {
+      sessionStorage.removeItem("show_welcome");
+      sessionStorage.setItem("tip_phase", "2");
+      sessionStorage.setItem("tip_dismissed", "2");
+      showForm(welcomeType === "premium" ? "welcomePremiumForm" : "welcomeForm");
+      overlayEl.classList.add("open");
+      setTimeout(function() {
+        sessionStorage.removeItem("tip_dismissed");
+        if (typeof showTipBubble === "function") { showTipBubble(); }
       }, 800);
     }
 
