@@ -339,6 +339,10 @@ const { title = "OffFrame" } = Astro.props;
 
       // ページ読み込み時に自動同期
       function autoSyncPremium() {
+        if (sessionStorage.getItem("just_logged_out") === "1") {
+          sessionStorage.removeItem("just_logged_out");
+          return;
+        }
         var sbKey = Object.keys(localStorage).find(function(k) {
           return k.startsWith("sb-") && k.endsWith("-auth-token");
         });

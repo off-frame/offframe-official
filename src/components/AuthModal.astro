@@ -708,6 +708,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       const doneOverlay = document.getElementById("logoutDoneOverlay");
       doneOverlay.classList.add("open");
       document.dispatchEvent(new CustomEvent("offframe:loggedout"));
+      sessionStorage.setItem("just_logged_out", "1");
       setTimeout(() => { location.href = "/"; }, 2000);
     });
 
