@@ -698,6 +698,22 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       setTimeout(() => { location.href = "/"; }, 2000);
     });
 
+    // メール確認リンクからの遷移 → ようこそモーダル
+    var hash = window.location.hash;
+    if (hash && hash.includes("type=signup")) {
+      // セッション確立を待つ
+      supabase.auth.onAuthStateChange(function(event, session) {
+        if (session) {
+          updateAuthButtons(supabase);
+          showForm("welcomeForm");
+          overlayEl.classList.add("open");
+          document.dispatchEvent(new CustomEvent("offframe:loggedin"));
+          // ハッシュをクリーン
+          history.replaceState(null, "", location.pathname);
+        }
+      });
+    }
+
     // プレミアム加入後、TOPに戻ってきたらモーダル+吹き出し
     if (sessionStorage.getItem("show_premium_welcome") === "1") {
       sessionStorage.removeItem("show_premium_welcome");
