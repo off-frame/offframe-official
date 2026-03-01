@@ -328,11 +328,14 @@ import OffFrameButton from "./OffFrameButton.astro";
         var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
         var isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
         if (!isLoggedIn) {
+          window.gtag?.('event', 'offframe_guest_click', { device: 'sp' });
           window.openPromoOverlay?.();
           return;
         }
         if (localStorage.getItem("offframe_premium") === "1") {
+          window.incrementTipCount?.();
           var next = localStorage.getItem("offframe") === "1" ? "0" : "1";
+          window.gtag?.('event', 'offframe_premium_toggle', { action: next === "1" ? "on" : "off", device: 'sp' });
           localStorage.setItem("offframe", next);
           var active = next === "1";
           premiumBtn.classList.toggle("active", active);

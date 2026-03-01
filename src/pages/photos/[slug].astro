@@ -85,7 +85,7 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
 ---
 
 <BaseLayout title={title}>
-  <main>
+  <main data-photo-slug={id} data-photo-tier={isStandard ? 'standard' : 'premium'}>
     <div class="layout">
 
       <!-- メインカラム -->
@@ -712,6 +712,14 @@ const bottomCol2 = allWithAds.filter((_, i) => i % 2 === 1);
     applyOffframeMode();
     initGuestOffframeCta();
     initMobileOffframeBtns();
+
+    const mainEl = document.querySelector('main[data-photo-slug]') as HTMLElement | null;
+    if (mainEl) {
+      (window as any).gtag?.('event', 'photo_view', {
+        slug: mainEl.dataset.photoSlug,
+        tier: mainEl.dataset.photoTier,
+      });
+    }
   });
   shuffleGrids();
   applyOffframeMode();

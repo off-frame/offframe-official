@@ -24,6 +24,7 @@ const { title = "OffFrame" } = Astro.props;
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
       gtag('js', new Date());
       gtag('config', 'G-KZDH6GD1NT');
     </script>
@@ -210,6 +211,17 @@ const { title = "OffFrame" } = Astro.props;
         var bubble = document.getElementById("tipBubble");
         if (!bubble) return;
 
+        // ログイン済みユーザーはOFFフレームボタン3回使用で吹き出し非表示
+        var sbKeyT = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
+        var isLoggedInT = sbKeyT ? !!localStorage.getItem(sbKeyT) : false;
+        if (isLoggedInT) {
+          var isPremiumT = localStorage.getItem("offframe_premium") === "1";
+          var tipPhase = isPremiumT ? "2" : "1";
+          var deviceKey = window.innerWidth <= 1024 ? "sp" : "pc";
+          var tipCount = parseInt(localStorage.getItem("tip_" + deviceKey + "_" + tipPhase) || "0", 10);
+          if (tipCount >= 3) return;
+        }
+
         // 現在のフェーズで既に消されていたら表示しない
         var phase = sessionStorage.getItem("tip_phase") || "0";
         var dismissed = sessionStorage.getItem("tip_dismissed");
@@ -277,6 +289,16 @@ const { title = "OffFrame" } = Astro.props;
           if (btn) btn.addEventListener("click", hideBubble);
         });
       }
+
+      // OFFフレームボタン使用回数カウント（ログイン済みユーザーのみ）
+      window.incrementTipCount = function() {
+        var isPremiumC = localStorage.getItem("offframe_premium") === "1";
+        var phase = isPremiumC ? "2" : "1";
+        var device = window.innerWidth <= 1024 ? "sp" : "pc";
+        var key = "tip_" + device + "_" + phase;
+        var count = parseInt(localStorage.getItem(key) || "0", 10);
+        localStorage.setItem(key, String(count + 1));
+      };
 
       // ログイン後にドロワーを閉じて吹き出しを再表示
       document.addEventListener("offframe:loggedin", function() {

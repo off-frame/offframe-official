@@ -82,10 +82,13 @@ const { id = "offframeBtn" } = Astro.props;
       const sbKey = Object.keys(localStorage).find((k) => k.startsWith("sb-") && k.endsWith("-auth-token"));
       const isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
       if (!isLoggedIn) {
+        (window as any).gtag?.('event', 'offframe_guest_click', { device: innerWidth <= 1024 ? 'sp' : 'pc' });
         (window as any).openPromoOverlay?.();
         return;
       }
+      (window as any).incrementTipCount?.();
       const next = localStorage.getItem("offframe") === "1" ? "0" : "1";
+      (window as any).gtag?.('event', 'offframe_standard_toggle', { action: next === "1" ? "on" : "off", device: innerWidth <= 1024 ? 'sp' : 'pc' });
       localStorage.setItem("offframe", next);
       const active = next === "1";
       btn.classList.toggle("active", active);

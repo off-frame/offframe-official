@@ -385,12 +385,15 @@ import OffFrameButton from "./OffFrameButton.astro";
         const sbKey = Object.keys(localStorage).find((k: string) => k.startsWith("sb-") && k.endsWith("-auth-token"));
         const isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
         if (!isLoggedIn) {
+          (window as any).gtag?.('event', 'offframe_guest_click', { device: 'pc' });
           (window as any).openPromoOverlay?.();
           return;
         }
         if (localStorage.getItem("offframe_premium") === "1") {
           // プレミアム: OFFフレーム切替
+          (window as any).incrementTipCount?.();
           const next = localStorage.getItem("offframe") === "1" ? "0" : "1";
+          (window as any).gtag?.('event', 'offframe_premium_toggle', { action: next === "1" ? "on" : "off", device: 'pc' });
           localStorage.setItem("offframe", next);
           const active = next === "1";
           premiumBtn.classList.toggle("active", active);
