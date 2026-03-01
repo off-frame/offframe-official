@@ -19,6 +19,14 @@ const { title = "OffFrame" } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KZDH6GD1NT"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KZDH6GD1NT');
+    </script>
     <title>{title}</title>
     <meta name="google-adsense-account" content="ca-pub-5176750984152342" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
