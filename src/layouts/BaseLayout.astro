@@ -59,6 +59,7 @@ const { title = "OffFrame" } = Astro.props;
             document.getElementById('drawer').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('open');
             this.classList.toggle('open');
+            if(!this.classList.contains('open') && window._hideDrawerTip) window._hideDrawerTip(false);
           "
         >
           <span></span>
@@ -74,6 +75,9 @@ const { title = "OffFrame" } = Astro.props;
     <div class="drawer" id="drawer">
       <SideNavContent />
     </div>
+    <div class="drawer-tip" id="drawerTip">
+      このボタンを押すと<br>オフフレームモードに<br>切り替わります
+    </div>
     <div
       class="overlay"
       id="overlay"
@@ -81,6 +85,7 @@ const { title = "OffFrame" } = Astro.props;
         document.getElementById('drawer').classList.remove('open');
         document.getElementById('overlay').classList.remove('open');
         document.getElementById('burgerBtn').classList.remove('open');
+        if(window._hideDrawerTip) window._hideDrawerTip(false);
       "
     ></div>
 
@@ -323,6 +328,86 @@ const { title = "OffFrame" } = Astro.props;
         setTimeout(showTipBubble, 1000);
       });
       setTimeout(showTipBubble, 1000);
+    </script>
+
+    <!-- ドロワー内吹き出し（初回展開時） -->
+    <script is:inline>
+      function initDrawerTip() {
+        var burger = document.getElementById("burgerBtn");
+        if (!burger) return;
+
+        burger.addEventListener("click", function() {
+          var drawer = document.getElementById("drawer");
+          if (!drawer || !drawer.classList.contains("open")) return;
+
+          // 状態判定
+          var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
+          var isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
+          var isPremium = isLoggedIn && localStorage.getItem("offframe_premium") === "1";
+
+          // フェーズ: 0=ゲスト, 1=無料会員, 2=プレミアム
+          var phase = isPremium ? "2" : (isLoggedIn ? "1" : "0");
+          if (sessionStorage.getItem("drawer_tip_dismissed") === phase) return;
+
+          setTimeout(function() {
+            var tip = document.getElementById("drawerTip");
+            if (!tip) return;
+
+            var stdBtn = document.getElementById("drawerOffframeBtn");
+            var premBtn = document.getElementById("drawerPremiumBtn");
+            if (!stdBtn && !premBtn) return;
+
+            var targetRect;
+            if (isPremium) {
+              // プレミアム: Premiumボタンの左横
+              targetRect = (premBtn || stdBtn).getBoundingClientRect();
+            } else if (isLoggedIn) {
+              // 無料会員: Standardボタンの左横
+              targetRect = (stdBtn || premBtn).getBoundingClientRect();
+            } else {
+              // ゲスト: 二つのボタンの中央の左横
+              var r1 = stdBtn ? stdBtn.getBoundingClientRect() : premBtn.getBoundingClientRect();
+              var r2 = premBtn ? premBtn.getBoundingClientRect() : r1;
+              targetRect = {
+                top: (r1.top + r1.height / 2 + r2.top + r2.height / 2) / 2 - r1.height / 2,
+                height: r1.height,
+                left: Math.min(r1.left, r2.left)
+              };
+            }
+
+            tip.style.display = "block";
+            tip.classList.remove("drawer-tip-hide");
+            var tipH = tip.offsetHeight;
+            var tipW = tip.offsetWidth;
+            tip.style.top = (targetRect.top + targetRect.height / 2 - tipH / 2) + "px";
+            tip.style.right = "auto";
+            tip.style.left = (targetRect.left - tipW - 12) + "px";
+
+            function hideDrawerTip(dismiss) {
+              if (tip.style.display === "none") return;
+              tip.classList.add("drawer-tip-hide");
+              if (dismiss) sessionStorage.setItem("drawer_tip_dismissed", phase);
+              setTimeout(function() { tip.style.display = "none"; }, 400);
+            }
+
+            window._hideDrawerTip = hideDrawerTip;
+            tip.onclick = function() { hideDrawerTip(true); };
+            if (stdBtn) stdBtn.addEventListener("click", function() { hideDrawerTip(true); }, { once: true });
+            if (premBtn) premBtn.addEventListener("click", function() { hideDrawerTip(true); }, { once: true });
+          }, 350);
+        });
+      }
+
+      // ログイン/プレミアム変化時にdismissリセット
+      document.addEventListener("offframe:loggedin", function() {
+        sessionStorage.removeItem("drawer_tip_dismissed");
+      });
+      document.addEventListener("offframe:premium", function() {
+        sessionStorage.removeItem("drawer_tip_dismissed");
+      });
+
+      document.addEventListener("astro:page-load", initDrawerTip);
+      initDrawerTip();
     </script>
 
     <!-- Premium状態同期 -->
@@ -654,6 +739,38 @@ const { title = "OffFrame" } = Astro.props;
   }
 
   .tip-bubble.tip-hide {
+    animation: tipFadeOut 0.4s ease forwards;
+  }
+
+  /* ============ ドロワー内吹き出し ============ */
+  .drawer-tip {
+    display: none;
+    position: fixed;
+    z-index: 301;
+    background: #fff;
+    color: #000;
+    font-family: "Shippori Mincho", serif;
+    font-size: 0.7rem;
+    line-height: 1.7;
+    letter-spacing: 0.05em;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    animation: tipFadeIn 0.4s ease forwards;
+  }
+
+  .drawer-tip::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -12px;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-left-color: #fff;
+  }
+
+  .drawer-tip.drawer-tip-hide {
     animation: tipFadeOut 0.4s ease forwards;
   }
 
