@@ -9,39 +9,19 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
         <h1 class="heading">About</h1>
 
-        <div class="row">
-          <div class="ja">
-            <p>「Off Frame」は、生成AIによって描き出された「存在しない、けれど確かな日常」を記録する場所です。</p>
-            <p>私たちが目指しているのは、単なる画像の生成ではありません。心を許したパートナーの隣でだけこぼれる「無防備な素顔」を、実在する写真と見紛うほどの質感で表現することです。</p>
-          </div>
-          <div class="en">
-            <p>"Off Frame" is a place that documents an absent yet tangible everyday life, rendered by generative AI.</p>
-            <p>Our goal is not mere image generation. We strive to capture the unguarded expressions that only emerge beside a trusted partner — with a tactile quality indistinguishable from real photography.</p>
-          </div>
-        </div>
+        <h2 class="section-title">存在しない、けれど確かな日常を。</h2>
+        <p>澄んだ朝の光、午後のまどろみ、そして夜の静寂。<br>
+        「OFF FRAME」は、生成AIによって描き出された、刻一刻と移ろう日常の時間を写し出す場所です。</p>
+        <p>追求しているのは、単なる画像の大量生成ではありません。オフの時間、ふとした瞬間にこぼれる無防備な素顔を、その場の温度や流れる時間ごと閉じ込めること。実在する写真と見紛うほどの質感で、一瞬のリアリティを一枚一枚の画に宿らせることを目指しています。</p>
 
-        <h2 class="section-title">Our Craft：AIは手法であり、手抜きではない。</h2>
+        <h2 class="section-title">レンズとしてのAI、そこに写る「時間」</h2>
+        <p>AIは、「存在しない日常」を写し取る「レンズ」です。誰もがカメラを手にできる時代に、プロの写真が特別であり続けるのはその「眼」があるから。OFF FRAMEの価値もまた、AIそのものではなく、それを通して何を見出し、何を残すかという「眼」にあると考えています。</p>
+        <p>数百語のプロンプトを編み上げ、細かな調整を繰り返し、AI特有の無機質な完璧さを削ぎ落とす。そうして選び抜かれた「時間」の断片にこそ、確かな日常が宿っていると考えます。</p>
 
-        <div class="row">
-          <div class="ja">
-            <p>「AI生成」と聞くと、ボタン一つで無限に画像が生まれる光景を想像されるかもしれません。しかし、当サイトに掲載されている1枚の裏側には、膨大な時間と熱量が注がれています。</p>
-            <ul>
-              <li><span class="li-title">終わりのないプロンプト研究</span>窓から差し込む光の角度、肌に残る体温、その瞬間の空気感までを感じさせるために、数百語に及ぶプロンプトをミリ単位で調整し、研究し続けています。</li>
-              <li><span class="li-title">妥協のないセレクト（Curation）</span>AIが生成した何百、何千というカットのうち、当サイトに掲載されるのは、私たちの「選美眼」をくぐり抜けた、わずか数パーセントの瞬間のみです。</li>
-              <li><span class="li-title">「生」の空気感の追求</span>AI特有の不自然さを削ぎ落とし、フィルム写真のような「揺らぎ」をあえて宿らせる。その職人的なセレクトプロセスを経て初めて、「Off Frame」の一枚となります。</li>
-            </ul>
-            <p>数多の試行錯誤、そのセレクトをくぐり抜けて残った「リアリティ」を味わっていただけますと幸いです。</p>
-          </div>
-          <div class="en">
-            <p>"AI-generated" may conjure images of endless output at the push of a button. Yet behind every image on this site lies an enormous investment of time and passion.</p>
-            <ul>
-              <li><span class="li-title">Endless Prompt Research</span>To evoke the angle of light through a window, warmth lingering on skin, the very air of a moment — we refine prompts of hundreds of words with millimeter precision.</li>
-              <li><span class="li-title">Uncompromising Curation</span>Of the hundreds or thousands of frames generated, only a few percent survive our curatorial eye to appear on this site.</li>
-              <li><span class="li-title">Pursuit of Authentic Atmosphere</span>Stripping away AI's uncanny qualities, deliberately instilling the grain of film photography — only after this artisanal process does an image become an "Off Frame."</li>
-            </ul>
-            <p>We hope you can taste the reality that has survived countless iterations and the most rigorous selection.</p>
-          </div>
-        </div>
+        <h2 class="section-title">OFF FRAME MODE<br>枠を外し、写真の外側に広がる世界へ。</h2>
+        <p>写真は常に、世界の一部を「切り捨てる」ことで成立します。OFF FRAME MODEは、その境界線を外側へと拡張します。枠が外れたその先に広がる景色や空気感。レンズが切り取った「素の時間」の全貌を、どうぞその目で確かめてください。</p>
+
+        <a class="promo-link" href="javascript:void(0)" onclick="window.openPromoOverlay?.()">今すぐ体験</a>
 
       </div>
     </div>
@@ -58,6 +38,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .card {
     background: #fff;
     width: 100%;
+    max-width: 800px;
     padding: 6% 8%;
   }
 
@@ -65,7 +46,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     width: 100%;
   }
 
-  /* ============ 見出し ============ */
   .heading {
     font-family: "Cormorant Garamond", serif;
     font-weight: 300;
@@ -76,9 +56,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   }
 
   .section-title {
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 300;
-    font-size: 1.2rem;
+    font-family: "Shippori Mincho", serif;
+    font-weight: 400;
+    font-size: 1rem;
     letter-spacing: 0.15em;
     color: #000;
     margin: 3rem 0 1.5rem;
@@ -86,99 +66,38 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     border-bottom: 1px solid #ddd;
   }
 
-  /* ============ 2カラム ============ */
-  .row {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 4rem;
-    align-items: flex-start;
-  }
-
-  .ja {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .en {
-    flex: 1;
-    min-width: 0;
-  }
-
-  /* ============ 本文 ============ */
   p {
     font-family: "Shippori Mincho", serif;
-    font-size: 0.95rem;
-    line-height: 2.8;
+    font-size: 0.78rem;
+    line-height: 2.4;
     letter-spacing: 0.1em;
-    color: #000;
+    color: #666;
     margin: 0 0 1.5rem;
-  }
-
-  .en p {
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 300;
-    font-size: 1rem;
-    line-height: 2.2;
-    letter-spacing: 0.05em;
   }
 
   p:last-child { margin-bottom: 0; }
 
-  /* ============ リスト ============ */
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  li {
+  .promo-link {
+    display: inline-block;
+    margin-top: 0;
     font-family: "Shippori Mincho", serif;
-    font-size: 0.95rem;
-    line-height: 2.4;
-    letter-spacing: 0.05em;
-    color: #000;
-    padding-left: 1rem;
-    border-left: 1px solid #ccc;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: #fff;
+    text-decoration: none;
+    background: #000;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    transition: opacity 0.2s;
   }
 
-  .en li {
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 300;
-    font-size: 1rem;
-    line-height: 2;
-  }
+  .promo-link:hover { opacity: 0.5; }
 
-  .li-title {
-    display: block;
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 300;
-    font-size: 1rem;
-    letter-spacing: 0.15em;
-    margin-bottom: 0.25rem;
-  }
-
-  /* ============ スマホ（〜900px） ============ */
   @media (max-width: 900px) {
     main { padding: 1.5rem; }
-
     .card { padding: 3rem 2rem; }
-
-    .row {
-      flex-direction: column !important;
-      gap: 2.5rem;
-    }
-
     .heading { font-size: 1.1rem; }
-
-    .section-title { font-size: 0.9rem; }
-
-    p, .en p { font-size: 0.8rem; line-height: 2.4; }
-
-    li, .en li { font-size: 0.8rem; }
-
-    .li-title { font-size: 0.8rem; }
+    .section-title { font-size: 0.85rem; }
+    p { font-size: 0.75rem; }
   }
 </style>
