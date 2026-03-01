@@ -21,9 +21,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <h2 class="section-title">OFF FRAME MODE<br>枠を外し、写真の外側に広がる世界へ。</h2>
         <p>写真は常に、世界の一部を「切り捨てる」ことで成立します。OFF FRAME MODEは、その境界線を外側へと拡張します。枠が外れたその先に広がる景色や空気感。レンズが切り取った「素の時間」の全貌を、どうぞその目で確かめてください。</p>
 
-        <a class="promo-link" href="javascript:void(0)" onclick="window.openPromoOverlay?.()">今すぐ体験</a>
+        <a class="promo-link" id="aboutPromoBtn" href="javascript:void(0)" onclick="window.openPromoOverlay?.()" style="display:none;">今すぐ体験</a>
 
       </div>
+
+      <script is:inline>
+        document.addEventListener("astro:page-load", function() {
+          var sbKey = Object.keys(localStorage).find(function(k) { return k.startsWith("sb-") && k.endsWith("-auth-token"); });
+          var isLoggedIn = sbKey ? !!localStorage.getItem(sbKey) : false;
+          var btn = document.getElementById("aboutPromoBtn");
+          if (btn) btn.style.display = isLoggedIn ? "none" : "inline-block";
+        });
+      </script>
     </div>
   </main>
 </BaseLayout>
@@ -39,7 +48,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     background: #fff;
     width: 100%;
     max-width: 800px;
-    padding: 6% 8%;
+    padding: 6% 8% 10%;
   }
 
   .content {
@@ -59,6 +68,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     font-family: "Shippori Mincho", serif;
     font-weight: 400;
     font-size: 1rem;
+    line-height: 2;
     letter-spacing: 0.15em;
     color: #000;
     margin: 3rem 0 1.5rem;
@@ -95,7 +105,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   @media (max-width: 900px) {
     main { padding: 1.5rem; }
-    .card { padding: 3rem 2rem; }
+    .card { padding: 3rem 2rem 5rem; }
     .heading { font-size: 1.1rem; }
     .section-title { font-size: 0.85rem; }
     p { font-size: 0.75rem; }
