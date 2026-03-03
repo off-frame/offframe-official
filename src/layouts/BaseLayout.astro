@@ -103,6 +103,99 @@ const { title = "OffFrame" } = Astro.props;
     <PremiumModal />
 
 
+    <!-- スマホ：スクロールでヘッダー表示/非表示 -->
+    <script is:inline>
+      (function() {
+        var prevY = 0;
+        var offset = 0;
+        var maxH = 74;
+        var topH = 74;
+        var header = null;
+        var ticking = false;
+        var wasHidden = false;
+        var bubbleTimer = null;
+
+        function onScroll() {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(function() {
+            ticking = false;
+            if (!header) header = document.querySelector(".site-header");
+            if (!header || window.innerWidth > 1024) return;
+
+            var drawer = document.getElementById("drawer");
+            if (drawer && drawer.classList.contains("open")) return;
+
+            var y = window.scrollY;
+            var delta = y - prevY;
+
+            if (delta < 0) {
+              // 上スクロール → トランジションで戻す
+              if (offset > 0) {
+                offset = 0;
+                header.style.transition = "transform 0.3s ease-out";
+              }
+            } else {
+              // 下スクロール → スクロール量に連動して隠す（トランジションなし）
+              header.style.transition = "none";
+              offset = Math.min(maxH, offset + delta);
+            }
+
+            // ページ最上部では常に表示
+            if (y <= 10) offset = 0;
+
+            var isHidden = offset > 0;
+            header.style.transform = isHidden
+              ? "translate3d(0,-" + offset + "px,0)"
+              : "";
+
+            // 吹き出しをヘッダーと連動
+            var bubble = document.getElementById("tipBubble");
+            if (bubble && bubble.style.display !== "none") {
+              if (offset > 0) {
+                // 下スクロール → ヘッダーと一緒に上へ移動
+                if (bubbleTimer) { clearTimeout(bubbleTimer); bubbleTimer = null; }
+                bubble.style.animation = "none";
+                bubble.style.transition = "none";
+                bubble.style.opacity = "0";
+                bubble.style.transform = "translate3d(0,-" + offset + "px,0)";
+                bubble.dataset.scrollHid = "1";
+              } else if (bubble.dataset.scrollHid === "1") {
+                // ヘッダー完全に戻った → しばらく待ってからふわっとフェードイン
+                bubble.style.transform = "";
+                bubble.style.opacity = "0";
+                if (!bubbleTimer) {
+                  bubbleTimer = setTimeout(function() {
+                    bubbleTimer = null;
+                    bubble.dataset.scrollHid = "";
+                    bubble.style.transition = "opacity 0.8s ease-out";
+                    bubble.style.opacity = "1";
+                  }, 800);
+                }
+              }
+            }
+            wasHidden = isHidden;
+
+            prevY = y;
+          });
+        }
+
+        function init() {
+          header = document.querySelector(".site-header");
+          var ht = document.querySelector(".header-top");
+          if (header) maxH = header.offsetHeight;
+          if (ht) topH = ht.offsetHeight;
+          prevY = window.scrollY;
+          offset = 0;
+          if (header) header.style.transform = "";
+        }
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+        document.addEventListener("astro:page-load", init);
+        init();
+      })();
+    </script>
+
     <!-- ゲスト向け下部バナー -->
     <div class="bottom-banner" id="bottomBanner">
       <p class="bottom-banner-text">写真の外側が見える、オフフレームモードをログインして体験する</p>
@@ -525,6 +618,13 @@ const { title = "OffFrame" } = Astro.props;
     display: flex;
     align-items: center;
     z-index: 200;
+    will-change: transform;
+  }
+
+  @media (max-width: 1024px) {
+    .site-header {
+      will-change: transform;
+    }
   }
 
   .header-top {
