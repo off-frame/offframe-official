@@ -369,10 +369,12 @@ const { title = "OffFrame" } = Astro.props;
 
         function hideBubble() {
           if (bubble.style.display === "none") return;
-          bubble.classList.add("tip-hide");
+          bubble.style.transition = "none";
+          bubble.style.animation = "none";
+          bubble.style.opacity = "0";
+          bubble.style.display = "none";
           var currentPhase = sessionStorage.getItem("tip_phase") || "0";
           sessionStorage.setItem("tip_dismissed", currentPhase);
-          setTimeout(function() { bubble.style.display = "none"; }, 400);
         }
 
         bubble.addEventListener("click", hideBubble);
