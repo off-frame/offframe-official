@@ -33,7 +33,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       <h2 class="auth-title">メールを<br>送信しました</h2>
       <p class="auth-message">パスワード再設定用のリンクを<br>お送りしました。</p>
       <p class="auth-message" style="margin-top:1rem;">メール内のリンクから<br>新しいパスワードを設定してください。</p>
-      <p class="auth-message confirm-note spam-note">※ メールが届かない場合は<br>迷惑メールフォルダをご確認ください。</p>
+      <p class="auth-message confirm-note spam-note">※ メールが届かない場合は<br>迷惑メールフォルダをご確認いただくか、<br>ご登録のメールアドレスを<br>再度ご確認ください。</p>
     </div>
 
     <!-- 新規登録フォーム -->
@@ -720,6 +720,10 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       sessionStorage.setItem("tip_phase", "2");
       sessionStorage.setItem("tip_dismissed", "2");
       supabase.auth.onAuthStateChange(function(event, session) {
+        if (event === "PASSWORD_RECOVERY" && session) {
+          location.href = "/reset-password";
+          return;
+        }
         if (session) {
           updateAuthButtons(supabase);
           document.dispatchEvent(new CustomEvent("offframe:loggedin"));
