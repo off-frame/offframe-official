@@ -572,6 +572,8 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     const overlayEl = document.getElementById("authOverlay");
     if (!overlayEl) return;
     if (!window.supabase) { setTimeout(initAuth, 100); return; }
+    if (overlayEl._authInit) return;
+    overlayEl._authInit = true;
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const closeBtn = document.getElementById("authClose");
