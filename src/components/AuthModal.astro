@@ -597,16 +597,20 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     }
 
     // パスワードリセット
+    var resetSending = false;
     document.getElementById("resetSubmit").addEventListener("click", async () => {
+      if (resetSending) return;
       const email = document.getElementById("resetEmail").value.trim();
       const errorEl = document.getElementById("resetError");
       if (!isValidEmail(email)) {
         errorEl.textContent = "正しいメールアドレスを入力してください。";
         return;
       }
+      resetSending = true;
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: location.origin + "/reset-password"
       });
+      resetSending = false;
       if (error) {
         errorEl.textContent = "送信に失敗しました。もう一度お試しください。";
       } else {
