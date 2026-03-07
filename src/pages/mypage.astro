@@ -113,6 +113,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
     margin: 0 0 3rem;
   }
 
+
   .desc {
     font-family: "Shippori Mincho", serif;
     font-size: 0.9rem;
@@ -648,6 +649,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
       const isPremium = localStorage.getItem("offframe_premium") === "1";
       const isCancelling = localStorage.getItem("offframe_cancel_at") === "1";
       const periodEnd = localStorage.getItem("offframe_period_end");
+
 
       document.getElementById("stateGuest").style.display   = !session ? "block" : "none";
       document.getElementById("stateFree").style.display    = session && !isPremium ? "block" : "none";
